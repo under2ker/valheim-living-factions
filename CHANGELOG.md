@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 - 2026-10-13
+- Discord server for feedback, bug reports and chat: https://discord.gg/qVfAq3fqj6. The link is in the
+  README and in the package description. Nothing changed in the game itself.
+
 ## 0.3.1 - 2026-10-13
 - People and settlements read in Russian when the mod speaks Russian: Steinvik is Стейнвик, the
   chieftain Astrid is «Астрид, вождь». Chronicle, map pins, dialog title and messages follow.
