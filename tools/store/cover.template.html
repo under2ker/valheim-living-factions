@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Living Factions — preview</title>
+<script src="594763f2-5256-460e-822a-a5ca94fa93b6"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* latin */
+@font-face {
+  font-family: 'Averia Serif Libre';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fbad7d52-33a2-45a6-9a24-c4a7adfd5e9a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin */
+@font-face {
+  font-family: 'Averia Serif Libre';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("b80c9627-f9bd-48e7-a833-af811a541731") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt7-GT7LEc.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("824702f8-3238-4034-9295-947525166bb1") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt7-GT7LEc.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("824702f8-3238-4034-9295-947525166bb1") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+body{margin:0}
+a{color:#F0C36A}a:hover{color:#fff}
+.lf-tag{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Averia Serif Libre',Georgia,serif;font-weight:700;font-size:15px;color:#fff;white-space:nowrap;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 0 6px rgba(0,0,0,.8)}
+.lf-bar{width:52px;height:4px;background:#1a1a1a;border:1px solid #000;box-sizing:content-box}
+.lf-bar i{display:block;height:100%;background:#3fbf3f}
+.lf-scrim-b{position:absolute;left:0;right:0;bottom:0;height:330px;background:linear-gradient(to top,rgba(8,10,8,.92) 0%,rgba(8,10,8,.72) 45%,rgba(8,10,8,0) 100%)}
+.lf-scrim-t{position:absolute;left:0;right:0;top:0;height:140px;background:linear-gradient(to bottom,rgba(8,10,8,.6),rgba(8,10,8,0))}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; position: relative; overflow: hidden; background: #0b0d0a; font-family: 'Averia Serif Libre', Georgia, serif; color: #EDE6D6">
+<img src="806f9e28-f064-46a7-ba7b-bd593a32e07a" alt="A Raven Clan hamlet in the Meadows: thatched huts, a banner, villagers at work" style="position: absolute; left: 0; top: 0; width: 1280px; height: 720px; object-fit: cover">
+<div class="lf-scrim-t"></div>
+<div class="lf-scrim-b"></div>
+
+<div class="lf-tag" style="left: 612px; top: 284px"><span style="color: {{accent}}">Freydis, chieftain</span><span class="lf-bar"><i style="width: 100%"></i></span></div>
+<div class="lf-tag" style="left: 446px; top: 314px"><span>Torsten</span><span class="lf-bar"><i style="width: 100%"></i></span></div>
+<div class="lf-tag" style="left: 742px; top: 300px"><span>Knut</span><span class="lf-bar"><i style="width: 90%"></i></span></div>
+<div class="lf-tag" style="left: 792px; top: 346px"><span>Rolf</span><span class="lf-bar"><i style="width: 100%"></i></span></div>
+<div class="lf-tag" style="left: 1000px; top: 334px"><span>Ingrid, guard</span><span class="lf-bar"><i style="width: 100%"></i></span></div>
+<div class="lf-tag" style="left: 350px; top: 388px"><span>Hakon</span><span class="lf-bar"><i style="width: 100%"></i></span></div>
+<div class="lf-tag" style="left: 134px; top: 368px"><span>Ragnhild</span><span class="lf-bar"><i style="width: 80%"></i></span></div>
+
+<div style="position: absolute; left: 56px; top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 900px">
+<div role="img" aria-label="Русский" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg role="img" aria-label="Russian" sc-camel-view-box="0 0 9 6" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="9" height="2" fill="#FFFFFF"></rect><rect y="2" width="9" height="2" fill="#0039A6"></rect><rect y="4" width="9" height="2" fill="#D52B1E"></rect></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">RU</span></div>
+<div role="img" aria-label="English (US)" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg role="img" aria-label="English (US)" sc-camel-view-box="0 0 19 13" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="19" height="13" fill="#FFFFFF"></rect><g fill="#B22234"><rect width="19" height="1"></rect><rect y="2" width="19" height="1"></rect><rect y="4" width="19" height="1"></rect><rect y="6" width="19" height="1"></rect><rect y="8" width="19" height="1"></rect><rect y="10" width="19" height="1"></rect><rect y="12" width="19" height="1"></rect></g><rect width="7.6" height="7" fill="#3C3B6E"></rect><g fill="#FFFFFF"><circle cx="1.3" cy="1.2" r=".35"></circle><circle cx="3.8" cy="1.2" r=".35"></circle><circle cx="6.3" cy="1.2" r=".35"></circle><circle cx="2.55" cy="2.7" r=".35"></circle><circle cx="5.05" cy="2.7" r=".35"></circle><circle cx="1.3" cy="4.2" r=".35"></circle><circle cx="3.8" cy="4.2" r=".35"></circle><circle cx="6.3" cy="4.2" r=".35"></circle><circle cx="2.55" cy="5.7" r=".35"></circle><circle cx="5.05" cy="5.7" r=".35"></circle></g></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">EN</span></div>
+<div role="img" aria-label="Polski" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg sc-camel-view-box="0 0 3 2" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="3" height="1" fill="#FFFFFF"></rect><rect y="1" width="3" height="1" fill="#DC143C"></rect></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">PL</span></div>
+<div role="img" aria-label="Deutsch" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg sc-camel-view-box="0 0 5 3" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="5" height="1" fill="#000000"></rect><rect y="1" width="5" height="1" fill="#DD0000"></rect><rect y="2" width="5" height="1" fill="#FFCE00"></rect></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">DE</span></div>
+<div role="img" aria-label="Français" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg sc-camel-view-box="0 0 3 2" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="1" height="2" fill="#002395"></rect><rect x="1" width="1" height="2" fill="#FFFFFF"></rect><rect x="2" width="1" height="2" fill="#ED2939"></rect></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">FR</span></div>
+<div role="img" aria-label="Español" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg sc-camel-view-box="0 0 3 2" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="3" height="2" fill="#AA151B"></rect><rect y="0.5" width="3" height="1" fill="#F1BF00"></rect></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">ES</span></div>
+<div role="img" aria-label="Português" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border: 1px solid rgba(240,195,106,.7); border-radius: 6px; background: rgba(12,14,11,.8)"><svg sc-camel-view-box="0 0 3 2" style="width: 36px; height: 24px; display: block; box-shadow: 0 0 0 1px rgba(0,0,0,.5)"><rect width="3" height="2" fill="#FF0000"></rect><rect width="1.2" height="2" fill="#006600"></rect><circle cx="1.2" cy="1" r="0.42" fill="#FFCC00" stroke="#000000" stroke-width="0.05"></circle></svg><span style="font-size: 16px; font-weight: 700; letter-spacing: 1.5px; color: #EDE6D6">PT</span></div>
+</div>
+
+
+<div style="position: absolute; right: 48px; top: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 132px; height: 132px; box-sizing: border-box; border: 2px solid {{accent}}; border-radius: 50%; background: rgba(12,14,11,.82); box-shadow: 0 0 0 6px rgba(12,14,11,.45)">
+<span style="font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #C9BFA8">version</span>
+<span style="font-family: Cinzel, Georgia, serif; font-weight: 900; font-size: 34px; line-height: 1; color: {{accent}}">{{version}}</span>
+<span style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #C9BFA8">{{stage}}</span>
+</div>
+
+<div style="position: absolute; left: 56px; right: 56px; bottom: 48px; display: flex; flex-direction: column; gap: 14px">
+<h1 style="margin: 0; font-family: Cinzel, Georgia, serif; font-weight: 900; font-size: 104px; line-height: .95; letter-spacing: 4px; color: {{accent}}; text-shadow: 0 3px 0 #2a1d08, 0 6px 24px rgba(0,0,0,.85)">Living Factions</h1>
+<p style="margin: 0; max-width: 860px; font-size: 26px; line-height: 1.3; color: #EDE6D6; text-shadow: 0 2px 6px rgba(0,0,0,.9)">Clans that found camps, raise villages, trade, feud and go to war — whether you are watching or not.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px">
+<span style="padding: 7px 14px; border: 1px solid rgba(240,195,106,.6); border-radius: 4px; background: rgba(12,14,11,.7); font-size: 16px; color: #EDE6D6">7 factions</span>
+<span style="padding: 7px 14px; border: 1px solid rgba(240,195,106,.6); border-radius: 4px; background: rgba(12,14,11,.7); font-size: 16px; color: #EDE6D6">Camp → hamlet → village → town → city</span>
+<span style="padding: 7px 14px; border: 1px solid rgba(240,195,106,.6); border-radius: 4px; background: rgba(12,14,11,.7); font-size: 16px; color: #EDE6D6">Diplomacy &amp; trade</span>
+<span style="padding: 7px 14px; border: 1px solid rgba(240,195,106,.6); border-radius: 4px; background: rgba(12,14,11,.7); font-size: 16px; color: #EDE6D6">Raids &amp; wars</span>
+<span style="padding: 7px 14px; border-radius: 4px; background: rgba(12,14,11,.7); font-size: 16px; color: #C9BFA8">Valheim 1.0.17 · BepInEx · Jötunn</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;version&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;v0.4.0&quot;},&quot;stage&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;early&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F0C36A&quot;},&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+renderVals() {
+return {
+version: this.props.version ?? 'v0.4.0',
+stage: this.props.stage ?? 'early',
+accent: this.props.accent ?? '#F0C36A'
+};
+}
+}
+</script>
+
+
+</body></html>
