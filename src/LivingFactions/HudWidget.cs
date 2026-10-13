@@ -36,6 +36,26 @@ namespace LivingFactions
             }
             _text.gameObject.SetActive(true);
             _text.text = Compose();
+            PlaceUnderMinimap();
+        }
+
+        private static readonly Vector3[] MapCorners = new Vector3[4];
+
+        /// <summary>
+        /// The panel hangs from the bottom edge of the small map, right edges in line, wherever the game
+        /// has put the map and however large: a fixed offset from the screen corner fits one screen size
+        /// and slides behind the map on another.
+        /// </summary>
+        private static void PlaceUnderMinimap()
+        {
+            RectTransform panel = _text.rectTransform;
+            RectTransform map = Minimap.instance != null && Minimap.instance.m_smallRoot != null ? Minimap.instance.m_smallRoot.GetComponent<RectTransform>() : null;
+            if (map == null) return;
+            map.GetWorldCorners(MapCorners);
+            // Corners come as bottom-left, top-left, top-right, bottom-right.
+            Vector3 hook = MapCorners[3];
+            panel.pivot = new Vector2(1f, 1f);
+            panel.position = new Vector3(hook.x, hook.y - 10f * panel.lossyScale.y, panel.position.z);
         }
 
         public static string Compose()

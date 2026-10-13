@@ -1,0 +1,6 @@
+god
+env 0.4 Clear
+goto 4
+wait 4
+shot hud_place
+quit

@@ -9,9 +9,18 @@ you are around or not, and you can take part: trade, bring gifts, make friends, 
 
 Made for Valheim 1.0.17 with BepInEx 5 and Jötunn. It is an early version.
 
-Playing together works since 0.4.0: on a dedicated server or with a player hosting. Everyone
-needs the mod, the server too. It was tested with a dedicated server and one guest. Two players
-in the same village at once have not been tested yet, so tell us how it goes.
+## Playing together
+
+Works since 0.4.0, on a dedicated server or with a player hosting.
+
+- Everyone needs the mod: the server and every player. Somebody without it, or with another
+  0.x version of it (0.3 against 0.4), is not let in.
+- On a dedicated server put BepInEx, Jötunn and `LivingFactions.dll` into the server folder the
+  same way as into the game. The state of the factions is kept on the server, next to its config.
+- The host runs the factions. The player nearest a settlement is the one who builds it.
+- Tested with a dedicated server and one guest over Steam. Crossplay servers and two players in
+  the same village at once have not been tested yet, so tell us how it goes.
+- Back up the server world before the first run.
 
 Feedback, bug reports and chat: [Discord](https://discord.gg/qVfAq3fqj6).
 

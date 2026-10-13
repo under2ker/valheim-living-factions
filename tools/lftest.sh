@@ -26,7 +26,7 @@ printf '%s' "$WORLD" > "$DATA/autostart.txt"
 rm -f "$DATA/report.txt" "$DATA/out.txt"
 cp "$SCENARIO" "$DATA/scenario.txt"
 
-( cd "$GAME" && ./valheim.exe -console -screen-fullscreen 0 -screen-width 1280 -screen-height 720 >/dev/null 2>&1 & )
+( cd "$GAME" && ./valheim.exe -console -screen-fullscreen 0 -screen-width "${LF_WIDTH:-1280}" -screen-height "${LF_HEIGHT:-720}" >/dev/null 2>&1 & )
 
 # Wait for the report to finish; give up after 10 minutes.
 for i in $(seq 1 480); do

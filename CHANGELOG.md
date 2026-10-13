@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1 - 2026-10-14
+- Fixed: on a large or full screen the chronicle panel slid behind the minimap. It now hangs from
+  the bottom edge of the minimap, right edges in line, at any screen size. Checked at 1280x720
+  and 1920x1080.
+- New icon and cover picture.
+
 ## 0.4.0 - 2026-10-14
 - Playing together. The simulation runs on whoever hosts the world, a player or a dedicated
   server, and everyone else reads a copy the host sends out. What a guest does (gifts, trade,
