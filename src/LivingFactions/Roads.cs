@@ -75,6 +75,7 @@ namespace LivingFactions
             PaintRoads(reference);
             Furnish(reference);
             PaintSquares(reference);
+            Materializer.ClearPaths(reference);
         }
 
         // ------------------------------------------------------------------ the network

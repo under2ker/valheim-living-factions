@@ -226,7 +226,61 @@ namespace LivingFactions
         /// </summary>
         private static void PaintPath(Settlement s, Building b, Vector3 pad)
         {
-            if (!ModConfig.Roads.Value || b.Plot < 0) return;
+            Vector3 from, to;
+            int paint;
+            float width;
+            if (PathOf(s, b, pad, out from, out to, out paint, out width)) QueueRoad(from, to, paint, width);
+        }
+
+        private static readonly Dictionary<int, int> PathsCleared = new Dictionary<int, int>();
+
+        /// <summary>
+        /// The paths inside a settlement are kept free of trees, rocks and bushes, as people who walk
+        /// them every day would keep them: without this a village in a wood has its paths under the
+        /// canopy where nobody sees them. Done once a session for each settlement near the player,
+        /// and again when it has put up something new.
+        /// </summary>
+        public static void ClearPaths(Vector3 reference)
+        {
+            if (!ModConfig.Roads.Value || !SimHost.Active) return;
+            foreach (Settlement s in SimHost.Sim.State.Settlements)
+            {
+                if (s.Destroyed) continue;
+                Vector3 centre = new Vector3(s.Pos.X, 0f, s.Pos.Z);
+                if (Utils.DistanceXZ(reference, centre) > 70f || !ZoneSystem.instance.IsZoneLoaded(centre)) continue;
+                int built = 0, done;
+                foreach (Building b in s.Buildings) if (b.SpawnedPieces > 0 && !float.IsNaN(b.GroundY)) built++;
+                if (PathsCleared.TryGetValue(s.Id, out done) && done == built) continue;
+                PathsCleared[s.Id] = built;
+                foreach (Building b in s.Buildings)
+                {
+                    if (b.SpawnedPieces == 0 || float.IsNaN(b.GroundY) || b.State == BuildingState.Destroyed) continue;
+                    Vector3 origin, from, to;
+                    float yaw, width;
+                    int paint;
+                    if (!TryGetOrigin(s, b, out origin, out yaw)) continue;
+                    origin.y = b.GroundY;
+                    if (!PathOf(s, b, origin, out from, out to, out paint, out width)) continue;
+                    float length = Utils.DistanceXZ(from, to);
+                    for (float d = 0f; d <= length; d += 2f)
+                    {
+                        Vector3 p = Vector3.Lerp(from, to, length > 0f ? d / length : 0f);
+                        if (!ZoneSystem.instance.IsZoneLoaded(p)) continue;
+                        float ground;
+                        if (ZoneSystem.instance.GetGroundHeight(p, out ground)) p.y = ground;
+                        ClearVegetation(p, 3f);
+                    }
+                }
+            }
+        }
+
+        /// <summary>Where the path of a building runs: to the square, or to the nearest older building.</summary>
+        private static bool PathOf(Settlement s, Building b, Vector3 pad, out Vector3 from, out Vector3 to, out int paint, out float width)
+        {
+            from = to = Vector3.zero;
+            paint = 1;
+            width = 1f;
+            if (!ModConfig.Roads.Value || b.Plot < 0) return false;
             Vector3 centre = new Vector3(s.Pos.X, pad.y, s.Pos.Z);
             bool everyone = b.Kind == BuildingKind.Storehouse || b.Kind == BuildingKind.Market || b.Kind == BuildingKind.GreatHall || b.Kind == BuildingKind.Smithy
                 || b.Kind == BuildingKind.Longhouse || b.Kind == BuildingKind.Watchtower;
@@ -249,11 +303,16 @@ namespace LivingFactions
             }
             if (everyone || nearest > 40f || ((b.Id + s.Seed) & 1) == 0)
             {
-                QueueRoad(centre + (pad - centre).normalized * 4f, pad + (centre - pad).normalized * (Blueprints.Radius(b.Kind) - 0.5f), s.Tier >= Tier.Town ? 2 : 1, 1.3f);
-                return;
+                from = centre + (pad - centre).normalized * 4f;
+                to = pad + (centre - pad).normalized * (Blueprints.Radius(b.Kind) - 0.5f);
+                paint = s.Tier >= Tier.Town ? 2 : 1;
+                width = 1.3f;
+                return true;
             }
             Vector3 dir = (neighbour - pad).normalized;
-            QueueRoad(pad + dir * (Blueprints.Radius(b.Kind) - 0.5f), neighbour - dir * (neighbourRadius - 0.5f), 1, 1f);
+            from = pad + dir * (Blueprints.Radius(b.Kind) - 0.5f);
+            to = neighbour - dir * (neighbourRadius - 0.5f);
+            return true;
         }
 
         private static readonly List<TerrainJob> Smooths = new List<TerrainJob>();

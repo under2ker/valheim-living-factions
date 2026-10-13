@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.4 - 2026-10-13
+- Paths inside a settlement are kept clear of trees, rocks and bushes. A village that grew in a
+  wood used to keep the whole wood between its houses, so its paths lay under the canopy and
+  could not be seen. Done once a session for each settlement near the player, and again when it
+  builds something new. Worn trails to a tree or a neighbour are left as they are.
+- Checked in the game: the village of Fjallfell from above before and after
+  (docs/screenshots/village_paths_0.3.4.jpg), smoke 15/15.
+
 ## 0.3.3 - 2026-10-13
 - Fixed: the doorway of the great hall was blocked by a table and a bench, so nobody could walk
   in. Both tables now stand along the back wall. Halls that are already built are taken down and

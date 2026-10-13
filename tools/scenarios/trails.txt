@@ -1,0 +1,14 @@
+god
+env 0.4 Clear
+goto 15
+waitready 240
+wait 20
+waitready 120
+hidehud on
+view 15 10 55 135
+shot trails_village_a
+view 15 28 42 315
+shot trails_village_b
+hidehud off
+roads
+quit
