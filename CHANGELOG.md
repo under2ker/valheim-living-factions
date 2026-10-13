@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.3 - 2026-10-13
+- Fixed: the doorway of the great hall was blocked by a table and a bench, so nobody could walk
+  in. Both tables now stand along the back wall. Halls that are already built are taken down and
+  put up again once, on the next visit.
+- Fixed a typo in the Russian description of the Wolf's Fang.
+- README says what the two axes really do in the game. The Wolf's Fang card is marked as concept
+  art, its numbers are plans.
+- Checked in the game: a settlement grown into a city has its square and paths cobbled, the
+  ground under 29 buildings is level and has no torn edges; the Wolf's Fang deals 1.25 times
+  the damage of the same axe without its mark; checks 8/8; smoke 14/15, the one miss being
+  raiders left in the test world by the scenario before it.
+- Dev tools: commands `damage` and `emptybag`.
+
 ## 0.3.2 - 2026-10-13
 - Discord server for feedback, bug reports and chat: https://discord.gg/qVfAq3fqj6. The link is in the
   README and in the package description. Nothing changed in the game itself.

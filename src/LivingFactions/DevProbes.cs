@@ -299,6 +299,8 @@ namespace LivingFactions
         {
             Player player = Player.m_localPlayer;
             if (player == null) return "no player";
+            // A full bar first: a player who has just run or swum would measure nothing.
+            player.AddStamina(player.GetMaxStamina());
             float before = player.GetStamina();
             if (before < 3f) return "not enough stamina to measure (" + before.ToString("0", Inv) + ")";
             player.UseStamina(2f);
@@ -308,6 +310,29 @@ namespace LivingFactions
             ItemDrop.ItemData weapon = player.GetCurrentWeapon();
             string name = weapon != null && weapon.m_dropPrefab != null ? weapon.m_dropPrefab.name : "nothing";
             return "holding " + name + ": asked 2.00, took " + taken.ToString("0.00", Inv) + " stamina";
+        }
+
+        /// <summary>
+        /// What the weapon in hand deals, and what it would deal without its relic mark. `damage keen`
+        /// puts that mark on it first, `damage none` takes the mark off.
+        /// </summary>
+        public static string Damage(string[] a)
+        {
+            Player player = Player.m_localPlayer;
+            ItemDrop.ItemData weapon = player != null ? player.GetCurrentWeapon() : null;
+            if (weapon == null || weapon.m_dropPrefab == null) return "nothing in hand";
+            if (a.Length > 1)
+            {
+                if (a[1] == "none") weapon.m_customData.Remove(Wares.RelicKey);
+                else weapon.m_customData[Wares.RelicKey] = a[1];
+            }
+            string affix = Wares.AffixOf(weapon);
+            float with = weapon.GetDamage().m_slash;
+            weapon.m_customData.Remove(Wares.RelicKey);
+            float plain = weapon.GetDamage().m_slash;
+            if (affix != null) weapon.m_customData[Wares.RelicKey] = affix;
+            return "holding " + weapon.m_dropPrefab.name + " [" + (affix ?? "no mark") + "]: slash " + with.ToString("0.0", Inv) + ", without the mark " + plain.ToString("0.0", Inv)
+                + ", x" + (plain > 0f ? with / plain : 0f).ToString("0.00", Inv);
         }
 
         public static string Shots(string[] a)

@@ -10,6 +10,11 @@ equip LF_StagHornAxe
 items
 expect took 1.60 :: stamina
 unequip all
+# the keen mark of the Wolf's Fang: a quarter more damage than the same axe without it
+equip LF_WolfFangAxe
+expect x1.00 :: damage none
+expect x1.25 :: damage keen
+unequip all
 # trading post: a player's chest of wood and stone by the settlement
 tradechest 4
 until Coins :: chestinfo

@@ -72,7 +72,15 @@ namespace LivingFactions
                 case "perf": return DevProbes.Perf();
                 case "track": return DevProbes.Track(a);
                 case "seams": return DevProbes.Seams(a.Length > 1 ? float.Parse(a[1], Inv) : 150f);
+                case "emptybag":
+                    // A test character fills up over many runs; a full bag makes every purchase fail.
+                    if (Player.m_localPlayer == null) return "no player";
+                    Player.m_localPlayer.UnequipAllItems();
+                    int had = Player.m_localPlayer.GetInventory().NrOfItems();
+                    Player.m_localPlayer.GetInventory().RemoveAll();
+                    return "bag emptied, " + had + " stacks gone";
                 case "stamina": return DevProbes.Stamina();
+                case "damage": return DevProbes.Damage(a);
                 case "shots": return DevProbes.Shots(a);
                 case "tradechest":
                     Settlement tradeTown = a.Length > 1 ? FindSettlement(a[1]) : null;

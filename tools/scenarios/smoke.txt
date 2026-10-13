@@ -14,6 +14,7 @@ expect Coinsx :: chests
 
 # dialog: wares, relic, mystery
 rep 8 45
+emptybag
 coins 600
 ui open chief
 expect [main] :: ui state

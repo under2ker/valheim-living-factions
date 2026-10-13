@@ -129,7 +129,10 @@ namespace LivingFactions
                 if (b.LayoutRev < LayoutRevision)
                 {
                     // Buildings laid out by an older blueprint are taken down and put up again.
-                    bool changed = b.Kind != BuildingKind.Campfire && b.Kind != BuildingKind.Farm && b.Kind != BuildingKind.Palisade && b.Kind != BuildingKind.Watchtower;
+                    // Revision 5 only moved the furniture of the great hall out of its doorway.
+                    bool changed = b.LayoutRev < 4
+                        ? b.Kind != BuildingKind.Campfire && b.Kind != BuildingKind.Farm && b.Kind != BuildingKind.Palisade && b.Kind != BuildingKind.Watchtower
+                        : b.Kind == BuildingKind.GreatHall;
                     if (changed && b.SpawnedPieces > 0)
                     {
                         RemovePieces(s, b, origin);
@@ -212,7 +215,7 @@ namespace LivingFactions
         }
 
         private const int TerrainRevision = 8;
-        private const int LayoutRevision = 4;
+        private const int LayoutRevision = 5;
         private const float PadMargin = 1.5f;
 
         /// <summary>

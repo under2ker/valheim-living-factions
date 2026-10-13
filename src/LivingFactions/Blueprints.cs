@@ -486,8 +486,9 @@ namespace LivingFactions
             b.Add("piece_throne01", -4.6f, WallBase, 0f, 90f);
             b.Add("piece_table", 2.5f, WallBase, -1.4f);
             b.Add("piece_bench01", 2.5f, WallBase, -2.3f);
-            b.Add("piece_table", 2.5f, WallBase, 1.3f);
-            b.Add("piece_bench01", 2.5f, WallBase, 2.2f, 180f);
+            // Both tables stand along the back wall: the door is in the front one, at x 0..2.
+            b.Add("piece_table", -2.9f, WallBase, -1.4f);
+            b.Add("piece_bench01", -2.9f, WallBase, -2.3f);
             b.Add("bed", 4.6f, WallBase, -1.2f);
             b.Add("piece_chest_wood", 5.2f, WallBase, 2.3f, 180f);
             foreach (int x in new[] { -4, -1, 2, 5 }) b.Add("piece_walltorch", x, WallBase + 2f, -2.75f);

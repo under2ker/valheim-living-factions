@@ -67,7 +67,11 @@ settlement when it is raided, the raiders really turn up.
 - Killing their people or breaking their buildings costs standing, and enough of it means war.
   Killing monsters near their homes or raiders attacking them earns standing.
 
-There are two relic axes so far, Wolf Fang and Stag's Horn. More weapons are being worked on.
+There are two relic axes so far. Wolf's Fang is sold by the Wolf Clan and hits 25% harder.
+Stag's Horn is sold by the Stag Clan, costs 20% less stamina to swing and makes traders charge
+you 10% less while you carry it. More weapons are being worked on.
+
+The card below is concept art. The numbers on it are plans, not what is in the game now.
 
 ![Wolf Fang](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/wolf-fang.jpg)
 

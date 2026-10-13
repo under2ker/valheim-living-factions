@@ -38,7 +38,7 @@ namespace LivingFactions
                 Asset = "wolf-fang-axe", Prefab = WolfFangAxe, Source = "AxeIron",
                 NameEn = "Wolf's Fang", NameRu = "Клык Волка",
                 DescEn = "The relic axe of the Wolf Clan. Iron blade, leather-wrapped haft, a wolf's tail at the pommel.",
-                DescRu = "Реликвийный топор Клана Волка. Лезвие выкован из железа, рукоять обвита кожей, на обухе - волчий хвост.",
+                DescRu = "Реликвийный топор Клана Волка. Лезвие выковано из железа, рукоять обвита кожей, на обухе - волчий хвост.",
             },
             new AxeSpec
             {
