@@ -1,0 +1,19 @@
+# Daily life in Russian: the game and the mod speak Russian, people are spread out, not bunched.
+god
+env 0.4 Clear
+expect game language Russian, mod language ru :: lang Russian
+goto 4
+expect жителей :: hud
+speed 3
+wait 150
+speed 1
+crowd
+reject at most 6 :: crowd
+reject at most 7 :: crowd
+reject at most 8 :: crowd
+npcs
+seams 200
+view 4 34 24 135
+shot life_village
+cam
+quit

@@ -1,0 +1,8 @@
+# NPC movement in settlement 4, frame by physics frame, twice: right after arrival and a minute later.
+goto 4
+track 20
+until track done :: track
+wait 60
+track 20
+until track done :: track
+quit

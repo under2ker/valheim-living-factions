@@ -1,0 +1,801 @@
+item	type	joint	node	exact	long axis	length	joint at % of length	gap	min x	max x	min y	max y	min z	max z	cut centre u	cut centre w	cut size u	cut size w
+Abomination_attack1	OneHandedWeapon	rightHand	-
+Abomination_attack2	OneHandedWeapon	rightHand	-
+Abomination_attack3	OneHandedWeapon	rightHand	-
+ArmorAshlandsMediumChest	Chest	body	attach_skin
+ArmorAshlandsMediumlegs	Legs	body	attach_skin
+ArmorBerserkerChest	Chest	body	attach_skin
+ArmorBerserkerLegs	Legs	body	attach_skin
+ArmorBerserkerUndeadChest	Chest	body	attach_skin
+ArmorBerserkerUndeadLegs	Legs	body	attach_skin
+ArmorBronzeChest	Chest	body	attach_skin
+ArmorBronzeLegs	Legs	body	attach_skin
+ArmorCarapaceChest	Chest	body	attach_skin
+ArmorCarapaceLegs	Legs	body	attach_skin
+ArmorDeepNorthHeavyChest	Chest	body	attach_skin
+ArmorDeepNorthHeavylegs	Legs	body	attach_skin
+ArmorDeepNorthMageChest	Chest	body	attach_skin
+ArmorDeepNorthMagelegs	Legs	body	attach_skin
+ArmorDeepNorthMediumChest	Chest	body	attach_skin
+ArmorDeepNorthMediumlegs	Legs	body	attach_skin
+ArmorDress1	Chest	body	attach_skin
+ArmorDress10	Chest	body	attach_skin
+ArmorDress2	Chest	body	attach_skin
+ArmorDress3	Chest	body	attach_skin
+ArmorDress4	Chest	body	attach_skin
+ArmorDress5	Chest	body	attach_skin
+ArmorDress6	Chest	body	attach_skin
+ArmorDress7	Chest	body	attach_skin
+ArmorDress8	Chest	body	attach_skin
+ArmorDress9	Chest	body	attach_skin
+ArmorFenringChest	Chest	body	attach_skin
+ArmorFenringLegs	Legs	body	attach_skin
+ArmorFlametalChest	Chest	body	attach_skin
+ArmorFlametalLegs	Legs	body	attach_skin
+ArmorHarvester1	Chest	body	attach_skin
+ArmorHarvester2	Chest	body	attach_skin
+ArmorIronChest	Chest	body	attach_skin
+ArmorIronLegs	Legs	body	attach_skin
+ArmorLeatherChest	Chest	body	attach_skin
+ArmorLeatherLegs	Legs	body	-
+ArmorLoxChest	Chest	body	attach_skin
+ArmorLoxLegs	Legs	body	attach_skin
+ArmorMageChest	Chest	body	attach_skin
+ArmorMageChest_Ashlands	Chest	body	attach_skin
+ArmorMageLegs	Legs	body	attach_skin
+ArmorMageLegs_Ashlands	Legs	body	attach_skin
+ArmorPaddedCuirass	Chest	body	attach_skin
+ArmorPaddedGreaves	Legs	body	attach_skin
+ArmorRagsChest	Chest	body	attach_skin
+ArmorRagsLegs	Legs	body	-
+ArmorRootChest	Chest	body	attach_skin
+ArmorRootLegs	Legs	body	attach_skin
+ArmorTrollLeatherChest	Chest	body	attach_skin
+ArmorTrollLeatherLegs	Legs	body	-
+ArmorTunic1	Chest	body	attach_skin
+ArmorTunic10	Chest	body	attach_skin
+ArmorTunic2	Chest	body	attach_skin
+ArmorTunic3	Chest	body	attach_skin
+ArmorTunic4	Chest	body	attach_skin
+ArmorTunic5	Chest	body	attach_skin
+ArmorTunic6	Chest	body	attach_skin
+ArmorTunic7	Chest	body	attach_skin
+ArmorTunic8	Chest	body	attach_skin
+ArmorTunic9	Chest	body	attach_skin
+ArmorWolfChest	Chest	body	attach_skin
+ArmorWolfLegs	Legs	body	attach_skin
+Asksvin_Bite	OneHandedWeapon	rightHand	-
+Asksvin_Headbutt	OneHandedWeapon	rightHand	-
+Asksvin_Pounce	OneHandedWeapon	rightHand	-
+Asksvin_Turnaround	OneHandedWeapon	rightHand	-
+aspect_bonemass_attack_aoe	OneHandedWeapon	rightHand	-
+aspect_bonemass_attack_punch	OneHandedWeapon	rightHand	-
+aspect_bonemass_attack_throw	OneHandedWeapon	rightHand	-
+aspect_dragon_bite	OneHandedWeapon	rightHand	-
+aspect_dragon_claw_left	OneHandedWeapon	rightHand	-
+aspect_dragon_claw_right	OneHandedWeapon	rightHand	-
+aspect_dragon_coldbreath	OneHandedWeapon	rightHand	-
+aspect_dragon_spit_shotgun	OneHandedWeapon	rightHand	-
+aspect_dragon_taunt	OneHandedWeapon	rightHand	-
+aspect_Eikthyr_antler	OneHandedWeapon	rightHand	-
+aspect_Eikthyr_charge	OneHandedWeapon	rightHand	-
+aspect_Eikthyr_stomp	OneHandedWeapon	rightHand	-
+aspect_Fader_Bite	OneHandedWeapon	rightHand	-
+aspect_Fader_Claw_Left	OneHandedWeapon	rightHand	-
+aspect_Fader_Claw_Right	OneHandedWeapon	rightHand	-
+aspect_Fader_Fissure	OneHandedWeapon	rightHand	-
+aspect_Fader_Flamebreath	OneHandedWeapon	rightHand	-
+aspect_Fader_Spin	OneHandedWeapon	rightHand	-
+aspect_Fader_WallOfFire	OneHandedWeapon	rightHand	-
+aspect_gd_king_rootspawn	OneHandedWeapon	rightHand	-
+aspect_gd_king_scream	OneHandedWeapon	rightHand	-
+aspect_gd_king_shoot	OneHandedWeapon	rightHand	-
+aspect_gd_king_stomp	OneHandedWeapon	rightHand	-
+aspect_GoblinKing_Beam	OneHandedWeapon	rightHand	-
+aspect_GoblinKing_Nova	OneHandedWeapon	rightHand	-
+aspect_GoblinKing_Taunt	OneHandedWeapon	rightHand	-
+aspect_SeekerQueen_Bite	OneHandedWeapon	rightHand	-
+aspect_SeekerQueen_PierceAOE	OneHandedWeapon	rightHand	-
+aspect_SeekerQueen_Rush	OneHandedWeapon	rightHand	-
+aspect_SeekerQueen_Slap	OneHandedWeapon	rightHand	-
+aspect_SeekerQueen_Spit	OneHandedWeapon	rightHand	-
+AtgeirBlackmetal	TwoHandedWeapon	rightHand	attach	yes	Z	2.67	26	0.015	-0.31	+0.79	-0.29	+0.12	-0.69	+1.98	-0.01	-0.01	0.06	0.06
+AtgeirBronze	TwoHandedWeapon	rightHand	attach	yes	Z	2.81	25	0.012	-0.32	+0.77	-0.34	+0.12	-0.71	+2.09	-0.01	-0.01	0.05	0.06
+AtgeirGold	TwoHandedWeapon	rightHand	attach	yes	Z	2.39	19	0.022	-0.19	+0.83	-0.33	+0.05	-0.46	+1.93	+0.01	-0.05	0.05	0.06
+AtgeirGold_BloodLightning	TwoHandedWeapon	rightHand	attach	yes	Z	2.39	19	0.022	-0.19	+0.83	-0.33	+0.05	-0.46	+1.93	+0.01	-0.05	0.05	0.06
+AtgeirGold_FrostFire	TwoHandedWeapon	rightHand	attach	yes	Z	2.39	19	0.022	-0.19	+0.83	-0.33	+0.05	-0.46	+1.93	+0.01	-0.05	0.05	0.06
+AtgeirHimminAfl	TwoHandedWeapon	rightHand	attach	yes	Z	2.65	26	0.023	-0.27	+0.81	-0.28	+0.13	-0.70	+1.95	+0.00	+0.00	0.05	0.06
+AtgeirIron	TwoHandedWeapon	rightHand	attach	yes	Z	2.81	25	0.012	-0.32	+0.77	-0.34	+0.12	-0.71	+2.09	-0.01	-0.01	0.05	0.06
+AtgeirWood	TwoHandedWeapon	rightHand	attach	yes	Z	2.55	26	0.024	-0.26	+0.84	-0.29	+0.13	-0.65	+1.89	+0.00	+0.00	0.05	0.06
+Axe1h_JotunWarrior	OneHandedWeapon	rightHand	attach	yes	Z	1.27	8	0.015	-0.55	+0.10	-0.07	+0.02	-0.10	+1.17	+0.00	-0.02	0.11	0.09
+Axe1h_JotunWarrior 1	Shield	leftHand	attach	yes	Z	1.27	8	0.015	-0.55	+0.10	-0.07	+0.02	-0.10	+1.17	+0.00	-0.02	0.11	0.09
+Axe2h_JotunWarrior	OneHandedWeapon	rightHand	attach	yes	Z	2.36	22	0.037	-0.48	+0.48	-0.04	+0.04	-0.52	+1.84	+0.00	+0.00	0.09	0.07
+AxeBerzerkr	TwoHandedWeapon	rightHand	attach_skin
+AxeBerzerkrBlood	TwoHandedWeapon	rightHand	attach_skin
+AxeBerzerkrLightning	TwoHandedWeapon	rightHand	attach_skin
+AxeBerzerkrNature	TwoHandedWeapon	rightHand	attach_skin
+AxeBlackMetal	OneHandedWeapon	rightHand	attach	yes	Z	0.94	17	0.014	-0.07	+0.26	-0.04	+0.04	-0.15	+0.78	+0.01	+0.00	0.06	0.06
+AxeBronze	OneHandedWeapon	rightHand	attach	yes	Z	0.88	18	0.014	-0.03	+0.25	-0.02	+0.02	-0.16	+0.72	+0.00	+0.00	0.04	0.03
+AxeEarly	TwoHandedWeapon	rightHand	attach_skin
+AxeFlint	OneHandedWeapon	rightHand	attach	yes	Z	1.00	16	0.029	-0.11	+0.20	-0.06	+0.06	-0.16	+0.84	+0.00	+0.00	0.07	0.08
+AxeGold	OneHandedWeapon	rightHand	attach	yes	Z	0.97	18	0.014	-0.03	+0.43	-0.06	+0.01	-0.17	+0.80	+0.03	-0.02	0.05	0.05
+AxeGold_BloodLightning	OneHandedWeapon	rightHand	attach	yes	Z	0.97	18	0.014	-0.03	+0.43	-0.06	+0.01	-0.17	+0.80	+0.03	-0.02	0.05	0.05
+AxeGold_FrostFire	OneHandedWeapon	rightHand	attach	yes	Z	0.97	18	0.014	-0.03	+0.43	-0.06	+0.01	-0.17	+0.80	+0.03	-0.02	0.05	0.05
+AxeIron	OneHandedWeapon	rightHand	attach	yes	Z	0.88	18	0.014	-0.03	+0.25	-0.02	+0.02	-0.16	+0.72	+0.00	+0.00	0.04	0.03
+AxeJotunBane	OneHandedWeapon	rightHand	attach	yes	Z	0.83	15	0.012	-0.20	+0.22	-0.04	+0.04	-0.13	+0.70	+0.01	+0.00	0.04	0.05
+AxeStone	OneHandedWeapon	rightHand	attach	yes	Z	0.99	16	0.030	-0.12	+0.19	-0.06	+0.06	-0.16	+0.83	+0.00	+0.00	0.07	0.08
+AxeWood	OneHandedWeapon	rightHand	attach	yes	Z	0.84	17	0.005	-0.02	+0.22	-0.03	+0.03	-0.14	+0.70	+0.02	+0.00	0.04	0.05
+babyseeker_attack	OneHandedWeapon	rightHand	-
+Barka_Backslam	OneHandedWeapon	rightHand	-
+Barka_HeavySwing	OneHandedWeapon	rightHand	-
+Barka_SlamDrive	OneHandedWeapon	rightHand	-
+Barka_WhipFlurry	OneHandedWeapon	rightHand	-
+Barka_WhipSlam	OneHandedWeapon	rightHand	-
+bat_melee	OneHandedWeapon	rightHand	-
+Battleaxe	TwoHandedWeapon	rightHand	attach	yes	Z	1.70	18	0.028	-0.07	+0.34	-0.05	+0.05	-0.30	+1.40	+0.00	+0.00	0.06	0.08
+BattleaxeBlackmetal	TwoHandedWeapon	rightHand	attach	yes	Z	1.61	12	0.009	-0.05	+0.35	-0.07	+0.05	-0.20	+1.41	+0.02	+0.01	0.06	0.07
+BattleaxeCrystal	TwoHandedWeapon	rightHand	attach	yes	Z	1.77	16	0.038	-0.42	+0.33	-0.07	+0.07	-0.29	+1.48	+0.00	+0.00	0.08	0.08
+BattleaxeGold	TwoHandedWeapon	rightHand	attach	yes	Z	1.82	20	0.027	-0.41	+0.41	-0.05	+0.05	-0.37	+1.46	+0.00	+0.00	0.06	0.06
+BattleaxeGold_BloodLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.82	20	0.027	-0.41	+0.41	-0.05	+0.05	-0.37	+1.46	+0.00	+0.00	0.06	0.06
+BattleaxeGold_FrostFire	TwoHandedWeapon	rightHand	attach	yes	Z	1.82	20	0.027	-0.41	+0.41	-0.05	+0.05	-0.37	+1.46	+0.00	+0.00	0.06	0.06
+BattleaxeSkullSplittur	TwoHandedWeapon	rightHand	attach	yes	Z	1.79	16	0.009	-0.23	+0.44	-0.03	+0.03	-0.28	+1.51	+0.02	+0.00	0.06	0.07
+BattleaxeWood	TwoHandedWeapon	rightHand	attach	yes	Z	1.68	18	0.023	-0.09	+0.43	-0.06	+0.06	-0.29	+1.38	-0.01	+0.00	0.06	0.07
+BeltStrength	Utility	body	attach	yes	X	0.56	50	0.166	-0.28	+0.28	-0.03	+0.28	-0.24	+0.22	+0.10	-0.01	0.27	0.46
+bjorn_bite	OneHandedWeapon	rightHand	-
+bjorn_claws	OneHandedWeapon	rightHand	-
+bjorn_slam	OneHandedWeapon	rightHand	-
+bjorn_swipe_combo	OneHandedWeapon	rightHand	-
+bjorn_swipe_l	OneHandedWeapon	rightHand	-
+bjorn_swipe_r	OneHandedWeapon	rightHand	-
+blob_attack_aoe	OneHandedWeapon	rightHand	-
+blob_frost_attack_aoe	OneHandedWeapon	rightHand	-
+blobelite_attack_aoe	OneHandedWeapon	rightHand	-
+blobLava_attack_aoe	OneHandedWeapon	rightHand	-
+blobmork_attack_aoe	OneHandedWeapon	rightHand	-
+blobtar_attack	OneHandedWeapon	rightHand	-
+boar_base_attack	OneHandedWeapon	rightHand	-
+BogWitchKvastur_attack	OneHandedWeapon	rightHand	-
+BombBile	OneHandedWeapon	rightHand	attach	yes	X	0.27	64	0.028	-0.18	+0.10	-0.20	+0.05	-0.13	+0.11	-0.07	-0.01	0.23	0.22
+BombBlob_Frost	OneHandedWeapon	rightHand	attach	yes	Z	0.48	28	0.006	-0.15	+0.08	-0.20	+0.06	-0.13	+0.35	-0.03	-0.08	0.23	0.23
+BombBlob_Lava	OneHandedWeapon	rightHand	attach	yes	Z	0.48	28	0.006	-0.15	+0.08	-0.20	+0.06	-0.13	+0.35	-0.03	-0.08	0.23	0.23
+BombBlob_Morkhalla	OneHandedWeapon	rightHand	attach	yes	Z	0.48	28	0.006	-0.15	+0.08	-0.20	+0.06	-0.13	+0.35	-0.03	-0.08	0.23	0.23
+BombBlob_Poison	OneHandedWeapon	rightHand	attach	yes	Z	0.48	28	0.006	-0.15	+0.08	-0.20	+0.06	-0.13	+0.35	-0.03	-0.08	0.23	0.23
+BombBlob_PoisonElite	OneHandedWeapon	rightHand	attach	yes	Z	0.48	28	0.006	-0.15	+0.08	-0.20	+0.06	-0.13	+0.35	-0.03	-0.08	0.23	0.23
+BombBlob_Tar	OneHandedWeapon	rightHand	attach	yes	Z	0.48	28	0.006	-0.15	+0.08	-0.20	+0.06	-0.13	+0.35	-0.03	-0.08	0.23	0.23
+BombDynamite	OneHandedWeapon	rightHand	attach	yes	Z	0.25	43	0.073	-0.08	+0.08	-0.09	+0.08	-0.11	+0.15	+0.00	-0.01	0.16	0.16
+BombLava	OneHandedWeapon	rightHand	attach	yes	Y	0.21	83	0.008	-0.13	+0.07	-0.17	+0.04	-0.08	+0.12	+0.03	-0.03	0.15	0.14
+BombOoze	OneHandedWeapon	rightHand	attach	yes	Z	0.26	47	0.017	-0.13	+0.08	-0.19	+0.03	-0.12	+0.14	-0.02	-0.08	0.21	0.21
+BombSmoke	OneHandedWeapon	rightHand	attach	yes	X	0.25	64	0.000	-0.16	+0.09	-0.20	+0.04	-0.14	+0.06	-0.09	-0.04	0.21	0.20
+bonemass_attack_aoe	OneHandedWeapon	rightHand	-
+bonemass_attack_punch	OneHandedWeapon	rightHand	-
+bonemass_attack_spawn	OneHandedWeapon	rightHand	-
+bonemass_attack_throw	OneHandedWeapon	rightHand	-
+BonemawSerpent_bite	OneHandedWeapon	rightHand	-
+BonemawSerpent_breath	OneHandedWeapon	rightHand	-
+BonemawSerpent_ram	OneHandedWeapon	rightHand	-
+BonemawSerpent_spit	OneHandedWeapon	rightHand	-
+BonemawSerpent_taunt	OneHandedWeapon	rightHand	-
+Bow	Bow	leftHand	attach	yes	Z	1.47	46	0.008	-0.41	+0.05	-0.22	+0.08	-0.67	+0.80	+0.01	+0.00	0.05	0.05
+BowAshlands	Bow	leftHand	attach	yes	Z	1.67	49	0.020	-0.36	+0.15	-0.16	+0.15	-0.82	+0.85	-0.08	+0.01	0.27	0.04
+BowAshlandsBlood	Bow	leftHand	attach	yes	Z	2.02	51	0.019	-0.41	+0.25	-0.15	+0.19	-1.03	+0.99	-0.09	+0.04	0.28	0.04
+BowAshlandsRoot	Bow	leftHand	attach	yes	Z	1.69	50	0.023	-0.36	+0.20	-0.13	+0.19	-0.85	+0.84	-0.08	+0.03	0.27	0.04
+BowAshlandsStorm	Bow	leftHand	attach	yes	Z	2.34	52	0.016	-0.48	+0.20	-0.28	+0.31	-1.21	+1.13	-0.07	+0.01	0.25	0.05
+BowDraugrFang	Bow	leftHand	attach	yes	Z	1.73	51	0.004	-0.37	+0.36	-0.19	+0.16	-0.88	+0.84	-0.06	+0.00	0.21	0.06
+BowFineWood	Bow	leftHand	attach	yes	Z	1.52	51	0.005	-0.33	+0.20	-0.17	+0.14	-0.78	+0.74	-0.05	+0.00	0.19	0.05
+BowGold	Bow	leftHand	attach	yes	Z	1.78	54	0.011	-0.46	+0.17	-0.22	+0.19	-0.96	+0.82	-0.13	-0.02	0.33	0.04
+BowGold_BloodLightning	Bow	leftHand	attach	yes	Z	1.78	54	0.011	-0.46	+0.17	-0.22	+0.19	-0.96	+0.82	-0.13	-0.02	0.33	0.04
+BowGold_FrostFire	Bow	leftHand	attach	yes	Z	1.78	54	0.011	-0.46	+0.17	-0.22	+0.19	-0.96	+0.82	-0.13	-0.02	0.33	0.04
+BowHuntsman	Bow	leftHand	attach	yes	Z	2.17	52	0.001	-0.63	+0.11	-0.32	+0.27	-1.13	+1.03	-0.11	+0.00	0.31	0.05
+BowSpineSnap	Bow	leftHand	attach	yes	Z	1.60	53	0.005	-0.49	+0.22	-0.16	+0.15	-0.85	+0.75	+0.02	+0.00	0.05	0.04
+CapeAsh	Shoulder	body	attach_skin
+CapeAsksvin	Shoulder	body	attach_skin
+CapeDeepNorth	Shoulder	body	attach_skin
+CapeDeepNorthMage	Shoulder	body	attach_skin
+CapeDeerHide	Shoulder	body	attach_skin
+CapeFeather	Shoulder	body	attach_skin
+CapeLinen	Shoulder	body	attach_skin
+CapeLox	Shoulder	body	attach_skin
+CapeOdin	Shoulder	body	attach_skin
+CapeTest	Shoulder	body	attach_skin
+CapeTrollHide	Shoulder	body	attach_skin
+CapeWolf	Shoulder	body	attach_skin
+charred_bow	Bow	leftHand	attach	yes	Z	3.65	51	0.029	-0.65	+0.14	-0.16	+0.16	-1.85	+1.80	+0.00	+0.00	0.06	0.08
+charred_bow_Fader	Bow	leftHand	attach	yes	Z	3.65	51	0.029	-0.65	+0.14	-0.16	+0.16	-1.85	+1.80	+0.00	+0.00	0.06	0.08
+charred_bow_volley	Bow	leftHand	attach	yes	Z	3.65	51	0.029	-0.65	+0.14	-0.16	+0.16	-1.85	+1.80	+0.00	+0.00	0.06	0.08
+charred_bow_volley_Fader	Bow	leftHand	attach	yes	Z	3.65	51	0.029	-0.65	+0.14	-0.16	+0.16	-1.85	+1.80	+0.00	+0.00	0.06	0.08
+Charred_Breastplate	Chest	body	attach_skin
+charred_dyrnwyn_greatsword_feint	TwoHandedWeapon	rightHand	attach	yes	Z	2.45	8	0.016	-0.13	+0.13	-0.03	+0.03	-0.21	+2.25	+0.00	+0.00	0.05	0.03
+charred_dyrnwyn_greatsword_swing	TwoHandedWeapon	rightHand	attach	yes	Z	2.45	8	0.015	-0.13	+0.13	-0.03	+0.03	-0.20	+2.25	+0.00	+0.00	0.05	0.03
+charred_dyrnwyn_greatsword_thrust	TwoHandedWeapon	rightHand	attach	yes	Z	2.45	8	0.016	-0.13	+0.13	-0.03	+0.03	-0.21	+2.25	+0.00	+0.00	0.05	0.03
+charred_dyrnwyn_greatsword_thrustfeint	TwoHandedWeapon	rightHand	attach	yes	Z	2.45	8	0.016	-0.13	+0.13	-0.03	+0.03	-0.21	+2.25	+0.00	+0.00	0.05	0.03
+charred_fader_greatsword_feint	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_fader_greatsword_swing	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_fader_greatsword_thrust	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_fader_greatsword_thrustfeint	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_greatsword_feint	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_greatsword_swing	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_greatsword_thrust	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+charred_greatsword_thrustfeint	TwoHandedWeapon	rightHand	attach	yes	Z	2.14	13	0.014	-0.20	+0.20	-0.04	+0.04	-0.27	+1.87	+0.00	+0.00	0.05	0.03
+Charred_Helmet	Helmet	helmet	attach_skin
+Charred_HipCloth	Legs	body	attach_skin
+Charred_MageCloths	Chest	body	attach_skin
+charred_magestaff_fire	TwoHandedWeapon	rightHand	attach	yes	Z	3.35	55	0.018	-0.34	+0.34	-0.12	+0.06	-1.85	+1.51	+0.00	+0.00	0.04	0.04
+charred_magestaff_summon	TwoHandedWeapon	rightHand	attach	yes	Z	3.35	55	0.018	-0.34	+0.34	-0.12	+0.06	-1.85	+1.51	+0.00	+0.00	0.04	0.04
+charred_twitcher_scratch_l	TwoHandedWeapon	rightHand	-
+charred_twitcher_scratch_r	TwoHandedWeapon	rightHand	-
+charred_twitcher_throw	Bow	leftHand	-
+Club	OneHandedWeapon	rightHand	attach	yes	Z	1.15	9	0.015	-0.10	+0.06	-0.09	+0.05	-0.11	+1.04	+0.00	+0.00	0.03	0.03
+CrossbowArbalest	Bow	leftHand	attach	yes	Z	1.70	58	0.043	-0.64	+0.64	-0.12	+0.11	-0.98	+0.72	+0.00	+0.01	0.09	0.12
+CrossbowGold	Bow	leftHand	attach	yes	Z	1.71	57	0.019	-0.70	+0.70	-0.18	+0.10	-0.98	+0.73	-0.02	-0.02	0.13	0.12
+CrossbowGold_BloodLightning	Bow	leftHand	attach	yes	Z	1.71	57	0.019	-0.70	+0.70	-0.18	+0.10	-0.98	+0.73	-0.02	-0.02	0.13	0.12
+CrossbowGold_FrostFire	Bow	leftHand	attach	yes	Z	1.71	57	0.019	-0.70	+0.70	-0.18	+0.10	-0.98	+0.73	-0.02	-0.02	0.13	0.12
+CrossbowRipper	Bow	leftHand	attach	yes	Z	1.86	53	0.020	-0.71	+0.71	-0.21	+0.09	-0.98	+0.88	+0.00	-0.02	0.12	0.12
+CrossbowRipperBlood	Bow	leftHand	attach	yes	Z	1.86	53	0.020	-0.71	+0.71	-0.15	+0.09	-0.98	+0.88	+0.00	+0.00	0.14	0.16
+CrossbowRipperLightning	Bow	leftHand	attach	yes	Z	1.71	57	0.020	-0.65	+0.65	-0.15	+0.08	-0.98	+0.73	+0.00	-0.02	0.09	0.12
+CrossbowRipperNature	Bow	leftHand	attach	yes	Z	1.79	55	0.020	-0.71	+0.71	-0.15	+0.08	-0.98	+0.81	+0.00	-0.02	0.09	0.12
+Cultivator	Tool	rightHand	attach	yes	Z	1.41	11	0.006	-0.06	+0.63	-0.33	+0.12	-0.16	+1.24	+0.01	+0.00	0.04	0.04
+Deathsquito_sting	OneHandedWeapon	rightHand	-
+Demister	Utility	body	-
+dragon_bite	OneHandedWeapon	rightHand	-
+dragon_claw_left	OneHandedWeapon	rightHand	-
+dragon_claw_right	OneHandedWeapon	rightHand	-
+dragon_coldbreath	OneHandedWeapon	rightHand	-
+dragon_coldbreath_OLD	OneHandedWeapon	rightHand	-
+dragon_spit_shotgun	OneHandedWeapon	rightHand	-
+dragon_taunt	OneHandedWeapon	rightHand	-
+draugr_axe	OneHandedWeapon	rightHand	attach	yes	Z	1.13	11	0.059	+0.04	+0.40	-0.04	+0.00	-0.12	+1.01	+0.08	-0.02	0.05	0.04
+draugr_bow	Bow	leftHand	attach	yes	Z	1.08	60	0.027	-0.70	+0.21	-0.27	+0.64	-0.65	+0.43	+0.08	+0.03	0.09	0.09
+draugr_sword	OneHandedWeapon	rightHand	attach	yes	Z	1.48	6	0.054	-0.01	+0.16	-0.05	+0.01	-0.09	+1.39	+0.08	-0.02	0.06	0.04
+Dverger_melee	OneHandedWeapon	rightHand	-
+Dverger_meleeAshlands	OneHandedWeapon	rightHand	-
+Dverger_meleeDeepNorth	OneHandedWeapon	rightHand	-
+DvergerArbalest	Utility	body	-
+DvergerArbalest_shoot	OneHandedWeapon	rightHand	-
+DvergerArbalest_shootAshlands	OneHandedWeapon	rightHand	-
+DvergerArbalest_shootDeepNorth	OneHandedWeapon	rightHand	-
+DvergerHairFemale	Legs	body	attach_skin
+DvergerHairFemale_Redhair	Legs	body	attach_skin
+DvergerHairMale	Helmet	helmet	attach_skin
+DvergerHairMale_Redbeard	Helmet	helmet	attach_skin
+DvergerMistile	OneHandedWeapon	rightHand	-
+DvergerStaffBlocker	OneHandedWeapon	rightHand	-
+DvergerStaffFire	Utility	body	-
+DvergerStaffFire_clusterbomb	OneHandedWeapon	rightHand	-
+DvergerStaffFire_fireball	OneHandedWeapon	rightHand	-
+DvergerStaffHeal	Utility	body	-
+DvergerStaffHeal_heal	OneHandedWeapon	rightHand	-
+DvergerStaffIce	Utility	body	-
+DvergerStaffIce_icebolt	OneHandedWeapon	rightHand	-
+DvergerStaffNova	OneHandedWeapon	rightHand	-
+DvergerStaffSupport	Utility	body	-
+DvergerStaffSupport_buff	OneHandedWeapon	rightHand	-
+DvergerSuitArbalest	Chest	body	attach_skin
+DvergerSuitArbalest_Ashlands	Chest	body	attach_skin
+DvergerSuitFire	Chest	body	attach_skin
+DvergerSuitIce	Chest	body	attach_skin
+DvergerSuitSupport	Chest	body	attach_skin
+Eikthyr_antler	OneHandedWeapon	rightHand	-
+Eikthyr_charge	OneHandedWeapon	rightHand	-
+Eikthyr_flegs_OLD	OneHandedWeapon	rightHand	-
+Eikthyr_stomp	OneHandedWeapon	rightHand	-
+Elaking_AttackClaw	OneHandedWeapon	rightHand	-
+Elaking_AttackJump	TwoHandedWeapon	rightHand	-
+Elaking_AttackLantern	OneHandedWeapon	rightHand	attach
+ElakingMole_AttackClaw	OneHandedWeapon	rightHand	-
+ElakingMole_AttackClaw2	OneHandedWeapon	rightHand	-
+ElakingMole_AttackSandcloud	OneHandedWeapon	rightHand	-
+Fader_Bite	OneHandedWeapon	rightHand	-
+Fader_Claw_Left	OneHandedWeapon	rightHand	-
+Fader_Claw_Right	OneHandedWeapon	rightHand	-
+Fader_Fissure	OneHandedWeapon	rightHand	-
+Fader_Fissure_Intense	OneHandedWeapon	rightHand	-
+Fader_Flamebreath	OneHandedWeapon	rightHand	-
+Fader_Jump	OneHandedWeapon	rightHand	-
+Fader_Jump_Left	OneHandedWeapon	rightHand	-
+Fader_Jump_Right	OneHandedWeapon	rightHand	-
+Fader_Meteors	OneHandedWeapon	rightHand	-
+Fader_Meteors_Intense	OneHandedWeapon	rightHand	-
+Fader_Roar	OneHandedWeapon	rightHand	-
+Fader_Roar_Intense	OneHandedWeapon	rightHand	-
+Fader_Spin	OneHandedWeapon	rightHand	-
+Fader_Taunt	OneHandedWeapon	rightHand	-
+Fader_WallOfFire	OneHandedWeapon	rightHand	-
+fallenvalkyrie_claws	OneHandedWeapon	rightHand	-
+fallenvalkyrie_poisonbreath	OneHandedWeapon	rightHand	-
+fallenvalkyrie_screech	OneHandedWeapon	rightHand	-
+fallenvalkyrie_spin	OneHandedWeapon	rightHand	-
+fallenvalkyrie_spit	OneHandedWeapon	rightHand	-
+fallenvalkyrie_swoopattack	OneHandedWeapon	rightHand	-
+fallenvalkyrie_taunt	OneHandedWeapon	rightHand	-
+fallenvalkyrie_wingspin	OneHandedWeapon	rightHand	-
+Feaster	Tool	rightHand	attach	yes	Y	0.86	97	0.016	-0.05	+0.49	-0.84	+0.02	-0.23	+0.21	-0.02	+0.10	0.27	0.08
+Fenring_attack_claw	OneHandedWeapon	rightHand	-
+Fenring_attack_fireclaw	OneHandedWeapon	rightHand	-
+Fenring_attack_fireclaw_double	OneHandedWeapon	rightHand	-
+Fenring_attack_flames	OneHandedWeapon	rightHand	-
+Fenring_attack_frost	OneHandedWeapon	rightHand	-
+Fenring_attack_iceclaw	OneHandedWeapon	rightHand	-
+Fenring_attack_iceclaw_double	OneHandedWeapon	rightHand	-
+Fenring_attack_IceNova	OneHandedWeapon	rightHand	-
+Fenring_attack_jump	OneHandedWeapon	rightHand	-
+Fenring_taunt	OneHandedWeapon	rightHand	-
+FishingRod	TwoHandedWeapon	rightHand	attach	yes	Z	3.69	12	0.009	-0.10	+0.13	-0.11	+0.01	-0.43	+3.26	-0.02	-0.05	0.06	0.09
+FistBjornClaw	TwoHandedWeapon	rightHand	attach_skin
+FistBjornUndeadClaw	TwoHandedWeapon	rightHand	attach_skin
+FistFenrirClaw	TwoHandedWeapon	rightHand	attach_skin
+FistGold	TwoHandedWeapon	rightHand	attach_skin
+FistGold_BloodLightning	TwoHandedWeapon	rightHand	attach_skin
+FistGold_FrostFire	TwoHandedWeapon	rightHand	attach_skin
+FrozenKing_ChainFlurry	OneHandedWeapon	rightHand	-
+FrozenKing_ChainRush	OneHandedWeapon	rightHand	-
+FrozenKing_ChainSlam_L	OneHandedWeapon	rightHand	-
+FrozenKing_ChainSlam_L_double	OneHandedWeapon	rightHand	-
+FrozenKing_ChainSlam_R	OneHandedWeapon	rightHand	-
+FrozenKing_ChainSlam_R_double	OneHandedWeapon	rightHand	-
+FrozenKing_ChainSweep_L	OneHandedWeapon	rightHand	-
+FrozenKing_ChainSweep_R	OneHandedWeapon	rightHand	-
+FrozenKing_ChainWhirl	OneHandedWeapon	rightHand	-
+FrozenKing_DoubleSweep	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Bonemass	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Eikthyr	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Elder	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Fader	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Moder	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Queen	OneHandedWeapon	rightHand	-
+FrozenKing_P2_Summon_Yagluth	OneHandedWeapon	rightHand	-
+FrozenKing_P3_ChainSlam_L_double	OneHandedWeapon	rightHand	-
+FrozenKing_P3_ChainSlam_R_double	OneHandedWeapon	rightHand	-
+FrozenKing_P3_ChainWhirl	OneHandedWeapon	rightHand	-
+FrozenKing_Punch_AOE	OneHandedWeapon	rightHand	-
+FrozenKing_SpikeRain	OneHandedWeapon	rightHand	-
+FrozenKing_tendrilspawn	OneHandedWeapon	rightHand	-
+frysling_snowball_attack	OneHandedWeapon	rightHand	-
+FW_ArmorBronzeChest	Chest	body	attach_skin
+FW_ArmorBronzeLegs	Legs	body	attach_skin
+FW_ArmorFenringChest	Chest	body	attach_skin
+FW_ArmorFenringLegs	Legs	body	attach_skin
+FW_ArmorMageChest	Chest	body	attach_skin
+FW_ArmorMageChest_Ashlands	Chest	body	attach_skin
+FW_ArmorMageLegs	Legs	body	attach_skin
+FW_ArmorMageLegs_Ashlands	Legs	body	attach_skin
+FW_ArmorPaddedCuirass	Chest	body	attach_skin
+FW_ArmorPaddedGreaves	Legs	body	attach_skin
+FW_ArmorTrollLeatherChest	Chest	body	attach_skin
+FW_ArmorTrollLeatherLegs	Legs	body	-
+FW_AxeBronze	OneHandedWeapon	rightHand	attach	yes	Z	0.88	18	0.014	-0.03	+0.25	-0.02	+0.02	-0.16	+0.72	+0.00	+0.00	0.04	0.03
+FW_BattleaxeCrystal	TwoHandedWeapon	rightHand	attach	yes	Z	1.77	16	0.038	-0.42	+0.33	-0.07	+0.07	-0.29	+1.48	+0.00	+0.00	0.08	0.08
+FW_BowDraugrFang	Bow	leftHand	attach	yes	Z	1.73	51	0.004	-0.37	+0.36	-0.19	+0.16	-0.88	+0.84	-0.06	+0.00	0.21	0.06
+FW_CapeLinen	Shoulder	body	attach_skin
+FW_CapeTrollHide	Shoulder	body	attach_skin
+FW_CapeWolf	Shoulder	body	attach_skin
+FW_HelmetBronze	Helmet	helmet	attach	yes	Z	0.26	51	0.099	-0.10	+0.10	-0.05	+0.18	-0.13	+0.13	+0.00	+0.11	0.20	0.15
+FW_KnifeSilver	OneHandedWeapon	rightHand	attach	yes	Z	0.63	13	0.004	-0.05	+0.14	-0.02	+0.02	-0.08	+0.55	+0.02	+0.00	0.04	0.03
+FW_KnifeSkollAndHati	TwoHandedWeapon	rightHand	attach_skin
+FW_ShieldBlackmetalTower	Shield	leftHand	attach	yes	Z	1.44	54	0.010	-0.51	+0.37	-0.35	+0.15	-0.77	+0.66	+0.02	-0.07	0.49	0.29
+FW_StaffFireball	TwoHandedWeapon	rightHand	attach	yes	Z	2.03	44	0.021	-0.11	+0.19	-0.12	+0.10	-0.90	+1.13	+0.00	+0.00	0.05	0.06
+FW_StaffLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.26	23	0.005	-0.11	+0.27	-0.22	+0.12	-0.28	+0.98	+0.02	-0.01	0.06	0.05
+FW_SwordBlackmetal	OneHandedWeapon	rightHand	attach	yes	Z	1.29	11	0.016	-0.10	+0.10	-0.03	+0.03	-0.14	+1.15	+0.00	+0.00	0.04	0.04
+gd_king_punch	OneHandedWeapon	rightHand	-
+gd_king_rootspawn	OneHandedWeapon	rightHand	-
+gd_king_scream	OneHandedWeapon	rightHand	-
+gd_king_shoot	OneHandedWeapon	rightHand	-
+gd_king_stomp	OneHandedWeapon	rightHand	-
+Ghost_attack	OneHandedWeapon	rightHand	-
+gjall_attack_egg	OneHandedWeapon	rightHand	-
+gjall_attack_shake	OneHandedWeapon	rightHand	-
+gjall_attack_spit	OneHandedWeapon	rightHand	-
+gjall_attack_taunt	OneHandedWeapon	rightHand	-
+GoblinArmband	Chest	body	attach_skin
+GoblinBrute_ArmGuard	Chest	body	attach_skin
+GoblinBrute_Attack	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinBrute_Backbones	Helmet	helmet	attach_skin
+GoblinBrute_ExecutionerCap	Helmet	helmet	attach_skin
+GoblinBrute_HipCloth	Legs	body	attach_skin
+GoblinBrute_LegBones	Utility	body	attach_skin
+GoblinBrute_RageAttack	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinBrute_ShoulderGuard	Shoulder	body	attach_skin
+GoblinBrute_Taunt	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinBruteBros_Attack	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinBruteBros_RageAttack	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinClub	OneHandedWeapon	rightHand	attach	yes	Z	1.15	9	0.015	-0.10	+0.06	-0.09	+0.05	-0.11	+1.04	+0.00	+0.00	0.03	0.03
+GoblinClubDeepNorth	OneHandedWeapon	rightHand	attach	yes	Z	1.15	9	0.015	-0.10	+0.06	-0.09	+0.05	-0.11	+1.04	+0.00	+0.00	0.03	0.03
+GoblinHelmet	Chest	body	attach_skin
+GoblinKing_Beam	OneHandedWeapon	rightHand	-
+GoblinKing_Meteors	OneHandedWeapon	rightHand	-
+GoblinKing_Nova	OneHandedWeapon	rightHand	-
+GoblinKing_Taunt	OneHandedWeapon	rightHand	-
+GoblinLegband	Chest	body	attach_skin
+GoblinLoin	Legs	body	attach_skin
+GoblinShaman_attack_fireball	OneHandedWeapon	rightHand	-
+GoblinShaman_attack_fireball_hildir	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinShaman_attack_poke	OneHandedWeapon	rightHand	-
+GoblinShaman_attack_protect	OneHandedWeapon	rightHand	-
+GoblinShaman_attack_protect_hildir	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+GoblinShaman_Headdress_antlers	Helmet	helmet	attach_skin
+GoblinShaman_Headdress_feathers	Helmet	helmet	attach_skin
+GoblinShaman_Staff_Bones	Utility	body	-
+GoblinShaman_Staff_Feathers	Utility	body	-
+GoblinShaman_Staff_Hildir	Utility	body	-
+GoblinShoulders	Chest	body	attach_skin
+GoblinSpear	OneHandedWeapon	rightHand	attach	yes	Z	2.36	46	0.021	-0.05	+0.05	-0.03	+0.03	-1.09	+1.27	+0.00	+0.00	0.04	0.04
+GoblinSpearDeepNorth	OneHandedWeapon	rightHand	attach	yes	Z	2.36	46	0.021	-0.05	+0.05	-0.03	+0.03	-1.09	+1.27	+0.00	+0.00	0.04	0.04
+GoblinSword	OneHandedWeapon	rightHand	attach	yes	Z	0.83	14	0.008	-0.09	+0.09	-0.01	+0.02	-0.12	+0.71	+0.00	+0.00	0.03	0.03
+GoblinSwordDeepNorth	OneHandedWeapon	rightHand	attach	yes	Z	0.83	14	0.008	-0.09	+0.09	-0.01	+0.02	-0.12	+0.71	+0.00	+0.00	0.03	0.03
+GoblinTorch	OneHandedWeapon	rightHand	attach	yes	Z	0.85	15	0.014	-0.03	+0.08	-0.16	+0.00	-0.13	+0.72	+0.00	-0.03	0.03	0.03
+GoblinTorchDeepNorth	OneHandedWeapon	rightHand	attach	yes	Z	0.85	15	0.014	-0.03	+0.08	-0.16	+0.00	-0.13	+0.72	+0.00	-0.03	0.03	0.03
+GrapplingHook	Bow	leftHand	attach	yes	Z	1.70	47	0.028	-0.67	+0.60	-0.64	+0.12	-0.80	+0.90	-0.02	+0.03	0.11	0.14
+Greydwarf_attack	OneHandedWeapon	rightHand	-
+Greydwarf_attack_frozen	OneHandedWeapon	rightHand	-
+Greydwarf_elite_attack	OneHandedWeapon	rightHand	-
+Greydwarf_shaman_attack	OneHandedWeapon	rightHand	-
+Greydwarf_shaman_attack_frozen	OneHandedWeapon	rightHand	-
+Greydwarf_shaman_heal	OneHandedWeapon	rightHand	-
+Greydwarf_shaman_heal_frozen	OneHandedWeapon	rightHand	-
+Greydwarf_throw	OneHandedWeapon	rightHand	-
+Greydwarf_throw_frozen	OneHandedWeapon	rightHand	-
+Greyling_attack	OneHandedWeapon	rightHand	-
+Hammer	Tool	rightHand	attach	yes	Z	0.47	22	0.021	-0.14	+0.14	-0.07	+0.07	-0.10	+0.37	+0.00	+0.00	0.05	0.05
+hatchling_spit_cold	OneHandedWeapon	rightHand	-
+HelmetAshlandsMediumHood	Helmet	helmet	attach_skin
+HelmetBerserkerHood	Helmet	helmet	attach	yes	X	0.74	52	0.066	-0.39	+0.36	-0.25	+0.37	-0.34	+0.22	+0.05	-0.02	0.44	0.47
+HelmetBerserkerUndead	Helmet	helmet	attach	yes	X	0.18	50	0.072	-0.09	+0.09	-0.12	+0.01	-0.05	+0.12	-0.10	+0.11	0.03	0.02
+HelmetBronze	Helmet	helmet	attach	yes	Z	0.26	51	0.099	-0.10	+0.10	-0.05	+0.18	-0.13	+0.13	+0.00	+0.11	0.20	0.15
+HelmetCarapace	Helmet	helmet	attach_skin
+HelmetCelebration	Helmet	helmet	attach	yes	Z	0.31	52	0.072	-0.17	+0.13	-0.07	+0.19	-0.16	+0.15	-0.01	+0.11	0.28	0.16
+HelmetCrownofValheim	Helmet	helmet	attach	yes	Z	0.42	67	0.084	-0.20	+0.20	-0.05	+0.29	-0.28	+0.14	+0.00	+0.11	0.30	0.23
+HelmetDNHeavy	Helmet	helmet	attach	yes	Y	0.48	29	0.085	-0.13	+0.13	-0.14	+0.34	-0.20	+0.13	-0.01	+0.00	0.27	0.21
+HelmetDNMage	Helmet	helmet	attach	yes	X	1.12	50	0.063	-0.56	+0.56	-0.23	+0.70	-0.16	+0.26	+0.01	+0.00	0.39	0.32
+HelmetDNMediumHood	Helmet	helmet	attach_skin
+HelmetDrake	Helmet	helmet	attach	yes	Z	0.46	71	0.084	-0.12	+0.12	-0.12	+0.20	-0.33	+0.14	+0.00	+0.04	0.20	0.25
+HelmetDverger	Helmet	helmet	attach	yes	Z	0.24	54	0.093	-0.10	+0.10	+0.02	+0.11	-0.13	+0.11	+0.00	+0.03	0.19	0.03
+HelmetFenring	Helmet	helmet	attach_skin
+HelmetFishingHat	Helmet	helmet	attach	yes	Z	0.39	48	0.074	-0.17	+0.16	-0.03	+0.20	-0.19	+0.20	+0.00	+0.09	0.33	0.20
+HelmetFlametal	Helmet	helmet	attach	yes	Y	0.57	33	0.071	-0.19	+0.19	-0.19	+0.38	-0.29	+0.15	+0.00	+0.00	0.26	0.23
+HelmetHat1	Helmet	helmet	attach	yes	Z	0.36	71	0.083	-0.10	+0.10	-0.18	+0.15	-0.25	+0.10	+0.00	+0.08	0.19	0.13
+HelmetHat10	Helmet	helmet	attach	yes	Z	0.22	53	0.088	-0.09	+0.09	+0.01	+0.14	-0.12	+0.10	+0.00	+0.09	0.17	0.10
+HelmetHat2	Helmet	helmet	attach	yes	Z	0.26	56	0.081	-0.10	+0.10	-0.05	+0.14	-0.15	+0.12	+0.00	+0.08	0.19	0.12
+HelmetHat3	Helmet	helmet	attach	yes	Z	0.25	56	0.077	-0.11	+0.11	-0.03	+0.15	-0.14	+0.11	+0.00	+0.08	0.22	0.14
+HelmetHat4	Helmet	helmet	attach	yes	Z	0.27	52	0.085	-0.12	+0.11	-0.04	+0.17	-0.14	+0.13	+0.00	+0.09	0.22	0.15
+HelmetHat5	Helmet	helmet	attach	yes	Z	0.22	53	0.088	-0.09	+0.09	+0.01	+0.14	-0.12	+0.10	+0.00	+0.09	0.17	0.10
+HelmetHat6	Helmet	helmet	attach	yes	Z	0.36	71	0.083	-0.10	+0.10	-0.18	+0.15	-0.25	+0.10	+0.00	+0.08	0.19	0.13
+HelmetHat7	Helmet	helmet	attach	yes	Z	0.26	56	0.081	-0.10	+0.10	-0.05	+0.14	-0.15	+0.12	+0.00	+0.08	0.19	0.12
+HelmetHat8	Helmet	helmet	attach	yes	Z	0.25	56	0.077	-0.11	+0.11	-0.03	+0.15	-0.14	+0.11	+0.00	+0.08	0.22	0.14
+HelmetHat9	Helmet	helmet	attach	yes	Z	0.27	52	0.085	-0.12	+0.11	-0.04	+0.17	-0.14	+0.13	+0.00	+0.09	0.22	0.15
+HelmetIron	Helmet	helmet	attach	yes	Z	0.29	58	0.090	-0.10	+0.10	-0.06	+0.18	-0.17	+0.12	+0.00	+0.08	0.20	0.21
+HelmetLeather	Helmet	helmet	attach	yes	Z	0.29	58	0.090	-0.10	+0.10	-0.06	+0.18	-0.17	+0.12	+0.00	+0.08	0.20	0.21
+HelmetLox	Helmet	helmet	attach_skin
+HelmetMage	Helmet	helmet	attach_skin
+HelmetMage_Ashlands	Helmet	helmet	attach_skin
+HelmetMidsummerCrown	Helmet	helmet	attach	yes	X	0.45	50	0.101	-0.23	+0.23	-0.06	+0.22	-0.25	+0.19	+0.09	-0.03	0.26	0.42
+HelmetOdin	Helmet	helmet	attach_skin
+HelmetPadded	Helmet	helmet	attach_skin
+HelmetPointyHat	Helmet	helmet	attach	yes	X	0.43	48	0.096	-0.21	+0.22	-0.07	+0.29	-0.22	+0.20	+0.11	-0.01	0.34	0.40
+HelmetRoot	Helmet	helmet	attach	yes	Y	0.65	32	0.012	-0.27	+0.32	-0.21	+0.44	-0.40	+0.16	+0.00	+0.01	0.28	0.21
+HelmetRootCrown	Helmet	helmet	attach	yes	Z	0.25	54	0.091	-0.10	+0.10	-0.01	+0.10	-0.14	+0.12	+0.00	+0.07	0.19	0.06
+HelmetStrawHat	Helmet	helmet	attach	yes	Z	0.55	47	0.088	-0.27	+0.25	-0.14	+0.16	-0.26	+0.29	-0.02	+0.05	0.49	0.22
+HelmetSweatBand	Helmet	helmet	attach	yes	Z	0.24	49	0.088	-0.10	+0.10	+0.04	+0.09	-0.12	+0.12	+0.00	+0.06	0.18	0.05
+HelmetTrollLeather	Helmet	helmet	attach_skin
+HelmetYule	Helmet	helmet	attach	yes	Z	0.34	65	0.099	-0.11	+0.11	+0.02	+0.27	-0.22	+0.12	+0.00	+0.12	0.21	0.20
+hive_attack_aoe	OneHandedWeapon	rightHand	-
+hive_attack_punch	OneHandedWeapon	rightHand	-
+hive_attack_ranged	OneHandedWeapon	rightHand	-
+hive_attack_throw	OneHandedWeapon	rightHand	-
+Hoe	Tool	rightHand	attach	yes	Z	1.17	11	0.011	-0.05	+0.57	-0.26	+0.04	-0.12	+1.04	+0.01	+0.00	0.05	0.04
+IceShoes	Utility	body	attach	yes	X	0.56	50	0.166	-0.28	+0.28	-0.03	+0.28	-0.24	+0.22	+0.10	-0.01	0.27	0.46
+IceSkates	Utility	body	attach	yes	X	0.56	50	0.166	-0.28	+0.28	-0.03	+0.28	-0.24	+0.22	+0.10	-0.01	0.27	0.46
+imp_fireball_attack	OneHandedWeapon	rightHand	-
+JotunHairFemale	Helmet	helmet	attach_skin
+JotunHairMale	Helmet	helmet	attach_skin
+JotunHairMale2	Helmet	helmet	attach_skin
+JotunHairMale3	Helmet	helmet	attach_skin
+JotunHairMale4	Helmet	helmet	attach_skin
+JotunHairMale5	Helmet	helmet	attach_skin
+JotunHairMale6	Helmet	helmet	attach_skin
+JotunHairMale7	Helmet	helmet	attach_skin
+JotunHairMale8	Helmet	helmet	attach_skin
+JotunWarrior_attack_charge	TwoHandedWeapon	rightHand	-
+JotunWarrior_attack_cleave	TwoHandedWeapon	rightHand	-
+JotunWarrior_attack_dodge	TwoHandedWeapon	rightHand	-
+JotunWarrior_attack_slash	TwoHandedWeapon	rightHand	-
+JotunWarrior_attack_sword	TwoHandedWeapon	rightHand	attach	yes	Z	2.75	23	0.003	-0.09	+0.10	-0.05	+0.04	-0.63	+2.12	+0.00	-0.01	0.13	0.08
+JotunWarrior1HAxe_attack_cleave	TwoHandedWeapon	rightHand	attach_skin
+JotunWarrior1HAxe_attack_dodge	TwoHandedWeapon	rightHand	attach_skin
+JotunWarrior1HAxe_attack_dodger	TwoHandedWeapon	rightHand	attach_skin
+JotunWarrior1HAxe_attack_slash	TwoHandedWeapon	rightHand	attach_skin
+JotunWarrior1HAxe_attack_slashdw	TwoHandedWeapon	rightHand	attach_skin
+JotunWarrior2HAxe_attack_charge	TwoHandedWeapon	rightHand	attach	yes	Z	2.36	22	0.037	-0.48	+0.48	-0.04	+0.04	-0.52	+1.84	+0.00	+0.00	0.09	0.07
+JotunWarrior2HAxe_attack_cleave	TwoHandedWeapon	rightHand	attach	yes	Z	2.36	22	0.037	-0.48	+0.48	-0.04	+0.04	-0.52	+1.84	+0.00	+0.00	0.09	0.07
+JotunWarrior2HAxe_attack_dodge	TwoHandedWeapon	rightHand	attach	yes	Z	2.36	22	0.037	-0.48	+0.48	-0.04	+0.04	-0.52	+1.84	+0.00	+0.00	0.09	0.07
+JotunWarrior2HAxe_attack_slash	TwoHandedWeapon	rightHand	attach	yes	Z	2.36	22	0.037	-0.48	+0.48	-0.04	+0.04	-0.52	+1.84	+0.00	+0.00	0.09	0.07
+JotunWarrior2HSword_attack_charge	TwoHandedWeapon	rightHand	attach	yes	Z	2.75	7	0.003	-0.09	+0.09	-0.08	+0.00	-0.19	+2.56	+0.00	-0.04	0.09	0.09
+JotunWarrior2HSword_attack_cleave	TwoHandedWeapon	rightHand	attach	yes	Z	2.75	7	0.003	-0.09	+0.09	-0.08	+0.00	-0.19	+2.56	+0.00	-0.04	0.09	0.09
+JotunWarrior2HSword_attack_dodge	TwoHandedWeapon	rightHand	attach	yes	Z	2.75	7	0.003	-0.09	+0.09	-0.08	+0.00	-0.19	+2.56	+0.00	-0.04	0.09	0.09
+JotunWarrior2HSword_attack_slash	TwoHandedWeapon	rightHand	attach	yes	Z	2.75	7	0.003	-0.09	+0.09	-0.08	+0.00	-0.19	+2.56	+0.00	-0.04	0.09	0.09
+JotunWarriorSword2h	OneHandedWeapon	rightHand	attach	yes	Z	2.75	7	0.003	-0.09	+0.09	-0.08	+0.00	-0.19	+2.56	+0.00	-0.04	0.09	0.09
+JotunWitch_attack_dodge	TwoHandedWeapon	rightHand	-
+JotunWitch_attack_dodge_down	TwoHandedWeapon	rightHand	-
+JotunWitch_attack_dodge_up	TwoHandedWeapon	rightHand	-
+JotunWitch_attack_dodge2	TwoHandedWeapon	rightHand	-
+JotunWitch_attack_lightningbolt	OneHandedWeapon	rightHand	-
+JotunWitch_attack_magicblast	OneHandedWeapon	rightHand	-
+KnifeBlackMetal	OneHandedWeapon	rightHand	attach	yes	Z	0.54	12	0.012	-0.02	+0.12	-0.01	+0.01	-0.07	+0.48	+0.00	+0.00	0.04	0.02
+KnifeButcher	OneHandedWeapon	rightHand	attach	yes	Z	0.60	14	0.004	-0.02	+0.06	-0.02	+0.00	-0.08	+0.52	+0.00	-0.01	0.04	0.02
+KnifeChitin	OneHandedWeapon	rightHand	attach	yes	Z	0.50	19	0.011	-0.08	+0.08	-0.01	+0.01	-0.09	+0.40	+0.00	+0.00	0.03	0.02
+KnifeCopper	OneHandedWeapon	rightHand	attach	yes	Z	0.37	21	0.012	-0.05	+0.03	-0.02	+0.02	-0.08	+0.29	+0.00	+0.00	0.04	0.02
+KnifeFlint	OneHandedWeapon	rightHand	attach	yes	Z	0.37	23	0.012	-0.03	+0.09	-0.02	+0.02	-0.09	+0.29	+0.00	+0.00	0.05	0.02
+KnifeGold	OneHandedWeapon	rightHand	attach	yes	Z	0.78	20	0.015	-0.07	+0.07	-0.03	+0.03	-0.15	+0.62	+0.00	+0.00	0.03	0.04
+KnifeGold_BloodLightning	OneHandedWeapon	rightHand	attach	yes	Z	0.78	20	0.015	-0.07	+0.07	-0.03	+0.03	-0.15	+0.62	+0.00	+0.00	0.03	0.04
+KnifeGold_FrostFire	OneHandedWeapon	rightHand	attach	yes	Z	0.78	20	0.015	-0.07	+0.07	-0.03	+0.03	-0.15	+0.62	+0.00	+0.00	0.03	0.04
+KnifeSilver	OneHandedWeapon	rightHand	attach	yes	Z	0.63	13	0.004	-0.05	+0.14	-0.02	+0.02	-0.08	+0.55	+0.02	+0.00	0.04	0.03
+KnifeSkollAndHati	TwoHandedWeapon	rightHand	attach_skin
+KnifeVoid	OneHandedWeapon	rightHand	attach	yes	Z	0.37	21	0.012	-0.05	+0.03	-0.02	+0.02	-0.08	+0.29	+0.00	+0.00	0.04	0.02
+KnifeWood	OneHandedWeapon	rightHand	attach	yes	Z	0.57	15	0.001	-0.02	+0.17	-0.02	+0.02	-0.09	+0.48	+0.02	+0.00	0.05	0.04
+Lantern	Torch	rightHand	attach
+Lantern_DN	Torch	rightHand	attach
+Lantern_hooded	Torch	rightHand	attach
+Leech_BiteAttack	OneHandedWeapon	rightHand	-
+lox_bite	OneHandedWeapon	rightHand	-
+lox_stomp	OneHandedWeapon	rightHand	-
+MaceBronze	OneHandedWeapon	rightHand	attach	yes	Z	0.83	16	0.023	-0.11	+0.11	-0.11	+0.11	-0.13	+0.70	+0.00	+0.00	0.06	0.07
+MaceEldner	OneHandedWeapon	rightHand	attach	yes	Z	1.18	11	0.021	-0.17	+0.16	-0.17	+0.17	-0.13	+1.05	+0.00	+0.00	0.06	0.06
+MaceEldnerBlood	OneHandedWeapon	rightHand	attach	yes	Z	1.14	12	0.020	-0.15	+0.15	-0.15	+0.14	-0.14	+1.00	+0.00	+0.00	0.06	0.06
+MaceEldnerLightning	OneHandedWeapon	rightHand	attach	yes	Z	1.18	12	0.020	-0.16	+0.15	-0.12	+0.13	-0.14	+1.04	+0.00	+0.00	0.06	0.06
+MaceEldnerNature	OneHandedWeapon	rightHand	attach	yes	Z	1.18	11	0.021	-0.12	+0.12	-0.11	+0.13	-0.13	+1.05	+0.00	+0.00	0.06	0.06
+MaceGold	OneHandedWeapon	rightHand	attach	yes	Z	1.27	27	0.027	-0.20	+0.20	-0.08	+0.08	-0.35	+0.92	+0.00	+0.00	0.06	0.06
+MaceGold_BloodLightning	OneHandedWeapon	rightHand	attach	yes	Z	1.27	27	0.027	-0.20	+0.20	-0.08	+0.08	-0.35	+0.92	+0.00	+0.00	0.06	0.06
+MaceGold_FrostFire	OneHandedWeapon	rightHand	attach	yes	Z	1.27	27	0.027	-0.20	+0.20	-0.08	+0.08	-0.35	+0.92	+0.00	+0.00	0.06	0.06
+MaceIron	OneHandedWeapon	rightHand	attach	yes	Z	1.03	13	0.023	-0.11	+0.11	-0.11	+0.11	-0.13	+0.90	+0.00	+0.00	0.06	0.07
+MaceNeedle	OneHandedWeapon	rightHand	attach	yes	Z	1.25	11	0.029	-0.24	+0.29	-0.20	+0.25	-0.13	+1.11	+0.00	+0.00	0.06	0.06
+MaceSilver	OneHandedWeapon	rightHand	attach	yes	Z	0.94	17	0.031	-0.22	+0.22	-0.07	+0.08	-0.16	+0.78	+0.00	+0.00	0.07	0.08
+MaceWood	OneHandedWeapon	rightHand	attach	yes	Z	0.81	17	0.019	-0.08	+0.08	-0.09	+0.09	-0.13	+0.68	+0.00	+0.00	0.04	0.04
+Mistile_kamikaze	OneHandedWeapon	rightHand	-
+moose_hooves	OneHandedWeapon	rightHand	-
+moose_horns	OneHandedWeapon	rightHand	-
+moose_horns_sweep	OneHandedWeapon	rightHand	-
+Morgen_bite	OneHandedWeapon	rightHand	-
+Morgen_bodyslam	OneHandedWeapon	rightHand	-
+Morgen_roll_left	OneHandedWeapon	rightHand	-
+Morgen_roll_right	OneHandedWeapon	rightHand	-
+Morgen_swipe_1	OneHandedWeapon	rightHand	-
+Morgen_swipe_2	OneHandedWeapon	rightHand	-
+Morgen_swipe_3	OneHandedWeapon	rightHand	-
+Morgen_swipe_4	OneHandedWeapon	rightHand	-
+Morgen_swipe_5	OneHandedWeapon	rightHand	-
+Morgen_swipe_6	OneHandedWeapon	rightHand	-
+Neck_BiteAttack	OneHandedWeapon	rightHand	-
+PickaxeAntler	TwoHandedWeapon	rightHand	attach	yes	Z	0.99	16	0.030	-0.09	+0.42	-0.07	+0.06	-0.16	+0.83	+0.00	+0.00	0.07	0.08
+PickaxeBlackMetal	TwoHandedWeapon	rightHand	attach	yes	Z	0.95	26	0.022	-0.27	+0.41	-0.04	+0.03	-0.25	+0.70	-0.01	+0.00	0.07	0.07
+PickaxeBronze	TwoHandedWeapon	rightHand	attach	yes	Z	0.93	14	0.004	-0.26	+0.41	-0.06	+0.05	-0.13	+0.80	-0.03	+0.00	0.06	0.07
+PickaxeIron	TwoHandedWeapon	rightHand	attach	yes	X	0.90	50	0.023	-0.45	+0.45	-0.09	+0.07	-0.13	+0.70	+0.00	-0.05	0.07	0.16
+PickaxeStone	TwoHandedWeapon	rightHand	attach	yes	Z	0.97	16	0.030	-0.08	+0.34	-0.07	+0.19	-0.15	+0.81	+0.00	+0.00	0.07	0.07
+PlayerUnarmed	OneHandedWeapon	rightHand	-
+Scythe	TwoHandedWeapon	rightHand	attach	yes	Y	1.81	56	0.000	-0.34	+0.31	-1.01	+0.80	-0.11	+0.94	+0.01	-0.03	0.23	0.09
+seeker_claw_left	OneHandedWeapon	rightHand	-
+seeker_claw_right	OneHandedWeapon	rightHand	-
+seeker_groundslam	OneHandedWeapon	rightHand	-
+seeker_groundslam_flying	OneHandedWeapon	rightHand	-
+seeker_land	OneHandedWeapon	rightHand	-
+seeker_pincers	OneHandedWeapon	rightHand	-
+seeker_takeoff	OneHandedWeapon	rightHand	-
+SeekerBrute_bite	OneHandedWeapon	rightHand	-
+SeekerBrute_groundslam	OneHandedWeapon	rightHand	-
+SeekerBrute_ram	OneHandedWeapon	rightHand	-
+SeekerBrute_Taunt	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+SeekerQueen_Bite	OneHandedWeapon	rightHand	-
+SeekerQueen_Call	OneHandedWeapon	rightHand	-
+SeekerQueen_PierceAOE	OneHandedWeapon	rightHand	-
+SeekerQueen_Rush	OneHandedWeapon	rightHand	-
+SeekerQueen_Slap	OneHandedWeapon	rightHand	-
+SeekerQueen_Spit	OneHandedWeapon	rightHand	-
+SeekerQueen_Teleport	OneHandedWeapon	rightHand	attach	yes	Z	3.07	12	0.051	-0.50	+0.50	-0.64	+0.45	-0.37	+2.70	+0.00	+0.02	0.19	0.14
+Serpent_attack	OneHandedWeapon	rightHand	-
+Serpent_taunt	OneHandedWeapon	rightHand	-
+ShieldBanded	Shield	leftHand	attach	yes	Z	0.97	48	0.019	-0.42	+0.51	-0.24	+0.11	-0.46	+0.51	+0.05	-0.08	0.30	0.14
+ShieldBlackmetal	Shield	leftHand	attach	yes	Z	1.02	53	0.004	-0.53	+0.44	-0.33	+0.13	-0.54	+0.48	+0.01	-0.05	0.53	0.23
+ShieldBlackmetalTower	Shield	leftHand	attach	yes	Z	1.44	54	0.010	-0.51	+0.37	-0.35	+0.15	-0.77	+0.66	+0.02	-0.07	0.49	0.29
+ShieldBoneTower	Shield	leftHand	attach	yes	Z	1.45	71	0.003	-0.48	+0.34	-0.33	+0.05	-1.02	+0.43	+0.05	-0.14	0.46	0.30
+ShieldBronzeBuckler	Shield	leftHand	attach	yes	Z	0.56	49	0.018	-0.23	+0.26	-0.15	+0.13	-0.27	+0.28	+0.02	-0.01	0.49	0.28
+ShieldCarapace	Shield	leftHand	attach	yes	Z	1.43	60	0.065	-0.46	+0.23	-0.30	+0.03	-0.86	+0.58	-0.03	-0.14	0.49	0.29
+ShieldCarapaceBuckler	Shield	leftHand	attach	yes	Z	0.74	55	0.054	-0.39	+0.33	-0.25	+0.38	-0.41	+0.34	+0.00	+0.00	0.40	0.47
+ShieldFlametal	Shield	leftHand	attach	yes	Z	1.17	51	0.021	-0.52	+0.60	-0.32	+0.12	-0.60	+0.57	+0.04	-0.11	0.41	0.20
+ShieldFlametalTower	Shield	leftHand	attach	yes	Z	1.68	51	0.084	-0.55	+0.46	-0.39	+0.09	-0.85	+0.82	+0.05	-0.13	0.47	0.25
+ShieldGold	Shield	leftHand	attach	yes	Z	0.95	51	0.042	-0.40	+0.48	-0.28	+0.07	-0.49	+0.46	+0.04	-0.11	0.51	0.19
+ShieldGoldBuckler	Shield	leftHand	attach	yes	Z	0.66	50	0.013	-0.28	+0.36	-0.24	+0.15	-0.33	+0.33	+0.04	-0.05	0.40	0.23
+ShieldGoldTower	Shield	leftHand	attach	yes	Z	1.72	57	0.073	-0.74	+0.70	-0.52	+0.23	-0.98	+0.74	+0.06	-0.11	0.48	0.23
+ShieldIronBuckler	Shield	leftHand	attach	yes	Z	0.61	49	0.017	-0.25	+0.29	-0.17	+0.15	-0.30	+0.31	+0.01	-0.02	0.51	0.30
+ShieldIronSquare	Shield	leftHand	attach	yes	Y	0.98	-8	0.434	-0.31	+0.37	+0.08	+1.05	-0.48	-0.32
+ShieldIronTower	Shield	leftHand	attach	yes	Z	1.46	57	0.011	-0.51	+0.39	-0.26	+0.09	-0.83	+0.64	+0.04	-0.06	0.49	0.18
+ShieldKnight	Shield	leftHand	attach	yes	X	1.26	42	0.075	-0.52	+0.73	-0.17	+0.08	-0.37	+0.37	-0.05	+0.00	0.05	0.56
+ShieldRoots	Shield	leftHand	attach	yes	Z	1.00	52	0.008	-0.41	+0.49	-0.32	+0.10	-0.51	+0.48	+0.01	-0.11	0.53	0.30
+ShieldSerpentscale	Shield	leftHand	attach	yes	Z	1.44	73	0.036	-0.32	+0.24	-0.23	+0.08	-1.05	+0.38	-0.02	-0.07	0.49	0.30
+ShieldSilver	Shield	leftHand	attach	yes	Z	0.74	49	0.009	-0.44	+0.30	-0.22	+0.05	-0.36	+0.38	+0.00	-0.06	0.49	0.22
+ShieldWood	Shield	leftHand	attach	yes	Z	0.81	47	0.028	-0.35	+0.44	-0.21	+0.08	-0.38	+0.43	+0.01	-0.06	0.20	0.10
+ShieldWoodTower	Shield	leftHand	attach	yes	Z	1.53	55	0.008	-0.47	+0.30	-0.29	+0.06	-0.83	+0.69	+0.01	-0.07	0.50	0.25
+Shovel	TwoHandedWeapon	rightHand	attach	yes	Z	1.48	18	0.012	-0.13	+0.46	-0.42	+0.21	-0.26	+1.21	+0.01	+0.01	0.05	0.05
+skeleton_bow	Bow	leftHand	attach	yes	Z	0.91	50	0.054	-0.58	+0.15	-0.12	+0.57	-0.45	+0.45	+0.05	+0.09	0.08	0.09
+skeleton_bow_meadows	Bow	leftHand	attach	yes	Z	0.91	50	0.054	-0.58	+0.15	-0.12	+0.57	-0.45	+0.45	+0.05	+0.09	0.08	0.09
+skeleton_bow_mountains	Bow	leftHand	attach	yes	Z	0.91	50	0.054	-0.58	+0.15	-0.12	+0.57	-0.45	+0.45	+0.05	+0.09	0.08	0.09
+skeleton_bow_swamps	Bow	leftHand	attach	yes	Z	0.91	50	0.054	-0.58	+0.15	-0.12	+0.57	-0.45	+0.45	+0.05	+0.09	0.08	0.09
+skeleton_bow2	Bow	leftHand	attach	yes	Z	0.91	50	0.054	-0.58	+0.15	-0.12	+0.57	-0.45	+0.45	+0.05	+0.09	0.08	0.09
+skeleton_hildir_firenova	OneHandedWeapon	rightHand	attach	yes	Z	1.91	9	0.015	-0.12	+0.12	-0.03	+0.03	-0.18	+1.73	+0.00	+0.00	0.05	0.03
+skeleton_mace	OneHandedWeapon	rightHand	attach	yes	Z	1.37	13	0.031	-0.15	+0.14	-0.15	+0.15	-0.18	+1.19	-0.01	+0.00	0.08	0.09
+skeleton_mace_DeepNorth	OneHandedWeapon	rightHand	attach	yes	Z	0.68	13	0.015	-0.07	+0.07	-0.07	+0.07	-0.09	+0.60	+0.00	+0.00	0.04	0.05
+skeleton_sword	OneHandedWeapon	rightHand	attach	yes	Z	1.06	8	0.020	-0.08	+0.08	-0.03	+0.03	-0.09	+0.97	+0.00	+0.00	0.06	0.04
+skeleton_sword_hildir	OneHandedWeapon	rightHand	attach	yes	Z	1.91	9	0.015	-0.12	+0.12	-0.03	+0.03	-0.18	+1.73	+0.00	+0.00	0.05	0.03
+skeleton_sword_meadows	OneHandedWeapon	rightHand	attach	yes	Z	1.06	8	0.020	-0.08	+0.08	-0.03	+0.03	-0.09	+0.97	+0.00	+0.00	0.06	0.04
+skeleton_sword_mountains	OneHandedWeapon	rightHand	attach	yes	Z	1.06	8	0.020	-0.08	+0.08	-0.03	+0.03	-0.09	+0.97	+0.00	+0.00	0.06	0.04
+skeleton_sword_swamps	OneHandedWeapon	rightHand	attach	yes	Z	1.06	8	0.020	-0.08	+0.08	-0.03	+0.03	-0.09	+0.97	+0.00	+0.00	0.06	0.04
+skeleton_sword2	OneHandedWeapon	rightHand	attach	yes	Z	1.06	8	0.020	-0.08	+0.08	-0.03	+0.03	-0.09	+0.97	+0.00	+0.00	0.06	0.04
+SledgeCheat	TwoHandedWeapon	rightHand	attach	yes	Z	1.36	22	0.001	-0.26	+0.29	-0.13	+0.06	-0.30	+1.06	+0.02	-0.04	0.07	0.09
+SledgeDemolisher	TwoHandedWeapon	rightHand	attach	yes	Z	1.52	23	0.029	-0.35	+0.35	-0.20	+0.20	-0.36	+1.16	+0.00	+0.00	0.07	0.06
+SledgeGold	TwoHandedWeapon	rightHand	attach	yes	Z	1.54	35	0.027	-0.39	+0.39	-0.15	+0.15	-0.54	+1.00	+0.00	+0.00	0.06	0.06
+SledgeGold_BloodLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.54	35	0.027	-0.39	+0.39	-0.15	+0.15	-0.54	+1.00	+0.00	+0.00	0.06	0.06
+SledgeGold_FrostFire	TwoHandedWeapon	rightHand	attach	yes	Z	1.54	35	0.027	-0.39	+0.39	-0.15	+0.15	-0.54	+1.00	+0.00	+0.00	0.06	0.06
+SledgeIron	TwoHandedWeapon	rightHand	attach	yes	Z	1.36	30	0.035	-0.28	+0.28	-0.10	+0.09	-0.40	+0.96	+0.00	+0.00	0.07	0.09
+SledgeStagbreaker	TwoHandedWeapon	rightHand	attach	yes	Z	1.36	26	0.030	-0.52	+0.55	-0.28	+0.24	-0.36	+1.01	+0.00	+0.00	0.06	0.08
+SledgeWood	TwoHandedWeapon	rightHand	attach	yes	Z	1.20	22	0.030	-0.31	+0.31	-0.19	+0.18	-0.26	+0.93	+0.00	+0.00	0.06	0.07
+Snowball	OneHandedWeapon	rightHand	attach	yes	X	0.20	49	0.000	-0.10	+0.10	-0.10	+0.10	+0.00	+0.12	+0.00	+0.06	0.19	0.12
+SnowballBig	OneHandedWeapon	rightHand	attach	yes	Y	0.54	53	0.125	-0.25	+0.26	-0.29	+0.26	-0.13	+0.20	+0.04	+0.00	0.32	0.50
+SP_ArmorBronzeChest	Chest	body	attach_skin
+SP_ArmorBronzeLegs	Legs	body	attach_skin
+SP_ArmorDress1	Chest	body	attach_skin
+SP_ArmorFenringChest	Chest	body	attach_skin
+SP_ArmorFenringLegs	Legs	body	attach_skin
+SP_ArmorLeatherLegs	Legs	body	-
+SP_ArmorMageChest	Chest	body	attach_skin
+SP_ArmorMageChest_Ashlands	Chest	body	attach_skin
+SP_ArmorMageLegs	Legs	body	attach_skin
+SP_ArmorMageLegs_Ashlands	Legs	body	attach_skin
+SP_ArmorPaddedCuirass	Chest	body	attach_skin
+SP_ArmorPaddedGreaves	Legs	body	attach_skin
+SP_ArmorTrollLeatherChest	Chest	body	attach_skin
+SP_ArmorTrollLeatherLegs	Legs	body	-
+SP_ArmorTunic5	Chest	body	attach_skin
+SP_AxeBronze	OneHandedWeapon	rightHand	attach	yes	Z	0.88	18	0.014	-0.03	+0.25	-0.02	+0.02	-0.16	+0.72	+0.00	+0.00	0.04	0.03
+SP_BattleaxeCrystal	TwoHandedWeapon	rightHand	attach	yes	Z	1.77	16	0.038	-0.42	+0.33	-0.07	+0.07	-0.29	+1.48	+0.00	+0.00	0.08	0.08
+SP_BowDraugrFang	Bow	leftHand	attach	yes	Z	1.73	51	0.004	-0.37	+0.36	-0.19	+0.16	-0.88	+0.84	-0.06	+0.00	0.21	0.06
+SP_CapeLinen	Shoulder	body	attach_skin
+SP_CapeTrollHide	Shoulder	body	attach_skin
+SP_CapeWolf	Shoulder	body	attach_skin
+SP_HelmetBronze	Helmet	helmet	attach	yes	Z	0.26	51	0.099	-0.10	+0.10	-0.05	+0.18	-0.13	+0.13	+0.00	+0.11	0.20	0.15
+SP_KnifeSilver	OneHandedWeapon	rightHand	attach	yes	Z	0.63	13	0.004	-0.05	+0.14	-0.02	+0.02	-0.08	+0.55	+0.02	+0.00	0.04	0.03
+SP_KnifeSkollAndHati	TwoHandedWeapon	rightHand	attach_skin
+SP_ShieldBlackmetalTower	Shield	leftHand	attach	yes	Z	1.44	54	0.010	-0.51	+0.37	-0.35	+0.15	-0.77	+0.66	+0.02	-0.07	0.49	0.29
+SP_StaffFireball	TwoHandedWeapon	rightHand	attach	yes	Z	2.03	44	0.021	-0.11	+0.19	-0.12	+0.10	-0.90	+1.13	+0.00	+0.00	0.05	0.06
+SP_StaffLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.26	23	0.005	-0.11	+0.27	-0.22	+0.12	-0.28	+0.98	+0.02	-0.01	0.06	0.05
+SP_SwordBlackmetal	OneHandedWeapon	rightHand	attach	yes	Z	1.29	11	0.016	-0.10	+0.10	-0.03	+0.03	-0.14	+1.15	+0.00	+0.00	0.04	0.04
+Sparkler	Torch	rightHand	attach	yes	Z	0.50	10	0.004	-0.01	+0.02	-0.02	+0.02	-0.05	+0.45	+0.00	+0.00	0.01	0.01
+SpearBronze	OneHandedWeapon	rightHand	attach	yes	Z	2.43	44	0.020	-0.08	+0.08	-0.03	+0.03	-1.08	+1.35	+0.00	+0.00	0.05	0.04
+SpearCarapace	OneHandedWeapon	rightHand	attach	yes	Z	2.43	42	0.011	-0.15	+0.14	-0.09	+0.06	-1.03	+1.41	+0.01	+0.00	0.05	0.05
+SpearChitin	OneHandedWeapon	rightHand	attach	yes	Z	2.32	42	0.020	-0.02	+0.02	-0.07	+0.10	-0.98	+1.34	+0.00	+0.00	0.04	0.06
+SpearElderbark	OneHandedWeapon	rightHand	attach	yes	Z	2.31	46	0.015	-0.07	+0.07	-0.06	+0.04	-1.06	+1.25	-0.01	+0.01	0.05	0.06
+SpearFlint	OneHandedWeapon	rightHand	attach	yes	Z	2.36	46	0.021	-0.05	+0.05	-0.03	+0.03	-1.09	+1.27	+0.00	+0.00	0.04	0.04
+SpearGold	OneHandedWeapon	rightHand	attach	yes	Z	2.30	38	0.002	-0.08	+0.08	-0.03	+0.04	-0.88	+1.42	+0.00	+0.01	0.08	0.06
+SpearGold_BloodLightning	OneHandedWeapon	rightHand	attach	yes	Z	2.30	38	0.002	-0.08	+0.08	-0.03	+0.04	-0.88	+1.42	+0.00	+0.01	0.08	0.06
+SpearGold_FrostFire	OneHandedWeapon	rightHand	attach	yes	Z	2.30	38	0.002	-0.08	+0.08	-0.03	+0.04	-0.88	+1.42	+0.00	+0.01	0.08	0.06
+SpearSplitner	OneHandedWeapon	rightHand	attach	yes	Z	2.97	50	0.021	-0.09	+0.09	-0.04	+0.03	-1.49	+1.48	+0.00	+0.00	0.05	0.05
+SpearSplitner_Blood	OneHandedWeapon	rightHand	attach	yes	Z	2.97	50	0.021	-0.13	+0.13	-0.04	+0.04	-1.48	+1.48	+0.00	+0.00	0.05	0.06
+SpearSplitner_Lightning	OneHandedWeapon	rightHand	attach	yes	Z	2.99	50	0.021	-0.13	+0.13	-0.04	+0.04	-1.50	+1.48	+0.00	+0.00	0.05	0.06
+SpearSplitner_Nature	OneHandedWeapon	rightHand	attach	yes	Z	2.97	50	0.005	-0.10	+0.10	-0.04	+0.03	-1.48	+1.48	+0.00	+0.00	0.05	0.06
+SpearWolfFang	OneHandedWeapon	rightHand	attach	yes	Z	2.33	38	0.021	-0.03	+0.03	-0.04	+0.04	-0.89	+1.44	+0.00	+0.00	0.04	0.05
+SpearWood	OneHandedWeapon	rightHand	attach	yes	Z	2.84	51	0.021	-0.04	+0.04	-0.04	+0.04	-1.45	+1.39	+0.00	+0.00	0.05	0.05
+spiritbjorn_bite	OneHandedWeapon	rightHand	-
+spiritbjorn_claws	OneHandedWeapon	rightHand	-
+spiritbjorn_slam	OneHandedWeapon	rightHand	-
+spiritbjorn_swipe_combo	OneHandedWeapon	rightHand	-
+spiritbjorn_swipe_l	OneHandedWeapon	rightHand	-
+spiritbjorn_swipe_r	OneHandedWeapon	rightHand	-
+spiritboar_base_attack	OneHandedWeapon	rightHand	-
+spiritmoose_hooves	OneHandedWeapon	rightHand	-
+spiritmoose_horns	OneHandedWeapon	rightHand	-
+spiritmoose_horns_sweep	OneHandedWeapon	rightHand	-
+SpiritWolf_Attack1	OneHandedWeapon	rightHand	-
+SpiritWolf_Attack2	OneHandedWeapon	rightHand	-
+SpiritWolf_Attack3	OneHandedWeapon	rightHand	-
+staff_greenroots_tentaroot_attack	OneHandedWeapon	rightHand	-
+StaffClusterbomb	TwoHandedWeapon	rightHand	attach	yes	Z	2.15	41	0.013	-0.19	+0.06	-0.21	+0.21	-0.88	+1.27	+0.00	+0.01	0.05	0.05
+StaffFireball	TwoHandedWeapon	rightHand	attach	yes	Z	2.03	44	0.021	-0.11	+0.19	-0.12	+0.10	-0.90	+1.13	+0.00	+0.00	0.05	0.06
+StaffFrostOrbs	TwoHandedWeaponLeft	leftHand	attach	yes	Z	0.48	44	0.001	-0.26	+0.21	-0.09	+0.31	-0.21	+0.27	-0.03	+0.07	0.41	0.31
+StaffGreenRoots	TwoHandedWeapon	rightHand	attach	yes	Z	2.28	44	0.020	-0.55	+0.23	-0.30	+0.28	-1.01	+1.28	+0.00	+0.01	0.05	0.06
+StaffIceShards	TwoHandedWeapon	rightHand	attach	yes	Z	2.03	44	0.026	-0.09	+0.07	-0.07	+0.09	-0.90	+1.13	+0.01	+0.00	0.06	0.08
+StaffLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.26	23	0.005	-0.11	+0.27	-0.22	+0.12	-0.28	+0.98	+0.02	-0.01	0.06	0.05
+StaffOrbofAhri	TwoHandedWeapon	rightHand	attach	yes	Z	1.13	44	0.002	-0.12	+0.14	-0.05	+0.04	-0.50	+0.63	+0.00	+0.00	0.07	0.05
+StaffRedTroll	TwoHandedWeapon	rightHand	attach	yes	Z	1.52	41	0.008	-0.19	+0.27	-0.11	+0.19	-0.62	+0.90	+0.00	+0.02	0.05	0.06
+StaffShield	TwoHandedWeapon	rightHand	attach	yes	Z	1.07	47	0.021	-0.14	+0.11	-0.10	+0.10	-0.50	+0.57	+0.00	+0.00	0.05	0.06
+StaffSkeleton	TwoHandedWeaponLeft	leftHand	attach	yes	X	0.32	49	0.019	-0.16	+0.16	-0.01	+0.23	-0.11	+0.10	+0.12	-0.01	0.20	0.20
+StaffSpiritCaller	TwoHandedWeaponLeft	leftHand	attach	yes	Z	0.45	51	0.071	-0.20	+0.23	+0.06	+0.23	-0.23	+0.22	-0.04	+0.15	0.28	0.17
+StaffThunderBlood	TwoHandedWeapon	rightHand	attach	yes	Z	2.33	50	0.010	-0.06	+0.06	-0.02	+0.05	-1.15	+1.18	+0.00	+0.01	0.05	0.05
+stonegolem_attack_doublesmash	OneHandedWeapon	rightHand	-
+stonegolem_attack_sonicboom_NOTUSED	OneHandedWeapon	rightHand	-
+stonegolem_attack1_spike	OneHandedWeapon	rightHand	-
+stonegolem_attack2_left_groundslam	OneHandedWeapon	rightHand	-
+stonegolem_attack3_spikesweep	OneHandedWeapon	rightHand	-
+StoneGolem_clubs	Chest	body	attach_skin
+StoneGolem_hat	Helmet	helmet	attach_skin
+StoneGolem_spikes	Chest	body	attach_skin
+Sword2h_JotunWarrior	OneHandedWeapon	rightHand	attach	yes	Z	2.75	7	0.003	-0.09	+0.09	-0.08	+0.00	-0.19	+2.56	+0.00	-0.04	0.09	0.09
+SwordBlackmetal	OneHandedWeapon	rightHand	attach	yes	Z	1.29	11	0.016	-0.10	+0.10	-0.03	+0.03	-0.14	+1.15	+0.00	+0.00	0.04	0.04
+SwordBronze	OneHandedWeapon	rightHand	attach	yes	Z	0.91	10	0.017	-0.07	+0.07	-0.03	+0.03	-0.09	+0.82	+0.00	+0.00	0.05	0.04
+SwordCheat	OneHandedWeapon	rightHand	attach	yes	Z	1.27	7	0.017	-0.07	+0.07	-0.03	+0.03	-0.09	+1.18	+0.00	+0.00	0.05	0.04
+SwordDyrnwyn	OneHandedWeapon	rightHand	attach	yes	Z	1.71	13	0.011	-0.10	+0.10	-0.02	+0.02	-0.22	+1.50	+0.00	+0.00	0.04	0.03
+SwordGold	OneHandedWeapon	rightHand	attach	yes	Z	1.40	12	0.018	-0.13	+0.13	-0.03	+0.03	-0.16	+1.24	+0.00	+0.00	0.05	0.05
+SwordGold_BloodLightning	OneHandedWeapon	rightHand	attach	yes	Z	1.40	12	0.018	-0.13	+0.13	-0.03	+0.03	-0.16	+1.24	+0.00	+0.00	0.05	0.05
+SwordGold_FrostFire	OneHandedWeapon	rightHand	attach	yes	Z	1.40	12	0.018	-0.13	+0.13	-0.03	+0.03	-0.16	+1.24	+0.00	+0.00	0.05	0.05
+SwordIron	OneHandedWeapon	rightHand	attach	yes	Z	1.27	7	0.017	-0.07	+0.07	-0.03	+0.03	-0.09	+1.18	+0.00	+0.00	0.05	0.04
+SwordIronFire	OneHandedWeapon	rightHand	attach	yes	Z	1.27	7	0.017	-0.07	+0.07	-0.03	+0.03	-0.09	+1.18	+0.00	+0.00	0.05	0.04
+SwordMistwalker	OneHandedWeapon	rightHand	attach	yes	Z	1.41	12	0.024	-0.13	+0.13	-0.04	+0.04	-0.17	+1.24	+0.00	+0.00	0.07	0.05
+SwordNiedhogg	OneHandedWeapon	rightHand	attach	yes	Z	1.44	11	0.011	-0.16	+0.17	-0.03	+0.03	-0.16	+1.28	+0.00	+0.00	0.04	0.03
+SwordNiedhoggBlood	OneHandedWeapon	rightHand	attach	yes	Z	1.44	11	0.011	-0.16	+0.17	-0.03	+0.03	-0.16	+1.27	+0.00	+0.00	0.04	0.03
+SwordNiedhoggLightning	OneHandedWeapon	rightHand	attach	yes	Z	1.44	11	0.011	-0.06	+0.07	-0.03	+0.03	-0.16	+1.28	+0.00	+0.00	0.04	0.03
+SwordNiedhoggNature	OneHandedWeapon	rightHand	attach	yes	Z	1.44	11	0.011	-0.16	+0.17	-0.03	+0.03	-0.16	+1.28	+0.00	+0.00	0.04	0.03
+SwordSilver	OneHandedWeapon	rightHand	attach	yes	Z	1.29	9	0.017	-0.10	+0.10	-0.03	+0.03	-0.12	+1.18	+0.00	+0.00	0.05	0.04
+SwordWood	OneHandedWeapon	rightHand	attach	yes	Z	0.95	9	0.019	-0.11	+0.11	-0.03	+0.03	-0.08	+0.87	+0.00	+0.00	0.04	0.04
+Tankard	OneHandedWeapon	rightHand	attach	yes	Z	0.26	53	0.004	-0.02	+0.24	-0.16	+0.05	-0.14	+0.12	+0.10	-0.06	0.25	0.19
+Tankard_dvergr	OneHandedWeapon	rightHand	attach	yes	X	0.33	12	0.000	-0.04	+0.29	-0.19	+0.06	-0.19	+0.13	+0.01	+0.02	0.05	0.16
+TankardAnniversary	OneHandedWeapon	rightHand	attach	yes	Y	0.53	35	0.011	-0.04	+0.31	-0.18	+0.34	-0.34	+0.13	-0.06	+0.10	0.36	0.28
+TankardOdin	OneHandedWeapon	rightHand	attach	yes	Z	0.51	70	0.000	-0.02	+0.25	-0.12	+0.22	-0.35	+0.15	+0.08	-0.05	0.19	0.12
+tendril_attack	OneHandedWeapon	rightHand	-
+tentaroot_attack	OneHandedWeapon	rightHand	-
+THSwordGold	TwoHandedWeapon	rightHand	attach	yes	Z	1.94	17	0.020	-0.14	+0.14	-0.04	+0.04	-0.33	+1.61	+0.00	+0.00	0.05	0.05
+THSwordGold_BloodLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.94	17	0.020	-0.14	+0.14	-0.04	+0.04	-0.33	+1.61	+0.00	+0.00	0.05	0.05
+THSwordGold_FrostFire	TwoHandedWeapon	rightHand	attach	yes	Z	1.94	17	0.020	-0.14	+0.14	-0.04	+0.04	-0.33	+1.61	+0.00	+0.00	0.05	0.05
+THSwordKrom	TwoHandedWeapon	rightHand	attach	yes	Z	1.91	17	0.015	-0.12	+0.12	-0.03	+0.03	-0.33	+1.58	+0.00	+0.00	0.05	0.03
+THSwordSlayer	TwoHandedWeapon	rightHand	attach	yes	Z	1.96	17	0.018	-0.13	+0.13	-0.04	+0.04	-0.33	+1.63	+0.00	+0.00	0.04	0.04
+THSwordSlayerBlood	TwoHandedWeapon	rightHand	attach	yes	Z	1.96	17	0.018	-0.25	+0.25	-0.05	+0.05	-0.34	+1.63	+0.00	+0.00	0.04	0.04
+THSwordSlayerLightning	TwoHandedWeapon	rightHand	attach	yes	Z	1.98	18	0.018	-0.13	+0.13	-0.04	+0.04	-0.35	+1.63	+0.00	+0.00	0.04	0.04
+THSwordSlayerNature	TwoHandedWeapon	rightHand	attach	yes	Z	1.96	17	0.018	-0.10	+0.10	-0.04	+0.04	-0.33	+1.63	+0.00	+0.00	0.04	0.04
+THSwordWood	TwoHandedWeapon	rightHand	attach	yes	Z	1.91	16	0.024	-0.16	+0.16	-0.04	+0.04	-0.30	+1.61	+0.00	+0.00	0.05	0.05
+tick_attack	OneHandedWeapon	rightHand	-
+tick_attack_attach	OneHandedWeapon	rightHand	-
+Torch	Torch	rightHand	attach	yes	Z	0.86	16	0.012	-0.05	+0.05	-0.05	+0.05	-0.13	+0.72	+0.00	+0.00	0.03	0.03
+TorchMist	Torch	rightHand	attach	yes	Z	0.86	16	0.012	-0.05	+0.05	-0.05	+0.05	-0.13	+0.72	+0.00	+0.00	0.03	0.03
+TrainingDummy_attack	OneHandedWeapon	rightHand	-
+TrainingDummy_attack2	OneHandedWeapon	rightHand	-
+TrainingDummy_attack3	OneHandedWeapon	rightHand	-
+TrainingDummy_throw	OneHandedWeapon	rightHand	-
+TrinketBlackDamageHealth	Trinket	body	attach	yes	X	0.29	37	0.002	-0.11	+0.18	-0.02	+0.03	-0.11	+0.07	+0.00	-0.01	0.03	0.17
+TrinketBlackStamina	Trinket	body	attach	yes	X	0.45	50	0.097	-0.22	+0.22	-0.09	+0.20	-0.16	+0.17	+0.05	+0.01	0.29	0.32
+TrinketBloodGoldHealth	Trinket	body	attach	yes	X	0.14	48	0.042	-0.07	+0.07	+0.04	+0.07	-0.04	+0.03	+0.05	+0.00	0.01	0.02
+TrinketBloodGoldStamina	Trinket	body	attach	yes	Z	0.24	51	0.107	-0.09	+0.09	+0.04	+0.09	-0.12	+0.11	+0.00	+0.07	0.18	0.01
+TrinketBronzeHealth	Trinket	body	attach	yes	X	0.15	38	0.027	-0.06	+0.10	+0.02	+0.04	-0.06	+0.06	+0.03	-0.04	0.02	0.05
+TrinketBronzeStamina	Trinket	body	attach	yes	X	0.32	82	0.024	-0.27	+0.06	+0.02	+0.04	-0.17	+0.06	+0.03	-0.03	0.02	0.18
+TrinketCarapaceEitr	Trinket	body	attach	yes	X	0.09	51	0.039	-0.05	+0.04	+0.04	+0.07	-0.03	+0.03	+0.05	+0.00	0.03	0.05
+TrinketChitinSwim	Trinket	body	attach	yes	X	0.53	48	0.008	-0.25	+0.28	-0.06	+0.13	-0.14	+0.13	+0.02	+0.05	0.11	0.06
+TrinketFlametalEitr	Trinket	body	attach	yes	X	0.20	50	0.076	-0.10	+0.10	-0.12	+0.08	-0.10	+0.10	-0.02	+0.00	0.17	0.19
+TrinketFlametalStaminaHealth	Trinket	body	attach	yes	X	0.31	55	0.034	-0.17	+0.14	+0.02	+0.07	-0.11	+0.08	+0.04	-0.02	0.02	0.17
+TrinketIronHealth	Trinket	body	attach	yes	Z	0.16	50	0.036	-0.08	+0.08	+0.03	+0.06	-0.08	+0.08	+0.00	+0.05	0.16	0.03
+TrinketIronStamina	Trinket	body	attach	yes	Z	0.18	54	0.073	-0.08	+0.08	+0.04	+0.06	-0.09	+0.08	+0.00	+0.05	0.15	0.01
+TrinketScaleStaminaDamage	Trinket	body	attach	yes	Z	0.15	50	1.487	-0.07	+0.07	+1.49	+1.52	-0.07	+0.07
+TrinketSilverDamage	Trinket	body	attach	yes	Z	0.24	52	0.104	-0.10	+0.10	+0.03	+0.09	-0.12	+0.12	+0.00	+0.05	0.21	0.02
+TrinketSilverResist	Trinket	body	attach	yes	X	0.29	95	0.031	-0.27	+0.02	+0.03	+0.07	-0.15	+0.04	+0.05	-0.02	0.04	0.14
+troll_groundslam	OneHandedWeapon	rightHand	-
+troll_log_swing_h	OneHandedWeapon	rightHand	attach	yes	X	6.31	25	0.294	-1.56	+4.75	+0.20	+0.87	-0.64	+0.08	+0.29	-0.07	0.00	0.00
+troll_log_swing_v	OneHandedWeapon	rightHand	attach	yes	X	6.31	25	0.294	-1.56	+4.75	+0.20	+0.87	-0.64	+0.08	+0.29	-0.07	0.00	0.00
+troll_punch	OneHandedWeapon	rightHand	-
+troll_summoned_groundslam	OneHandedWeapon	rightHand	-
+troll_summoned_log_swing_h	OneHandedWeapon	rightHand	attach	yes	X	6.12	22	0.359	-1.37	+4.74	+0.25	+0.93	-0.67	+0.00
+troll_summoned_log_swing_v	OneHandedWeapon	rightHand	attach	yes	X	6.12	22	0.359	-1.37	+4.74	+0.25	+0.93	-0.67	+0.00
+troll_summoned_punch	OneHandedWeapon	rightHand	-
+troll_summoned_throw	OneHandedWeapon	rightHand	-
+troll_throw	OneHandedWeapon	rightHand	-
+trollsnow_groundslam	OneHandedWeapon	rightHand	-
+trollsnow_groundslam_r	OneHandedWeapon	rightHand	-
+trollsnow_punch	OneHandedWeapon	rightHand	-
+trollsnow_punch_r	OneHandedWeapon	rightHand	-
+trollsnow_throw	OneHandedWeapon	rightHand	-
+Ulv_attack1_bite	OneHandedWeapon	rightHand	-
+Ulv_attack2_slash	OneHandedWeapon	rightHand	-
+unbjorn_bite	OneHandedWeapon	rightHand	-
+unbjorn_claws	OneHandedWeapon	rightHand	-
+unbjorn_slam	OneHandedWeapon	rightHand	-
+unbjorn_swipe_combo	OneHandedWeapon	rightHand	-
+unbjorn_swipe_l	OneHandedWeapon	rightHand	-
+unbjorn_swipe_r	OneHandedWeapon	rightHand	-
+volture_talons	OneHandedWeapon	rightHand	-
+Wishbone	Utility	body	-
+Wolf_Attack1	OneHandedWeapon	rightHand	-
+Wolf_Attack2	OneHandedWeapon	rightHand	-
+Wolf_Attack3	OneHandedWeapon	rightHand	-
+wraith_melee	OneHandedWeapon	rightHand	-
+writhan_bite	OneHandedWeapon	rightHand	-
+writhan_explode_aoe	OneHandedWeapon	rightHand	-

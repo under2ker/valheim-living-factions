@@ -1,0 +1,24 @@
+# Hired fighters: they join, follow the player, and fight when the settlement is raided.
+god
+env 0.4 Clear
+speed 2
+goto 4
+hire 4
+wait 6
+expect [Mercenary] :: npcs
+# they keep up with the player
+tp 1030 -250
+wait 20
+watch [Mercenary]
+shot hired_follow
+cam
+# a war makes the raiders their enemies; then the raid
+war 8 9
+raid 5 4
+until [Mercenary] idle ALERT :: npcs
+watch [Mercenary]
+shot hired_fight
+cam
+war 8 9 peace
+speed 1
+quit

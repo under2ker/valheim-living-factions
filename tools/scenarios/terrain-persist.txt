@@ -1,0 +1,13 @@
+# Ground work must survive a restart. Run this scenario TWICE in a row.
+# First run: pads are re-levelled and seams mended. Second run: the same numbers, with no work done.
+# After each run check the game log has no line "Removed duplicate terrain compiler".
+god
+env 0.4 Clear
+goto 4
+waitready 240
+wait 100
+waitready 240
+perf
+expect worst deviation 0.0 :: padcheck 4
+seams 200
+quit

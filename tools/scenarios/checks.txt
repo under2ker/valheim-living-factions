@@ -1,0 +1,37 @@
+# In-game checks of features that were written but never watched working.
+god
+env 0.4 Clear
+speed 3
+goto 4
+# stamina of the Stag's Horn: the same spend with and without the axe
+unequip all
+expect took 2.00 :: stamina
+equip LF_StagHornAxe
+items
+expect took 1.60 :: stamina
+unequip all
+# trading post: a player's chest of wood and stone by the settlement
+tradechest 4
+until Coins :: chestinfo
+chestinfo
+# cargo: someone carries goods to the storehouse
+hidehud on
+until carrying :: npcs
+watch carrying
+shot checks_cargo
+cam
+# archers: a fighter who is certainly an archer, a war so the raiders are enemies, and a raid
+shots reset
+war 8 9
+expect bow in the pack: True :: archer 4
+raid 5 4
+until arrows flying :: shots
+npcs
+war 8 9 peace
+watch ALERT
+shot checks_raid
+npcs
+cam
+hidehud off
+speed 1
+quit

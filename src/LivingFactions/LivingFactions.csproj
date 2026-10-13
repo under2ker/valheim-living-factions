@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>LivingFactions</AssemblyName>
+    <RootNamespace>LivingFactions</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Version>0.3.1</Version>
+    <!-- The shipped DLL names its sources by their place in the repository, not on the build machine. -->
+    <PathMap>$(MSBuildThisFileDirectory)..\..\=/_/</PathMap>
+    <DebugType>portable</DebugType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+    <PluginDir>$(ValheimDir)\BepInEx\plugins\LivingFactions</PluginDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Compile Include="..\LivingFactions.Core\**\*.cs" LinkBase="Core" />
+    <EmbeddedResource Include="Assets\*" LogicalName="lf_%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- Game, loader and library assemblies: referenced from the local install, never copied or shipped. -->
+  <ItemGroup>
+    <Reference Include="$(ValheimDir)\BepInEx\core\BepInEx.dll" Private="false" />
+    <Reference Include="$(ValheimDir)\BepInEx\core\0Harmony.dll" Private="false" />
+    <Reference Include="$(ValheimDir)\BepInEx\plugins\Jotunn\Jotunn.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\assembly_valheim.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\assembly_utils.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\assembly_guiutils.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\gui_framework.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\Newtonsoft.Json.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\netstandard.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\Splatform.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\Unity.TextMeshPro.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(ManagedDir)\UnityEngine.*.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="DeployToGame" AfterTargets="Build">
+    <MakeDir Directories="$(PluginDir)" />
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDir)" />
+    <Message Importance="high" Text="Deployed to $(PluginDir)" />
+  </Target>
+</Project>

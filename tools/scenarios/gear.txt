@@ -1,0 +1,30 @@
+# Equipment photo session: every item is worn and photographed from the angles its slot has.
+# Pictures land in BepInEx/config/LivingFactions/shots/gear_<item>_<angle>.png; tools/lfgear.sh runs this
+# and copies them to docs/gear/.
+god
+env 0.4 Clear
+unequip all
+gearshots AxeBronze
+gearshots SwordIron
+gearshots ShieldBanded
+gearshots Bow
+gearshots AtgeirBronze
+gearshots HelmetBronze
+gearshots ArmorBronzeChest
+gearshots ArmorBronzeLegs
+gearshots CapeDeerHide
+gearshots BeltStrength
+hidehud on
+look full
+face lit
+wait 1
+shot gear_full_front
+look full rear
+face lit
+wait 1
+shot gear_full_rear
+hidehud off
+look off
+points
+points all
+quit

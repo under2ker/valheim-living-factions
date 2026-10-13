@@ -1,0 +1,16 @@
+# A caravan that arrives: it shows up 100 m out on the road, walks in and breaks up at the square.
+god
+env 0.4 Clear
+speed 3
+goto 4
+caravan 4 in
+until journey in :: npcs
+wait 15
+watch journey in
+shot caravan_in_road
+cam
+# it is gone once the goods are delivered (walking 100 m takes about a minute of game time)
+until nobody matches :: watch journey in
+cam
+speed 1
+quit

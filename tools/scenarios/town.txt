@@ -1,0 +1,20 @@
+# Cobbles: a settlement that has grown into a town has a wider paved square, paved paths to its
+# buildings and a cobbled last stretch of road. This moves the lab world 40 days forward.
+god
+env 0.4 Clear
+advance 40
+status
+goto 4
+waitready 240
+wait 60
+waitready 240
+hidehud on
+view 4 26 22 135
+shot town_square
+roadview 4 30 12
+shot town_road_in
+cam
+hidehud off
+expect worst deviation 0.0 :: padcheck 4
+seams 200
+quit

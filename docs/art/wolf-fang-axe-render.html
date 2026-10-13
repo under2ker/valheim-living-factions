@@ -1,0 +1,190 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script>
+// ---------- tiny math ----------
+const M={
+ ident(){return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]},
+ mul(a,b){const o=new Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s}return o},
+ persp(f,asp,n,fa){const t=1/Math.tan(f/2);return [t/asp,0,0,0, 0,t,0,0, 0,0,(fa+n)/(n-fa),-1, 0,0,2*fa*n/(n-fa),0]},
+ trans(x,y,z){const m=M.ident();m[12]=x;m[13]=y;m[14]=z;return m},
+ rx(a){const c=Math.cos(a),s=Math.sin(a);return [1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]},
+ ry(a){const c=Math.cos(a),s=Math.sin(a);return [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]},
+ rz(a){const c=Math.cos(a),s=Math.sin(a);return [c,s,0,0, -s,c,0,0, 0,0,1,0, 0,0,0,1]},
+};
+const P=new URLSearchParams(location.hash.slice(1));
+const W=+P.get('w')||1200,H=+P.get('h')||1200;
+const cv=document.getElementById('c');cv.width=W;cv.height=H;
+const gl=cv.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:true});
+
+// ---------- seeded rng ----------
+let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+
+// ---------- svg-space helpers (axe drawn in the 420x720 svg space) ----------
+const S=(x,y)=>[(x-242)/300,-(y-380)/300];
+function bez(p0,p1,p2,p3,n){const o=[];for(let i=1;i<=n;i++){const t=i/n,u=1-t;o.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]])}return o}
+// blade outline (svg coords), low-poly sampled
+const bladeSvg=[[226,92],[150,104],...bez([150,104],[118,96],[92,76],[64,46],3),...bez([64,46],[34,98],[26,168],[34,226],4),...bez([34,226],[42,286],[66,340],[100,382],4),...bez([100,382],[118,340],[140,288],[168,246],3),...bez([168,246],[190,220],[210,210],[226,206],2)];
+const pollSvg=[[264,110],[300,98],[314,120],[302,150],[300,176],[264,186]];
+
+// ---------- textures (low-res, painterly pixels) ----------
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');draw(x,w,h);return c}
+function noiseFill(x,w,h,base,amp){const d=x.getImageData(0,0,w,h);for(let i=0;i<w*h;i++){const n=(rnd()-.5)*amp;d.data[i*4]=base[0]+n;d.data[i*4+1]=base[1]+n;d.data[i*4+2]=base[2]+n*1.05;d.data[i*4+3]=255}x.putImageData(d,0,0)}
+const BX0=26,BX1=226,BY0=46,BY1=382; // blade bbox
+const bladeTex=canvasTex(72,120,(x,w,h)=>{
+ noiseFill(x,w,h,[104,111,118],14);for(let i=0;i<220;i++){const g=rnd()<.5?'rgba(40,44,50,.18)':'rgba(170,178,186,.14)';x.fillStyle=g;x.fillRect(Math.floor(rnd()*w),Math.floor(rnd()*h),2+Math.floor(rnd()*3),2+Math.floor(rnd()*3))}
+ const sx=v=>(v-BX0)/(BX1-BX0)*w, sy=v=>(v-BY0)/(BY1-BY0)*h;
+ // darker forge scale near the socket
+ x.fillStyle='rgba(30,32,36,.45)';x.fillRect(sx(170),0,w,h);
+ for(let i=0;i<40;i++){x.fillStyle=`rgba(20,22,25,${.25+rnd()*.3})`;x.fillRect(Math.floor(rnd()*w),Math.floor(rnd()*h),1,1)}
+ // scratches
+ x.strokeStyle='rgba(170,178,186,.35)';x.lineWidth=1;for(let i=0;i<10;i++){const a=rnd()*w,b=rnd()*h;x.beginPath();x.moveTo(a,b);x.lineTo(a+rnd()*8-4,b+rnd()*3);x.stroke()}
+ // honed cutting edge
+ const edge=()=>{x.beginPath();x.moveTo(sx(64),sy(46));x.bezierCurveTo(sx(34),sy(98),sx(26),sy(168),sx(34),sy(226));x.bezierCurveTo(sx(42),sy(286),sx(66),sy(340),sx(100),sy(382));};
+ x.lineCap='round';
+ edge();x.strokeStyle='#4b5157';x.lineWidth=19;x.stroke();edge();x.strokeStyle='#9aa3aa';x.lineWidth=16;x.stroke();
+ edge();x.strokeStyle='#c3cad0';x.lineWidth=9;x.stroke();
+ edge();x.strokeStyle='#eef2f4';x.lineWidth=3;x.stroke();
+ // engraved wolf head with bronze inlay
+ const wolf=[[104,120],[118,146],[132,142],[146,146],[160,120],[164,160],[154,184],[136,206],[132,208],[128,206],[110,184],[100,160]];
+ x.beginPath();wolf.forEach((p,i)=>i?x.lineTo(sx(p[0]),sy(p[1])):x.moveTo(sx(p[0]),sy(p[1])));x.closePath();
+ x.fillStyle='rgba(28,30,34,.55)';x.fill();x.strokeStyle='#2a2d31';x.lineWidth=3;x.stroke();x.strokeStyle='#c98a3c';x.lineWidth=1.4;x.stroke();
+ x.fillStyle='#e0a24c';x.fillRect(Math.round(sx(118)),Math.round(sy(164)),2,1);x.fillRect(Math.round(sx(140)),Math.round(sy(164)),2,1);
+ x.strokeStyle='#c98a3c';x.lineWidth=1.2;x.beginPath();x.moveTo(sx(126),sy(190));x.lineTo(sx(132),sy(197));x.lineTo(sx(138),sy(190));x.stroke();
+ // runes down the beard
+ x.strokeStyle='#b8792f';x.lineWidth=1;
+ const runes=[[[0,0],[0,6],[3,3]],[[0,0],[0,6],[3,2],[0,3]],[[0,6],[0,0],[3,2]],[[0,0],[3,3],[0,6]],[[1.5,0],[1.5,6],[0,2],[1.5,0],[3,2]],[[0,6],[0,0],[3,1.5],[0,3],[3,4.5]]];
+ let px=sx(150),py=sy(250);runes.forEach((r,i)=>{x.beginPath();r.forEach((p,j)=>j?x.lineTo(px+p[0],py+p[1]):x.moveTo(px+p[0],py+p[1]));x.stroke();px-=3.2;py+=6.4});
+});
+const ironTex=canvasTex(32,32,(x,w,h)=>{noiseFill(x,w,h,[78,84,90],30);x.fillStyle='rgba(20,22,25,.35)';for(let i=0;i<30;i++)x.fillRect(Math.floor(rnd()*w),Math.floor(rnd()*h),1,1)});
+const brightIronTex=canvasTex(32,32,(x,w,h)=>{noiseFill(x,w,h,[120,128,134],30)});
+const bronzeTex=canvasTex(16,16,(x,w,h)=>{noiseFill(x,w,h,[176,116,46],34);x.fillStyle='rgba(255,210,130,.35)';x.fillRect(0,0,w,3);x.fillStyle='rgba(60,30,8,.4)';x.fillRect(0,h-3,w,3)});
+const woodTex=canvasTex(24,160,(x,w,h)=>{
+ noiseFill(x,w,h,[104,68,38],18);
+ for(let i=0;i<14;i++){const c=rnd()<.5?'rgba(58,34,16,.55)':'rgba(150,104,60,.45)';x.fillStyle=c;const cx=Math.floor(rnd()*w);let y=Math.floor(rnd()*h);x.fillRect(cx,y,1,20+Math.floor(rnd()*60))}
+ x.fillStyle='rgba(40,22,10,.8)';x.fillRect(Math.floor(w*.3),Math.floor(h*.4),2,3);
+});
+const leatherTex=canvasTex(32,64,(x,w,h)=>{
+ noiseFill(x,w,h,[74,48,32],16);
+ for(let k=-8;k<16;k++){x.fillStyle='rgba(28,16,9,.85)';for(let i=0;i<w;i++){x.fillRect(i,Math.floor(k*6+i*.35),1,1)}x.fillStyle='rgba(130,92,64,.5)';for(let i=0;i<w;i++){x.fillRect(i,Math.floor(k*6+i*.35)+2,1,1)}}
+});
+const furTex=canvasTex(32,64,(x,w,h)=>{
+ const d=x.createImageData(w,h);for(let j=0;j<h;j++)for(let i=0;i<w;i++){const t=j/h;let g=150-70*t+(rnd()-.5)*40;if((i+Math.floor(j/6))%5===0)g-=35;if(t>.8)g=40+rnd()*20;if(t<.12)g=190+rnd()*30;const o=(j*w+i)*4;d.data[o]=g*1.02;d.data[o+1]=g;d.data[o+2]=g*.94;d.data[o+3]=255}x.putImageData(d,0,0);
+});
+const cordTex=canvasTex(8,32,(x,w,h)=>{noiseFill(x,w,h,[62,40,24],20);x.fillStyle='rgba(20,10,5,.7)';for(let j=0;j<h;j+=3)x.fillRect(0,j,w,1)});
+
+// ---------- geometry builders (non-indexed, flat shaded) ----------
+const meshes=[];
+function mesh(tex,spec,shin){const m={tex,spec,shin,p:[],u:[]};meshes.push(m);return m}
+function tri(m,a,b,c,ua,ub,uc){m.p.push(...a,...b,...c);m.u.push(...ua,...ub,...uc)}
+function quad(m,a,b,c,d,ua,ub,uc,ud){tri(m,a,b,c,ua,ub,uc);tri(m,a,c,d,ua,uc,ud)}
+function earcut(pts){// returns triangles index list, pts CCW
+ const idx=pts.map((_,i)=>i),out=[];const area=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const inside=(p,a,b,c)=>area(a,b,p)>=0&&area(b,c,p)>=0&&area(c,a,p)>=0;
+ let guard=0;while(idx.length>3&&guard++<5000){let cut=false;for(let i=0;i<idx.length;i++){const ia=idx[(i+idx.length-1)%idx.length],ib=idx[i],ic=idx[(i+1)%idx.length];const a=pts[ia],b=pts[ib],c=pts[ic];if(area(a,b,c)<=1e-9)continue;let ok=true;for(const j of idx){if(j===ia||j===ib||j===ic)continue;if(inside(pts[j],a,b,c)){ok=false;break}}if(ok){out.push([ia,ib,ic]);idx.splice(i,1);cut=true;break}}if(!cut)break}
+ if(idx.length===3)out.push(idx.slice());return out}
+function signedArea(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
+// extrude a 2D outline with thickness function th(x,y)
+function extrude(m,pts,th,uvf,zoff=0){
+ if(signedArea(pts)<0)pts=pts.slice().reverse();
+ const tris=earcut(pts);
+ for(const [a,b,c] of tris){const A=pts[a],B=pts[b],C=pts[c];
+  tri(m,[A[0],A[1],zoff+th(A)],[B[0],B[1],zoff+th(B)],[C[0],C[1],zoff+th(C)],uvf(A),uvf(B),uvf(C));
+  tri(m,[A[0],A[1],zoff-th(A)],[C[0],C[1],zoff-th(C)],[B[0],B[1],zoff-th(B)],uvf(A),uvf(C),uvf(B));}
+ for(let i=0;i<pts.length;i++){const A=pts[i],B=pts[(i+1)%pts.length];const ua=uvf(A),ub=uvf(B);
+  quad(m,[A[0],A[1],zoff-th(A)],[B[0],B[1],zoff-th(B)],[B[0],B[1],zoff+th(B)],[A[0],A[1],zoff+th(A)],ua,ub,ub,ua);}
+}
+function prism(m,cx,cz,y0,y1,r0,r1,seg,rot=0,vrep=1){
+ for(let i=0;i<seg;i++){const a0=rot+i/seg*Math.PI*2,a1=rot+(i+1)/seg*Math.PI*2;
+  const p=(a,y,r)=>[cx+Math.cos(a)*r,y,cz+Math.sin(a)*r];
+  quad(m,p(a0,y0,r0),p(a1,y0,r0),p(a1,y1,r1),p(a0,y1,r1),[i/seg,0],[(i+1)/seg,0],[(i+1)/seg,vrep],[i/seg,vrep]);
+  tri(m,[cx,y1,cz],p(a1,y1,r1),p(a0,y1,r1),[.5,.5],[.5,.6],[.6,.5]);
+  tri(m,[cx,y0,cz],p(a0,y0,r0),p(a1,y0,r0),[.5,.5],[.6,.5],[.5,.6]);}
+}
+function box(m,x0,x1,y0,y1,z0,z1){const v=(x,y,z)=>[x,y,z];
+ const f=(a,b,c,d)=>quad(m,a,b,c,d,[0,0],[1,0],[1,1],[0,1]);
+ f(v(x0,y0,z1),v(x1,y0,z1),v(x1,y1,z1),v(x0,y1,z1));f(v(x1,y0,z0),v(x0,y0,z0),v(x0,y1,z0),v(x1,y1,z0));
+ f(v(x0,y0,z0),v(x0,y0,z1),v(x0,y1,z1),v(x0,y1,z0));f(v(x1,y0,z1),v(x1,y0,z0),v(x1,y1,z0),v(x1,y1,z1));
+ f(v(x0,y1,z1),v(x1,y1,z1),v(x1,y1,z0),v(x0,y1,z0));f(v(x0,y0,z0),v(x1,y0,z0),v(x1,y0,z1),v(x0,y0,z1));}
+// tube along a polyline with radius profile
+function tube(m,path,radii,seg,twist=0){
+ const rings=path.map((c,k)=>{const n=path[Math.min(k+1,path.length-1)],pv=path[Math.max(k-1,0)];const d=[n[0]-pv[0],n[1]-pv[1],n[2]-pv[2]];const L=Math.hypot(...d);const t=d.map(v=>v/L);
+  let a=[0,0,1];let b=[t[1]*a[2]-t[2]*a[1],t[2]*a[0]-t[0]*a[2],t[0]*a[1]-t[1]*a[0]];const bl=Math.hypot(...b);b=b.map(v=>v/bl);a=[b[1]*t[2]-b[2]*t[1],b[2]*t[0]-b[0]*t[2],b[0]*t[1]-b[1]*t[0]];
+  const r=[];const jit=[];for(let i=0;i<seg;i++)jit.push(.8+rnd()*.4);for(let i=0;i<=seg;i++){const an=i/seg*Math.PI*2+k*twist;const rr=radii[k]*jit[i%seg];r.push([c[0]+(Math.cos(an)*a[0]+Math.sin(an)*b[0])*rr,c[1]+(Math.cos(an)*a[1]+Math.sin(an)*b[1])*rr,c[2]+(Math.cos(an)*a[2]+Math.sin(an)*b[2])*rr])}return r});
+ for(let k=0;k<rings.length-1;k++)for(let i=0;i<seg;i++){const v0=k/(rings.length-1),v1=(k+1)/(rings.length-1);
+  quad(m,rings[k][i],rings[k][i+1],rings[k+1][i+1],rings[k+1][i],[i/seg,1-v0],[(i+1)/seg,1-v0],[(i+1)/seg,1-v1],[i/seg,1-v1]);}
+}
+
+// ---------- build the axe ----------
+const Y=v=>-(v-380)/300, X=v=>(v-242)/300;
+// haft
+prism(mesh(woodTex,.08,8),0,0,Y(668),Y(70),.040,.044,7,.2,1);
+// leather grip
+prism(mesh(leatherTex,.05,6),0,0,Y(626),Y(458),.050,.050,7,.2,2.4);
+// bronze rings
+const brz=mesh(bronzeTex,.55,24);
+prism(brz,0,0,Y(634),Y(624),.057,.057,7,.2);prism(brz,0,0,Y(462),Y(452),.057,.057,7,.2);
+// pommel
+const pom=mesh(ironTex,.45,18);prism(pom,0,0,Y(690),Y(650),.056,.044,6,0);prism(pom,0,0,Y(700),Y(690),.04,.056,6,0);
+// blade wedge
+const blade2d=bladeSvg.map(p=>S(p[0],p[1]));
+const bx0=X(BX0),bx1=X(BX1),by0=Y(BY1),by1=Y(BY0);
+extrude(mesh(bladeTex,.75,30),blade2d,p=>{const t=(p[0]-bx0)/(X(220)-bx0);return .0035+.028*Math.max(0,Math.min(1,t))**1.4},p=>[(p[0]-bx0)/(bx1-bx0),(p[1]-by0)/(by1-by0)]);
+// socket + poll
+const sock=mesh(ironTex,.5,20);box(sock,X(218),X(266),Y(216),Y(80),-.048,.048);
+extrude(sock,pollSvg.map(p=>S(p[0],p[1])),p=>.036-.02*Math.max(0,(p[0]-X(264))/(X(314)-X(264))),p=>[p[0]*3,p[1]*3]);
+const bands=mesh(bronzeTex,.6,24);box(bands,X(212),X(272),Y(108),Y(94),-.054,.054);box(bands,X(212),X(272),Y(202),Y(188),-.054,.054);
+// rivet
+prism(mesh(bronzeTex,.7,30),X(242),0,0,0,0,0,3);// placeholder no-op
+const riv=mesh(bronzeTex,.7,30);box(riv,X(236),X(248),Y(154),Y(142),-.054,.054);
+// cord + wolf tail
+const cord=mesh(cordTex,.05,4);
+tube(cord,[[X(232),Y(214),.05],[X(228),Y(240),.07],[X(222),Y(270),.075],[X(220),Y(296),.07]],[.008,.008,.008,.008],5);
+const tailPath=[],tailR=[];const N=13;for(let k=0;k<=N;k++){const t=k/N;tailPath.push([X(220)-0.06*t*t-0.01*Math.sin(t*3),Y(292)-t*0.52,.07+0.03*Math.sin(t*2.4)]);tailR.push(t<.08?.02:Math.sin(Math.min(1,t*1.15)*Math.PI*.92)*.075+.008)}
+tailR[N]=0.004;
+tube(mesh(furTex,.03,4),tailPath,tailR,8,.25);
+const binding=mesh(bronzeTex,.6,24);prism(binding,X(220),.07,Y(306),Y(290),.026,.026,6,0);
+
+// ---------- GL ----------
+const vs=`#version 300 es
+in vec3 p;in vec2 u;uniform mat4 mvp;uniform mat4 mdl;out vec3 wp;out vec2 vu;
+void main(){vec4 w=mdl*vec4(p,1.);wp=w.xyz;vu=u;gl_Position=mvp*vec4(p,1.);}`;
+const fs=`#version 300 es
+precision highp float;in vec3 wp;in vec2 vu;uniform sampler2D t;uniform vec3 cam;uniform float spec,shin;out vec4 o;
+void main(){
+ vec3 n=normalize(cross(dFdx(wp),dFdy(wp)));
+ vec3 v=normalize(cam-wp); if(dot(n,v)<0.)n=-n;
+ vec3 alb=texture(t,vu).rgb; alb=pow(alb,vec3(2.2));
+ vec3 L=normalize(vec3(-.55,.75,.62)); vec3 sun=vec3(1.55,1.2,.82);
+ vec3 R=normalize(vec3(.8,.15,-.6)); vec3 rim=vec3(.35,.45,.65);
+ float hemi=n.y*.5+.5; vec3 amb=mix(vec3(.14,.10,.07),vec3(.26,.30,.38),hemi);
+ float d=max(dot(n,L),0.); d=floor(d*4.+.5)/4.*.35+d*.65;
+ vec3 h=normalize(L+v); float s=pow(max(dot(n,h),0.),shin)*spec;
+ float rr=pow(1.-max(dot(n,v),0.),3.)*max(dot(n,R)+.3,0.);
+ vec3 c=alb*(amb+sun*d)+sun*s*.9+rim*rr*.8;
+ c=c/(c+vec3(.85))*1.55; c=pow(c,vec3(1./2.2));
+ o=vec4(c,1.);}`;
+function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(s);return s}
+const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+const texCache=new Map();function glTex(c){if(texCache.has(c))return texCache.get(c);const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);texCache.set(c,t);return t}
+const ap=gl.getAttribLocation(pr,'p'),au=gl.getAttribLocation(pr,'u');
+for(const m of meshes){m.vao=gl.createVertexArray();gl.bindVertexArray(m.vao);
+ const b1=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b1);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(m.p),gl.STATIC_DRAW);gl.enableVertexAttribArray(ap);gl.vertexAttribPointer(ap,3,gl.FLOAT,false,0,0);
+ const b2=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b2);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(m.u),gl.STATIC_DRAW);gl.enableVertexAttribArray(au);gl.vertexAttribPointer(au,2,gl.FLOAT,false,0,0);
+ m.n=m.p.length/3;m.gt=glTex(m.tex);}
+// pose
+const rz=+(P.get('rz')??-30)*Math.PI/180, ryy=+(P.get('ry')??28)*Math.PI/180, rxx=+(P.get('rx')??8)*Math.PI/180, dist=+(P.get('d')||5.2), oy=+(P.get('oy')||0), ox=+(P.get('ox')||0);
+const model=M.mul(M.trans(ox,oy,0),M.mul(M.rz(rz),M.mul(M.rx(rxx),M.mul(M.ry(ryy),M.trans(+(P.get("cx")||0.24),+(P.get("cy")||0),0)))));
+const view=M.trans(0,0,-dist);const proj=M.persp(+(P.get('fov')||30)*Math.PI/180,W/H,.1,50);
+const mvp=M.mul(proj,M.mul(view,model));
+gl.viewport(0,0,W,H);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+gl.uniformMatrix4fv(gl.getUniformLocation(pr,'mvp'),false,new Float32Array(mvp));
+// world space = view*model so camera at origin
+gl.uniformMatrix4fv(gl.getUniformLocation(pr,'mdl'),false,new Float32Array(M.mul(view,model)));
+gl.uniform3f(gl.getUniformLocation(pr,'cam'),0,0,0);
+for(const m of meshes){if(!m.n)continue;gl.bindVertexArray(m.vao);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,m.gt);gl.uniform1i(gl.getUniformLocation(pr,'t'),0);gl.uniform1f(gl.getUniformLocation(pr,'spec'),m.spec);gl.uniform1f(gl.getUniformLocation(pr,'shin'),m.shin);gl.drawArrays(gl.TRIANGLES,0,m.n);}
+document.title='done';
+</script></body></html>

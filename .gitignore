@@ -1,0 +1,14 @@
+bin/
+obj/
+*.user
+.vs/
+# never commit game files, decompiled code or extracted assets
+decomp/
+*.assets
+assembly_*.dll
+# build output staged for the game
+dist/
+docs/video/
+docs/gear/
+# handoff bundles between sessions are working files, not part of the mod
+handoff-glow/

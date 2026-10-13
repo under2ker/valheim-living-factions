@@ -1,0 +1,25 @@
+# The road: found over dry land, painted, cleared, lit. Run twice: the second run must show the
+# same road at once, without waiting for it to be made again.
+god
+env 0.4 Clear
+goto 1
+roads
+roadtp 1 dry 150
+wait 20
+hidehud on
+roadview 1 dry
+shot road_at_once
+wait 130
+roads
+seams 200
+shot road_day
+lampview
+shot road_lamp
+env 0.97 Clear
+wait 6
+roadview 1 dry
+shot road_night
+env 0.4 Clear
+cam
+hidehud off
+quit

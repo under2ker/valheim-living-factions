@@ -1,0 +1,14 @@
+# People and places read in Russian when the mod speaks Russian, and switch with the language.
+god
+env 0.4 Clear
+lang Russian
+goto 4
+npcs
+expect страж :: npcs
+reject , guard :: npcs
+ui open chief
+expect Стейнвик :: ui state
+ui close
+view 4 30 14 135
+shot names_ru
+quit

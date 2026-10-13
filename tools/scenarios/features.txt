@@ -1,0 +1,42 @@
+# Roads with lamps, the settings menu, the hire button, caravans, the tower guard.
+god
+env 0.4 Clear
+goto 4
+roads
+# the settings menu and its icon on the inventory screen
+inv
+wait 1
+expect icon present :: modmenu state
+shot feat_inventory
+modmenu open
+shot feat_menu
+expect Язык :: modmenu state
+modmenu page 2
+shot feat_menu_world
+modmenu close
+inv off
+# the hire button in the chief's dialog
+ui open chief
+expect Нанять :: ui state
+ui close
+# a caravan leaves by the road
+hidehud on
+speed 3
+caravan 4
+until journey out :: npcs
+wait 20
+watch journey
+shot feat_caravan
+cam
+# the road itself: 150 m out of the settlement
+speed 1
+tp 929 -117
+wait 45
+roads
+shot feat_road_day
+env 0.97 Clear
+wait 6
+shot feat_road_night
+env 0.4 Clear
+hidehud off
+quit

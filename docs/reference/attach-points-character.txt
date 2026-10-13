@@ -1,0 +1,30 @@
+Joints equipment hangs on. Position is in the character's own space in the current pose: x to their right, y up from the feet, z forward. Metres.
+  rightHand           (+0.32, +0.80, +0.04)  scale 0.95  RightForeArm/RightHand/RightHand_Attach  - one- and two-handed weapons, tools, torch
+  leftHand            (-0.27, +0.79, +0.06)  scale 0.95  LeftForeArm/LeftHand/LeftHand_Attach  - shield, bow, left-hand weapons
+  helmet              (-0.02, +1.72, +0.15)  scale 0.95  Neck/Head/Helmet_attach  - helmet
+  backMelee           (+0.23, +1.74, -0.17)  scale 95  Spine/Spine1/BackOneHanded_attach  - sheathed one-handed weapon, torch
+  backTwohandedMelee  (+0.21, +1.69, -0.16)  scale 95  Spine/Spine1/BackTwohanded_attach  - sheathed two-handed weapon
+  backShield          (+0.00, +1.34, -0.31)  scale 95  Spine/Spine1/BackShield_attach  - shield on the back
+  backBow             (-0.03, +1.19, -0.22)  scale 95  Spine/Spine1/BackBow_attach  - bow on the back
+  backTool            (+0.24, +1.08, -0.03)  scale 95  Armature/Hips/BackTool_attach  - tool on the back, left-hand torch
+  backAtgeir          (+0.10, +0.89, -0.33)  scale 95  Spine/Spine1/BackAtgeir_attach  - atgeir on the back
+Skeleton (skinned armour, capes and belts follow these):
+  Hips                (+0.02, +0.89, +0.00)  Hips
+  Spine               (+0.01, +1.01, -0.02)  Spine
+  Chest               (+0.01, +1.29, -0.05)  Spine1
+  Neck                (-0.01, +1.58, +0.01)  Neck
+  Head                (-0.02, +1.64, +0.06)  Head
+  LeftShoulder        (-0.08, +1.56, +0.00)  LeftShoulder
+  LeftUpperArm        (-0.19, +1.46, -0.02)  LeftArm
+  LeftLowerArm        (-0.23, +1.14, +0.00)  LeftForeArm
+  LeftHand            (-0.28, +0.89, +0.04)  LeftHand
+  RightShoulder       (+0.07, +1.57, +0.01)  RightShoulder
+  RightUpperArm       (+0.18, +1.46, +0.01)  RightArm
+  RightLowerArm       (+0.25, +1.15, +0.01)  RightForeArm
+  RightHand           (+0.32, +0.90, +0.03)  RightHand
+  LeftUpperLeg        (-0.08, +1.00, -0.02)  LeftUpLeg
+  LeftLowerLeg        (-0.13, +0.55, +0.07)  LeftLeg
+  LeftFoot            (-0.18, +0.12, -0.04)  LeftFoot
+  RightUpperLeg       (+0.11, +1.01, -0.03)  RightUpLeg
+  RightLowerLeg       (+0.15, +0.56, +0.06)  RightLeg
+  RightFoot           (+0.18, +0.12, -0.01)  RightFoot

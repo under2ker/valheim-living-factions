@@ -1,0 +1,45 @@
+# Smoke test of a settlement the simulation built itself (Steinvik, id 4, in the lab world).
+god
+env 0.4 Clear
+speed 3
+goto 4
+expect Steinvik :: status
+expect worst deviation 0.0 :: padcheck 4
+reject BLOCKED :: doorcheck 4
+expect inhabitants :: count
+expect maxPerTarget :: npcs
+reject ALERT :: npcs
+expect Woodx :: chests
+expect Coinsx :: chests
+
+# dialog: wares, relic, mystery
+rep 8 45
+coins 600
+ui open chief
+expect [main] :: ui state
+expect монеты :: ui click 2
+expect сделка :: ui click 3
+expect [light] :: items
+ui close
+
+# what it looks like
+view 4 30 14 135
+shot smoke_day
+inside 4 Hut 1.3 1.9
+shot smoke_hut
+
+# night: villagers indoors, guards out
+env 0.97 Clear
+wait 90
+expect asleep :: npcs
+expect [Guard] idle :: npcs
+view 4 30 14 135
+shot smoke_night
+
+# morning again and out
+env 0.4 Clear
+wait 30
+reject asleep :: npcs
+cam
+speed 1
+quit
