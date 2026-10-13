@@ -2,11 +2,55 @@ using System.Collections.Generic;
 
 namespace LivingFactions.Core
 {
-    /// <summary>All player-facing text, English and Russian. Index 0 = en, 1 = ru.</summary>
-    public static class Texts
+    /// <summary>
+    /// All player-facing text. English and Russian sit side by side in the table below; every other
+    /// language is a table of its own (Texts.pl.cs and so on) and falls back to English for a line
+    /// it does not have.
+    /// </summary>
+    public static partial class Texts
     {
-        /// <summary>0 = English, 1 = Russian.</summary>
+        /// <summary>The languages the mod speaks, in the order of <see cref="Lang"/>.</summary>
+        public static readonly string[] Codes = { "en", "ru", "pl", "de", "fr", "es", "pt" };
+
+        /// <summary>Index into <see cref="Codes"/>: 0 = English, 1 = Russian, 2 and up the other tables.</summary>
         public static int Lang;
+
+        private static readonly Dictionary<string, string>[] More = new Dictionary<string, string>[Codes.Length];
+
+        /// <summary>What the game calls its languages, for following the game's own choice.</summary>
+        private static readonly Dictionary<string, string> GameNames = new Dictionary<string, string>
+        {
+            { "English", "en" }, { "Russian", "ru" }, { "Polish", "pl" }, { "German", "de" }, { "French", "fr" },
+            { "Spanish", "es" }, { "Portuguese_Brazilian", "pt" }, { "Portuguese_European", "pt" },
+        };
+
+        /// <summary>
+        /// The language to speak: the player's own choice when they made one, otherwise the game's
+        /// language when the mod knows it, otherwise English.
+        /// </summary>
+        public static int Resolve(string choice, string gameLanguage)
+        {
+            choice = (choice ?? "").Trim().ToLowerInvariant();
+            int index = System.Array.IndexOf(Codes, choice);
+            if (index >= 0) return index;
+            string code;
+            if (gameLanguage != null && GameNames.TryGetValue(gameLanguage, out code)) return System.Array.IndexOf(Codes, code);
+            return 0;
+        }
+
+        public static string Code { get { return Codes[Lang >= 0 && Lang < Codes.Length ? Lang : 0]; } }
+
+        /// <summary>Every key of the main table (for checking that a language misses nothing).</summary>
+        public static IEnumerable<string> Keys { get { return T.Keys; } }
+
+        public static bool Has(string key) { return T.ContainsKey(key); }
+
+        /// <summary>True when the language has its own wording for the line (English and Russian have all of them).</summary>
+        public static bool Translated(int lang, string key)
+        {
+            if (lang < 2) return T.ContainsKey(key);
+            return More[lang] != null && More[lang].ContainsKey(key);
+        }
 
         private static readonly Dictionary<string, string[]> T = new Dictionary<string, string[]>
         {
@@ -214,6 +258,17 @@ namespace LivingFactions.Core
             { "lang_auto", new[] { "as in the game", "как в игре" } },
             { "lang_en", new[] { "English", "English" } },
             { "lang_ru", new[] { "Русский", "Русский" } },
+            { "lang_pl", new[] { "Polski", "Polski" } },
+            { "lang_de", new[] { "Deutsch", "Deutsch" } },
+            { "lang_fr", new[] { "Français", "Français" } },
+            { "lang_es", new[] { "Español", "Español" } },
+            { "lang_pt", new[] { "Português", "Português" } },
+            { "title_Chief", new[] { "chieftain", "вождь" } },
+            { "title_Guard", new[] { "guard", "страж" } },
+            { "title_Raider", new[] { "raider", "налётчик" } },
+            { "title_Mercenary", new[] { "hired sword", "наёмник" } },
+            { "title_Trader", new[] { "trader", "торговец" } },
+            { "title_Escort", new[] { "caravan guard", "охранник каравана" } },
             { "opt_language", new[] { "Language", "Язык" } },
             { "opt_hud", new[] { "Chronicle on screen", "Хроника на экране" } },
             { "opt_messages", new[] { "Messages about great events", "Сообщения о важных событиях" } },
@@ -362,6 +417,8 @@ namespace LivingFactions.Core
         public static string Get(string key)
         {
             string[] entry;
+            string other;
+            if (Lang >= 2 && Lang < More.Length && More[Lang] != null && More[Lang].TryGetValue(key, out other)) return other;
             if (!T.TryGetValue(key, out entry)) return key;
             return entry[Lang == 1 ? 1 : 0];
         }
@@ -387,6 +444,8 @@ namespace LivingFactions.Core
         {
             if (f == null) return "?";
             CultureDef c = Defs.Culture(f.CultureId);
+            string other;
+            if (Lang >= 2 && Lang < More.Length && More[Lang] != null && More[Lang].TryGetValue("f_" + c.Id, out other)) return other;
             return Lang == 1 ? c.NameRu : c.NameEn;
         }
 

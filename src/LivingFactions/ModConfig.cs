@@ -48,7 +48,7 @@ namespace LivingFactions
             Errands = cfg.Bind("Features", "Errands", true, "Between shifts villagers visit other buildings or walk out along the road and back.");
             RoadLamps = cfg.Bind("Features", "RoadLamps", true, "Lamp posts stand along the roads between settlements, one every 30 m.");
             RoadReach = cfg.Bind("World", "RoadReach", 1500f, new ConfigDescription("Settlements closer than this to a neighbour they are not at war with lay a road to it.", new AcceptableValueRange<float>(0f, 5000f)));
-            Language = cfg.Bind("General", "Language", "auto", "Mod text language: auto (follow the game), en or ru.");
+            Language = cfg.Bind("General", "Language", "auto", "Mod text language: auto (follow the game when the mod speaks its language, otherwise English) or one of en, ru, pl, de, fr, es, pt.");
             ShowChronicleMessages = cfg.Bind("General", "ShowChronicleMessages", true, "Show notable faction events (wars, new settlements, raids) as on-screen messages.");
             DevTools = cfg.Bind("Dev", "DevTools", false, "Enable the developer command file bridge and autostart (for testing the mod).");
         }

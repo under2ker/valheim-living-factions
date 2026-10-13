@@ -36,6 +36,7 @@ namespace LivingFactions
                 if (s.Destroyed || known.Contains(s.Id)) continue;
                 if (Utils.DistanceXZ(me, new Vector3(s.Pos.X, 0f, s.Pos.Z)) > 90f) continue;
                 known.Add(s.Id);
+                Net.Discover(pid, s.Id);
                 changed = true;
                 Faction f = state.GetFaction(s.FactionId);
                 if (MessageHud.instance != null)

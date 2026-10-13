@@ -1,0 +1,18 @@
+# A guest builds what the host's simulation has decided: the host runs ahead, the guest goes to a
+# village that has grown meanwhile and puts the new buildings up; the host must hear how far they got.
+god
+env 0.4 Clear
+goto 26
+waitready 300
+expect builds settlements [26 :: net
+expect worst deviation 0.0 :: padcheck 26
+wait 25
+reject BLOCKED :: doorcheck 26
+expect unconfirmed building reports 0 :: net
+count
+view 26 30 20 135
+shot mp_guest_built
+# the server saves the world and the faction state, as it would when its owner stops it
+server quit
+wait 6
+quit

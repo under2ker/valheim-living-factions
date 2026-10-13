@@ -1,0 +1,30 @@
+# A guest on a dedicated server (run by tools/lfmp.sh). What the guest does must reach the host,
+# and the guest must put up what the host's simulation decides to build.
+god
+env 0.4 Clear
+goto 4
+expect guest :: net
+expect keeps roads True :: net
+expect inhabitants :: count
+expect worst deviation 0.0 :: padcheck 4
+reject BLOCKED :: doorcheck 4
+# a purchase: the coins the guest pays must still be in the settlement's stores after the host's next copy
+emptybag
+coins 600
+status
+ui open chief
+expect монеты :: ui click 2
+expect сделка :: ui click 3
+ui close
+status
+wait 20
+status
+# the host runs three days ahead; the guest is the one who builds what that brings
+server advance 3
+wait 25
+waitready 240
+net
+expect worst deviation 0.0 :: padcheck 4
+view 4 30 14 135
+shot mp_guest_village
+quit

@@ -81,7 +81,7 @@ namespace LivingFactions
             if (Pages.Count > 0) return;
 
             Page general = AddPage("menu_page_general");
-            Choice(general, "opt_language", ModConfig.Language, new[] { "auto", "en", "ru" }, v => Texts.Get("lang_" + v));
+            Choice(general, "opt_language", ModConfig.Language, new[] { "auto", "en", "ru", "pl", "de", "fr", "es", "pt" }, v => Texts.Get("lang_" + v));
             general.Rows[general.Rows.Count - 1].Click += ApplyLanguage;
             Toggle(general, "opt_hud", ModConfig.HudWidget);
             Toggle(general, "opt_messages", ModConfig.ShowChronicleMessages);
@@ -115,8 +115,7 @@ namespace LivingFactions
 
         private static void ApplyLanguage()
         {
-            string choice = ModConfig.Language.Value.Trim().ToLowerInvariant();
-            Texts.Lang = choice == "ru" ? 1 : choice == "en" ? 0 : Localization.instance != null && Localization.instance.GetSelectedLanguage() == "Russian" ? 1 : 0;
+            Texts.Lang = Texts.Resolve(ModConfig.Language.Value, Localization.instance != null ? Localization.instance.GetSelectedLanguage() : null);
             foreach (FactionMember member in FactionMember.All) member.Rename();
         }
 

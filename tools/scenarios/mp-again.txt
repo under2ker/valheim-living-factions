@@ -1,0 +1,11 @@
+# The same server world after a restart: everything stands, nothing is put up twice, the ground is level.
+god
+env 0.4 Clear
+goto 26
+waitready 300
+expect pieces placed this session 0, :: count
+expect worst deviation 0.0 :: padcheck 26
+wait 25
+reject BLOCKED :: doorcheck 26
+expect inhabitants :: count
+quit

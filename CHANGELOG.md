@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.4.0 - 2026-10-14
+- Playing together. The simulation runs on whoever hosts the world, a player or a dedicated
+  server, and everyone else reads a copy the host sends out. What a guest does (gifts, trade,
+  hiring, kills, war, peace, alliance, theft, finding a settlement) reaches the host and stays.
+  The player nearest a settlement puts it up in the world, levels its ground and brings its people
+  out; a dedicated server builds nothing itself. Roads, lamps and raids have one keeper in each
+  neighbourhood, so nothing is done twice. Everyone on the server needs the mod, the server too.
+- Five more languages: Polish, German, French, Spanish and Portuguese, about 290 lines each. The
+  language follows the game by default; the menu now lets you pick any of the seven whatever the
+  game is set to. Names of people and places are translated for Russian only.
+- Fixed: a sapling or a tree on a doorstep kept people out of their house. Doorsteps and paths
+  are cleared again every 20 seconds, because growth turns up later than the ground it stands on.
+- Checked on a dedicated server with one guest on the same machine: the guest received the state
+  and saw the village with level ground and its people; a purchase by the guest stayed in the
+  settlement's stores after the host's next copy; the guest put up a settlement nobody had visited
+  (623 pieces, twice, the same number both times), the server recorded every building, and after
+  the server was restarted nothing was placed again.
+- Not checked: a player hosting from the game with a friend joining, and two players in the same
+  settlement at once. Both need a second Steam account.
+- Dev tools: `tools/lfmp.sh` starts a dedicated server with a copy of the lab world and joins the
+  game to it as a guest; scenarios mp, mp-build, mp-again, langs; commands `net`, `server <cmd>`,
+  `lang mod <code>`; translations live in `tools/lang/*.tsv` and `tools/lang/build.py` checks them.
+
 ## 0.3.4 - 2026-10-13
 - Paths inside a settlement are kept clear of trees, rocks and bushes. A village that grew in a
   wood used to keep the whole wood between its houses, so its paths lay under the canopy and

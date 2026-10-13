@@ -1,0 +1,35 @@
+# The mod's language chosen apart from the game's: the game stays Russian, the mod speaks each
+# of its other languages in turn, and goes back to following the game at the end.
+god
+env 0.4 Clear
+# the game itself stays Russian throughout
+expect game language Russian :: lang Russian
+goto 4
+expect mod language pl :: lang mod pl
+expect wódz :: npcs
+ui open chief
+expect Handluj :: ui state
+shot lang_pl_dialog
+ui close
+modmenu open
+expect Język :: modmenu state
+shot lang_pl_menu
+expect mod language de :: lang mod de
+modmenu open
+expect Sprache :: modmenu state
+shot lang_de_menu
+expect mod language fr :: lang mod fr
+ui open chief
+expect Commercer :: ui state
+shot lang_fr_dialog
+ui close
+expect mod language es :: lang mod es
+expect jefe :: npcs
+expect mod language pt :: lang mod pt
+modmenu open
+expect Idioma :: modmenu state
+shot lang_pt_menu
+modmenu close
+expect mod language ru :: lang mod auto
+expect вождь :: npcs
+quit

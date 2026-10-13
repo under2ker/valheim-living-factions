@@ -69,7 +69,7 @@ namespace LivingFactions
             {
                 if (inv.CountItems("$item_coins") < price) return "r_hire_poor";
                 inv.RemoveItem("$item_coins", price);
-                s.Stock[(int)Res.Coins] += price;
+                Net.AddStock(s, Res.Coins, price);
             }
             int joined = 0;
             for (int i = 0; i < 2; i++)
@@ -102,7 +102,7 @@ namespace LivingFactions
 
             foreach (Settlement s in SimHost.Sim.State.Settlements)
             {
-                if (s.Destroyed || s.Population < 5f) continue;
+                if (s.Destroyed || s.Population < 5f || !Net.IsBuilder(s)) continue;
                 Vector3 centre = new Vector3(s.Pos.X, 0f, s.Pos.Z);
                 if (Utils.DistanceXZ(player.transform.position, centre) > 110f || !ZNetScene.instance.IsAreaReady(centre)) continue;
                 if (SimHost.Sim.IsHostileToPlayer(s.FactionId, player.GetPlayerID())) continue;

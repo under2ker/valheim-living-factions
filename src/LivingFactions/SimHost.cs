@@ -38,9 +38,15 @@ namespace LivingFactions
         public static void Update()
         {
             // The simulation belongs to whoever hosts the world.
-            if (ZNet.instance == null || !ZNet.instance.IsServer() || ZoneSystem.instance == null || ZNetScene.instance == null)
+            if (ZNet.instance == null || ZoneSystem.instance == null || ZNetScene.instance == null)
             {
                 if (Sim != null) Unload();
+                return;
+            }
+            if (!ZNet.instance.IsServer())
+            {
+                // A guest in somebody else's world reads the copy of the state the host sends (Net.cs).
+                Net.ClientUpdate();
                 return;
             }
             if (Sim == null)
@@ -49,6 +55,15 @@ namespace LivingFactions
                 Load();
             }
             Sim.AdvanceTo(WorldDay + Sim.State.ClockOffset, 6);
+            Net.HostUpdate();
+        }
+
+        /// <summary>A guest's copy of the host's state: read like the real thing, never run forward.</summary>
+        public static void SetMirror(WorldState state)
+        {
+            if (Sim == null) Texts.Lang = ResolveLanguage();
+            Sim = new Simulation(state, new GameWorld(), ModConfig.ToBalance());
+            Sim.PlayerBuyMult = Wares.BuyMultiplier;
         }
 
         private static bool WorldReady()
@@ -94,7 +109,7 @@ namespace LivingFactions
             Texts.Lang = ResolveLanguage();
             Sim = new Simulation(state, new GameWorld(), ModConfig.ToBalance());
             Sim.EventRaised += OnEvent;
-            Sim.RaidInterceptor = Raids.Stage;
+            Sim.RaidInterceptor = Net.StageRaid;
             Sim.PlayerBuyMult = Wares.BuyMultiplier;
             if (!state.Seeded)
             {
@@ -113,10 +128,7 @@ namespace LivingFactions
 
         private static int ResolveLanguage()
         {
-            string choice = ModConfig.Language.Value.Trim().ToLowerInvariant();
-            if (choice == "ru") return 1;
-            if (choice == "en") return 0;
-            return Localization.instance != null && Localization.instance.GetSelectedLanguage() == "Russian" ? 1 : 0;
+            return Texts.Resolve(ModConfig.Language.Value, Localization.instance != null ? Localization.instance.GetSelectedLanguage() : null);
         }
 
         private static string Sanitize(string name)
@@ -148,6 +160,7 @@ namespace LivingFactions
             Sim.EventRaised -= OnEvent;
             Sim = null;
             Pending.Clear();
+            Net.Reset();
             Materializer.Reset();
             Discovery.Reset();
             NightWatch.Reset();
@@ -167,6 +180,12 @@ namespace LivingFactions
         private static void OnEvent(SimEvent e)
         {
             Pending.Enqueue(e);
+            Announce(e);
+        }
+
+        /// <summary>Writes an event to the log and shows it to the player if it is worth a message.</summary>
+        public static void Announce(SimEvent e)
+        {
             string text = Texts.Describe(e, Sim.State);
             bool minor = e.Kind == EventKind.BuildingStarted || e.Kind == EventKind.BuildingCompleted || e.Kind == EventKind.TradeCaravan;
             if (!minor) Plugin.Log.LogInfo("[chronicle d" + e.Day.ToString("0.0") + "] " + text);

@@ -1,0 +1,288 @@
+tier_Camp	campamento
+tier_Hamlet	aldea
+tier_Village	pueblo
+tier_Town	villa
+tier_City	ciudad
+res_Wood	madera
+res_Stone	piedra
+res_Food	comida
+res_Metal	metal
+res_Coins	monedas
+b_Campfire	hoguera
+b_Hut	choza
+b_House	casa
+b_Longhouse	casa larga
+b_Storehouse	almacén
+b_Woodcutter	cabaña del leñador
+b_Stonecutter	taller del cantero
+b_Farm	granja
+b_HunterLodge	cabaña del cazador
+b_Smithy	herrería
+b_Watchtower	torre de vigía
+b_Market	mercado
+b_Palisade	empalizada
+b_GreatHall	gran salón
+st_War	en guerra
+st_Hostile	hostil
+st_Wary	receloso
+st_Neutral	neutral
+st_Friendly	amistoso
+st_Allied	aliado
+tr_Peace	paz
+tr_War	guerra
+tr_Alliance	alianza
+ev_FactionFounded	Llegan a estas tierras: {f}.
+ev_SettlementFounded	Se funda un nuevo asentamiento: {s} ({f}).
+ev_BuildingStarted	{s}: empieza la obra ({b}).
+ev_BuildingCompleted	{s}: obra terminada ({b}).
+ev_TierUp	{s} ha crecido: ahora es {t}.
+ev_Starvation	Hambre en {s}.
+ev_GoodHarvest	{s}: una buena cosecha llena los almacenes.
+ev_Sickness	{s}: una enfermedad se cobra su precio.
+ev_BeastAttack	{s}: atacan las bestias del bosque.
+ev_Newcomers	{s}: unos caminantes se quedan a vivir aquí.
+ev_WarDeclared	¡Guerra! Atacante: {f}. Rival: {o}.
+ev_PeaceMade	Paz: {f} y {o} deponen las armas.
+ev_AllianceFormed	Alianza: {f} y {o} hacen juramento.
+ev_AllianceBroken	Alianza rota: {f} y {o}.
+ev_RaidWon	Incursión: saquean {s}. Atacante: {f}.
+ev_RaidRepelled	{s} rechaza una incursión. Atacante: {f}.
+ev_BuildingDestroyed	{s}: ha ardido un edificio ({b}).
+ev_SettlementCaptured	{s} ha caído. Nuevos dueños: {f}.
+ev_SettlementDestroyed	{s} queda abandonado y en ruinas.
+ev_TradeCaravan	Caravana entre {s} y {s2}: {r0} por {r1}.
+ev_Incident_good0	{f} y {o}: una boda une a dos familias.
+ev_Incident_good1	{f} y {o}: se recuerda con cariño un banquete compartido.
+ev_Incident_good2	{f} y {o}: unos cazadores perdidos vuelven sanos y salvos.
+ev_Incident_good3	{f} y {o}: intercambio de regalos.
+ev_Incident_bad0	{f} y {o}: disputa por los cotos de caza.
+ev_Incident_bad1	{f} y {o}: desaparece ganado.
+ev_Incident_bad2	{f} y {o}: un duelo acaba en sangre.
+ev_Incident_bad3	{f} y {o}: un insulto en el banquete.
+ev_PlayerWar_player	{p} declara la guerra. Rival: {f}.
+ev_PlayerWar_faction	Se acabó la paciencia. {p} es ahora enemigo para: {f}. ¡Guerra!
+ev_PlayerPeace	Paz: {f} y {p}.
+ev_PlayerAlliance	{f} y {p} son ahora aliados.
+ev_PlayerAllianceBroken	Se acabó la alianza: {f} y {p}.
+ev_PlayerGift	{p} lleva regalos a {s}.
+ev_PlayerKilledMember	{p} derrama sangre en {s}. No lo olvidarán: {f}.
+ui_talk	Hablar
+ui_relation	Reputación
+ui_population	Habitantes
+ui_soldiers	guerreros
+ui_stock	Reservas
+ui_needs	Les falta
+ui_gift	Hacer un regalo
+ui_trade	Comerciar
+ui_news	Preguntar por novedades
+ui_politics	Preguntar por sus vecinos
+ui_war	Declarar la guerra
+ui_peace	Ofrecer la paz ({0} monedas)
+ui_alliance	Proponer una alianza
+ui_break	Romper la alianza
+ui_leave	Irse
+ui_back	Atrás
+ui_buy	Comprar {0} {1} por {2} monedas
+ui_sell	Vender {0} {1} por {2} monedas
+ui_give	Dar {0} x{1}
+ui_war_confirm	¿Declarar la guerra? Rival: {0}. Sus guerreros te atacarán nada más verte, y la paz costará plata.
+ui_your_coins	Tus monedas: {0}
+r_pack_full	No puedes cargar con tanto.
+ui_nothing_to_give	No llevas nada que ellos valoren.
+ui_no_news	Nada que merezca contarse.
+ui_day	Día {0}
+ui_capital	capital
+ui_strength	Fuerza
+ui_settlements	asentamientos
+ui_chronicle	Crónica de las facciones
+ui_factions	Facciones
+greet_War	¿Te atreves a venir aquí? Desenvaina o corre.
+greet_Hostile	Aquí no eres bienvenido. Vete.
+greet_Wary	Di a qué vienes, forastero, y ten las manos donde pueda verlas.
+greet_Neutral	Bien hallado, viajero. ¿Qué te trae a nuestro fuego?
+greet_Friendly	¡Qué bien verte de nuevo, amigo! Siéntate junto al fuego.
+greet_Allied	¡Salve, hermano de espada! Nuestro salón es tu salón.
+r_already_war	Ya estamos en guerra.
+r_war_declared	Que así sea. Tu sangre regará estos campos.
+r_not_at_war	No hay guerra entre nosotros.
+r_blood_too_fresh	La sangre está demasiado fresca. Vuelve dentro de un día.
+r_not_enough_coins	Las palabras son baratas. Trae la plata.
+r_peace_made	Que haya paz. No hagas que lo lamentemos.
+r_at_war	Estamos en guerra. Habla primero de paz.
+r_already_allied	Ya nos une un juramento.
+r_not_trusted	No te conocemos lo bastante para tales juramentos.
+r_alliance_made	Entonces somos familia. Tus enemigos son los nuestros.
+r_not_allied	No hay juramento entre nosotros.
+r_alliance_broken	Perjuro. No lo olvidaremos.
+r_no_trade	No comerciamos con gente como tú.
+r_deal_refused	No hay trato. No podemos desprendernos de eso.
+r_deal_done	Un trato justo.
+r_gift_thanks	Un regalo generoso. Lo recordaremos. (+{0})
+r_gift_meh	Lo aceptamos.
+night_halt	¡Alto! ¿Quién va? Nada de forasteros cerca de nuestras casas de noche. ¡Da la vuelta!
+night_pass	...Está bien. Quédate si no hay más remedio, pero las manos lejos del acero.
+night_attack	¡Estabas avisado! ¡A las armas!
+night_alarm	La guardia nocturna ataca: {0}.
+msg_theft	Han notado tu robo: {0}.
+hud_hunger	se acaba la comida
+relic_title	Reliquia
+relic_unknown	Sin identificar. Quienes lo hicieron podrían decirte qué es, si confiaran en ti.
+affix_keen	afilada (+25% de daño)
+affix_stout	recia (+20% de armadura y bloqueo)
+affix_light	ligera (la mitad de peso)
+affix_lasting	duradera (el doble de durabilidad)
+affix_merchant	de mercader (compras a mercaderes -10% mientras la lleves; aguante -20% al golpear)
+ui_wares	Mercancías especiales
+ui_ware_sell	{0} x{1} - {2} monedas
+ui_ware_relic	Reliquia: {0}, {1} - {2} monedas
+ui_ware_mystery	Sin identificar: {0} - {1} monedas
+ui_ware_locked	 (requiere reputación {0})
+ui_identify	Preguntar qué es esto: {0}
+r_identified	Ah, eso. Es {0}.
+r_no_wares	No tenemos nada de eso para forasteros.
+msg_chest_trade	{0}: han comprado mercancías de tu cofre por {1} monedas.
+msg_raid	¡Incursión! Objetivo: {1}. Atacante: {0}.
+fc_head	{0}, {1}: {2} habitantes, {3} guardias
+fc_ruin	{0} está en ruinas
+fc_build0	en obras: {0}, {1}% hecho
+fc_build1	suenan los martillos: {0}, ya va un {1}%
+fc_build2	todos a la obra: {0} ({1}%)
+fc_gather0	acopian madera y piedra
+fc_gather1	las cuadrillas han salido a talar y picar
+fc_quiet0	días tranquilos de trabajo
+fc_quiet1	campos y talleres a pleno rendimiento
+fc_quiet2	nada nuevo: los almacenes se llenan
+fc_quiet3	la gente repara herramientas y espera a los mercaderes
+fc_starving	la gente pasa hambre
+fc_food_low	se acaba la comida
+fc_raided0	se lamen las heridas tras una incursión
+fc_raided1	entierran a los muertos de la última incursión
+fc_war	en guerra, rival: {0}
+fc_crowded	no queda sitio: hacen falta casas
+fc_unguarded	nadie monta guardia
+fc_no_wood	la obra espera madera
+fc_grows	a punto de crecer: {0}
+fc_rich	las arcas están llenas: buen momento para comerciar
+fc_faction	{0} (asentamientos: {1}, gente: {2}):
+fc_homeless	{0}: dispersos, sin hogar
+fc_f_war	en combate, rival: {0}
+fc_f_hunger	hambre en {0}
+fc_f_raided	incursión contra {0}
+fc_f_grows	{0} crece: pronto {1}
+fc_f_builds	{0} construye: {1}
+fc_f_quiet0	van a lo suyo
+fc_f_quiet1	comercian y cuidan los campos
+fc_f_quiet2	tranquilos por ahora
+ui_hire	Contratar a dos guerreros ({0} monedas)
+r_hired	Son tuyos hasta que acabe el día. Tráelos de vuelta con vida.
+r_hire_full	Ya llevas bastantes espadas a la espalda.
+r_hire_none	No nos sobran guerreros.
+r_hire_poor	El acero cuesta dinero, y tienes muy poco.
+msg_caravan_out	Una caravana sale de {0}.
+msg_caravan_in	Una caravana llega a {0}.
+menu_title	Ajustes
+menu_close	Cerrar
+menu_on	sí
+menu_off	no
+menu_page_general	General
+menu_page_life	Habitantes
+menu_page_world	Mundo
+menu_page_sim	Facciones
+menu_note_reload	Estos ajustes se aplican la próxima vez que se cargue el mundo.
+lang_auto	como en el juego
+opt_language	Idioma
+opt_hud	Crónica en pantalla
+opt_messages	Mensajes sobre grandes sucesos
+opt_work	Los habitantes trabajan y cargan mercancías
+opt_errands	Visitas y paseos por el camino
+opt_sleep	Los habitantes duermen bajo techo de noche
+opt_watch	La guardia nocturna da el alto a los forasteros
+opt_night_attack	Probabilidad de que la guardia nocturna ataque
+opt_tower	Un guardia en la torre de vigía
+opt_archers	Arqueros entre los guerreros
+opt_npcs	Habitantes visibles por asentamiento
+opt_roads	Caminos, plazas y senderos
+opt_lamps	Faroles junto a los caminos
+opt_road_reach	Caminos a vecinos a menos de
+opt_caravans	Caravanas con escolta
+opt_raids	Incursiones que se ven y en las que se puede luchar
+opt_chests	Mercancías en cofres
+opt_trade	Comercio
+opt_relics	Reliquias y objetos desconocidos
+opt_hire	Guerreros a sueldo
+opt_pace	Ritmo de desarrollo
+opt_wars	Guerras entre facciones
+opt_races	Facciones de las razas del juego
+greet_War1	Ni un paso más.
+greet_War2	Los tuyos ya han derramado bastante sangre nuestra.
+greet_Hostile1	Date la vuelta mientras puedas.
+greet_Hostile2	Recordamos lo que hiciste.
+greet_Wary1	Hum. Un forastero. Te estamos vigilando.
+greet_Wary2	Comercia si hace falta y sigue tu camino.
+greet_Wary3	Sin problemas, y no habrá problemas.
+greet_Neutral1	¡Un viajero! El camino ha sido largo, por la pinta que traes.
+greet_Neutral2	La paz sea contigo. El jefe está junto al fuego, si tienes asuntos que tratar.
+greet_Neutral3	Cara nueva. Cuidado con la obra, que ruedan los troncos.
+greet_Friendly1	¡Aquí estás! Justo hablábamos de ti.
+greet_Friendly2	Bienvenido de nuevo. El guiso está caliente.
+greet_Friendly3	Buena caza, amigo.
+greet_Allied1	¡Hermano de escudo! Di una palabra y marchamos.
+greet_Allied2	El salón está más alegre cuando tú estás en él.
+bark_wood	Buen pino, bien recto. De este sale una viga para el tejado.
+bark_wood1	¡Cuidado con la cabeza, que ya cae!
+bark_wood2	Otra vez sin filo. Afilo más de lo que corto.
+bark_stone	La piedra no tiene prisa, y yo tampoco.
+bark_stone1	Otra carretada y ya se puede levantar el muro.
+bark_stone2	Mi espalda se va a acordar de esta cantera.
+bark_farm	Si no llueve, será una cosecha decente.
+bark_farm1	Nabos. Siempre nabos.
+bark_farm2	Anoche los jabalíes volvieron a entrar en el campo.
+bark_build	¡Sujeta esa viga! ¡Que la sujetes, digo!
+bark_build1	Una casa antes de la primera nevada, si alcanza la madera.
+bark_haul	Abrid paso, que esto pesa más de lo que parece.
+bark_haul1	Al almacén, y luego me siento.
+bark_haul2	¡Esta vez cuenta bien, mayordomo!
+bark_visit	Solo paso a ver a los vecinos.
+bark_visit1	¿Te has enterado de las novedades? Yo tampoco. Por eso pregunto.
+bark_visit2	Les presté un hacha en primavera. Ya es hora de que vuelva a casa.
+bark_road	Camino abajo y de vuelta antes de que oscurezca.
+bark_road1	Voy a mirar los lazos. Deséame suerte.
+bark_idle	Un rato de descanso nunca le hizo daño al trabajo.
+bark_idle1	Buen día. Por una vez.
+bark_idle2	Me duelen los pies. Mañana llueve.
+bark_guard	Todo tranquilo. Me gusta la tranquilidad.
+bark_guard1	Dentro de la cerca, la hoja en la vaina.
+bark_guard2	Anoche, enanos grises en el lindero. Tres.
+bark_tower	Desde aquí arriba veo el humo de tres hogares.
+bark_tower1	Nada en el camino. Todavía.
+bark_chief	Un asentamiento es su gente. Recuérdalo.
+bark_chief1	Ven al fuego si quieres hablar de condiciones.
+bark_chief2	Más manos, más bocas. Así es la vida.
+bark_trader	Pieles, sal y hierro, y el mejor precio a este lado del mar.
+bark_trader1	El camino es largo, así que no regatearé mucho.
+bark_trader2	En el siguiente hogar pagan bien. Eso espero.
+bark_escort	Aléjate de la mercancía.
+bark_escort1	En el último viaje había lobos en el camino. De dos patas.
+bark_merc	Pagado hasta la puesta de sol. Dime a quién le doy.
+bark_merc1	Yo sigo, tú guías. Procura no guiarnos hasta un trol.
+bark_merc2	Primero la moneda, luego las canciones.
+hud_elsewhere	En otros lugares
+hud_news	Noticias
+msg_enter	{0}: {1}, {2}
+title_Chief	jefe
+title_Guard	guardia
+title_Raider	saqueador
+title_Mercenary	mercenario
+title_Trader	mercader
+title_Escort	guardia de caravana
+f_clan_raven	Clan del Cuervo
+f_clan_wolf	Clan del Lobo
+f_clan_stag	Clan del Ciervo
+f_fuling_horde	Horda Fuling
+f_dvergr_hold	Fortaleza Dvergr
+f_greydwarf_brood	Camada de Enanos Grises
+f_draugr_court	Corte Draugr
+item_LF_WolfFangAxe	Colmillo del Lobo
+itemd_LF_WolfFangAxe	El hacha reliquia del Clan del Lobo. Hoja de hierro, mango forrado de cuero, una cola de lobo en el pomo.
+item_LF_StagHornAxe	Asta del Ciervo
+itemd_LF_StagHornAxe	Un hacha de mercader del Clan del Ciervo. Mango de asta, herrajes de bronce, monedas en una cadena.

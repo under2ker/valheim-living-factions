@@ -129,7 +129,7 @@ namespace LivingFactions
                         float units;
                         if (!Items.TryValue(item, out res, out units) || res == Res.Coins) continue;
                         int amount = Mathf.Min(item.m_stack, 20);
-                        int paid = SimHost.Sim.PlayerSell(s, res, Mathf.Max(1, Mathf.RoundToInt(amount * units)), player.GetPlayerID());
+                        int paid = Net.PlayerSell(s, res, Mathf.Max(1, Mathf.RoundToInt(amount * units)), player.GetPlayerID());
                         if (paid <= 0) continue;
                         inv.RemoveItem(item, amount);
                         earned += paid;
@@ -233,12 +233,12 @@ namespace LivingFactions
 
         private static void Taken(Settlement s, Res res, float units)
         {
-            if (res != Res.Coins || units > 0f) s.Stock[(int)res] = Mathf.Max(0f, s.Stock[(int)res] - units);
+            if (res != Res.Coins || units > 0f) Net.AddStock(s, res, -units);
             Player player = Player.m_localPlayer;
             Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
             if (player == null || f == null || s.Destroyed) return;
-            SimHost.Sim.PlayerRel(f, player.GetPlayerID()).Name = player.GetPlayerName();
-            bool noticed = SimHost.Sim.PlayerStole(f, player.GetPlayerID(), units * Balance.CoinValue[(int)res]);
+            Net.NamePlayer(f, player.GetPlayerID(), player.GetPlayerName());
+            bool noticed = Net.PlayerStole(f, player.GetPlayerID(), units * Balance.CoinValue[(int)res]);
             if (noticed && MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, Texts.Get("msg_theft", Texts.Name(s.Name)));
         }
 
@@ -247,10 +247,10 @@ namespace LivingFactions
             Player player = Player.m_localPlayer;
             if (player == null)
             {
-                s.Stock[(int)res] += units;
+                Net.AddStock(s, res, units);
                 return;
             }
-            SimHost.Sim.PlayerGift(s, player.GetPlayerID(), res, units);
+            Net.PlayerGift(s, player.GetPlayerID(), res, units);
         }
 
         public static string Describe()

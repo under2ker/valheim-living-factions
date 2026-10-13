@@ -288,10 +288,12 @@ namespace LivingFactions
         public static string Language(string[] a)
         {
             if (Localization.instance == null) return "no localization yet";
-            if (a.Length > 1) Localization.instance.SetLanguage(a[1]);
-            string choice = ModConfig.Language.Value.Trim().ToLowerInvariant();
-            Texts.Lang = choice == "ru" ? 1 : choice == "en" ? 0 : Localization.instance.GetSelectedLanguage() == "Russian" ? 1 : 0;
-            return "game language " + Localization.instance.GetSelectedLanguage() + ", mod language " + (Texts.Lang == 1 ? "ru" : "en");
+            // `lang mod pl` sets the mod's own choice and leaves the game alone; `lang mod auto` follows the game again.
+            if (a.Length > 2 && a[1] == "mod") ModConfig.Language.Value = a[2];
+            else if (a.Length > 1) Localization.instance.SetLanguage(a[1]);
+            Texts.Lang = Texts.Resolve(ModConfig.Language.Value, Localization.instance.GetSelectedLanguage());
+            foreach (FactionMember member in FactionMember.All) member.Rename();
+            return "game language " + Localization.instance.GetSelectedLanguage() + ", mod language " + Texts.Code;
         }
 
         /// <summary>Spends a known amount of stamina and reports what it actually cost, through the game's own UseStamina.</summary>

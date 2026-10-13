@@ -7,8 +7,11 @@ and food, put up buildings one piece at a time and grow into villages and towns.
 each other, fall out, go to war and take each other's settlements. All of this goes on whether
 you are around or not, and you can take part: trade, bring gifts, make friends, start a war.
 
-Made for Valheim 1.0.17 with BepInEx 5 and Jötunn. It is an early version. Single-player and
-hosting work. Dedicated servers and joining someone else's game do not work yet.
+Made for Valheim 1.0.17 with BepInEx 5 and Jötunn. It is an early version.
+
+Playing together works since 0.4.0: on a dedicated server or with a player hosting. Everyone
+needs the mod, the server too. It was tested with a dedicated server and one guest. Two players
+in the same village at once have not been tested yet, so tell us how it goes.
 
 Feedback, bug reports and chat: [Discord](https://discord.gg/qVfAq3fqj6).
 
@@ -80,8 +83,9 @@ The card below is concept art. The numbers on it are plans, not what is in the g
 - A chronicle panel shows what the nearest settlement is doing and what the other factions are
   up to.
 - Settings are behind the "LF" tile on the inventory screen (Tab).
-- The mod speaks English and Russian and follows the language of the game. In Russian the names
-  of people and settlements are Russian too.
+- The mod speaks English, Russian, Polish, German, French, Spanish and Portuguese. It follows the
+  language of the game, or you can pick one in the menu whatever the game is set to. In Russian
+  the names of people and settlements are Russian too.
 
 ## Install
 
@@ -121,7 +125,7 @@ Start the game with `-console` and press F5.
 
 ## Known limits
 
-- Single-player and host only.
+- Playing together is new and lightly tested. Back up the server world before the first run.
 - Villagers swing their tools but the trees stay standing. What a settlement produces is decided
   by the simulation.
 - The non-human factions build in the same style as the clans.
@@ -155,7 +159,8 @@ on the game.
 `Valheim/BepInEx/plugins/LivingFactions/`. Нужны BepInExPack Valheim и Jötunn. Перед первым
 запуском сделайте копию мира.
 
-Пока работает только одиночная игра и игра у хоста.
+С версии 0.4.0 можно играть вместе: на выделенном сервере или у игрока-хоста. Мод нужен всем,
+включая сервер. Проверено с сервером и одним гостем.
 
 Отзывы, баги и общение: [Discord](https://discord.gg/qVfAq3fqj6).
 

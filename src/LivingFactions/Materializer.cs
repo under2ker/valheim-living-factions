@@ -55,6 +55,7 @@ namespace LivingFactions
             Flatten.Clear();
             Smooths.Clear();
             TerrainBusy.Clear();
+            TileSeen.Clear();
             LastDeath.Clear();
             Roads.Reset();
             Company.Reset();
@@ -72,13 +73,14 @@ namespace LivingFactions
 
         public static void Update()
         {
-            if (!SimHost.Active || ZNetScene.instance == null || ZoneSystem.instance == null) return;
+            // A dedicated server has no ground loaded: the players near a settlement put it up (Net.cs).
+            if (!SimHost.Active || ZNetScene.instance == null || ZoneSystem.instance == null || Net.IsDedicated) return;
             DevProbes.Frame();
             ProcessTerrain();
-            HealSeams();
+            if (Net.KeepsRoads) HealSeams();
 
             Vector3 reference = ZNet.instance.GetReferencePosition();
-            Roads.Update(reference);
+            if (Net.KeepsRoads) Roads.Update(reference);
             Company.Update();
             int budget = ModConfig.PiecesPerFrame.Value;
             bool npcPass = Time.time >= _nextNpcPass;
@@ -89,7 +91,7 @@ namespace LivingFactions
             {
                 Settlement s = settlements[i];
                 Vector3 centre = new Vector3(s.Pos.X, 0f, s.Pos.Z);
-                if (Utils.DistanceXZ(reference, centre) > Range) continue;
+                if (Utils.DistanceXZ(reference, centre) > Range || !Net.IsBuilder(s)) continue;
                 if (s.Destroyed && npcPass && ZNetScene.instance.IsAreaReady(centre) && !Swept.Contains(s.Id))
                 {
                     // Whatever an abandoned settlement left behind is cleared away once.
@@ -232,13 +234,12 @@ namespace LivingFactions
             if (PathOf(s, b, pad, out from, out to, out paint, out width)) QueueRoad(from, to, paint, width);
         }
 
-        private static readonly Dictionary<int, int> PathsCleared = new Dictionary<int, int>();
+        private static readonly Dictionary<int, float> PathsCleared = new Dictionary<int, float>();
 
         /// <summary>
         /// The paths inside a settlement are kept free of trees, rocks and bushes, as people who walk
         /// them every day would keep them: without this a village in a wood has its paths under the
-        /// canopy where nobody sees them. Done once a session for each settlement near the player,
-        /// and again when it has put up something new.
+        /// canopy where nobody sees them. Done for each settlement near the player.
         /// </summary>
         public static void ClearPaths(Vector3 reference)
         {
@@ -248,10 +249,11 @@ namespace LivingFactions
                 if (s.Destroyed) continue;
                 Vector3 centre = new Vector3(s.Pos.X, 0f, s.Pos.Z);
                 if (Utils.DistanceXZ(reference, centre) > 70f || !ZoneSystem.instance.IsZoneLoaded(centre)) continue;
-                int built = 0, done;
-                foreach (Building b in s.Buildings) if (b.SpawnedPieces > 0 && !float.IsNaN(b.GroundY)) built++;
-                if (PathsCleared.TryGetValue(s.Id, out done) && done == built) continue;
-                PathsCleared[s.Id] = built;
+                // Again every so often: growth of a tile turns up some time after the tile itself (later still
+                // for a guest, who hears of it from the host), and a single pass would miss it.
+                float due;
+                if (PathsCleared.TryGetValue(s.Id, out due) && Time.time < due) continue;
+                PathsCleared[s.Id] = Time.time + 20f;
                 foreach (Building b in s.Buildings)
                 {
                     if (b.SpawnedPieces == 0 || float.IsNaN(b.GroundY) || b.State == BuildingState.Destroyed) continue;
@@ -260,6 +262,13 @@ namespace LivingFactions
                     int paint;
                     if (!TryGetOrigin(s, b, out origin, out yaw)) continue;
                     origin.y = b.GroundY;
+                    if (FactionMember.IsHome(b.Kind) && b.State == BuildingState.Complete)
+                    {
+                        // The way in: a sapling that came up on the doorstep keeps everyone out of the house.
+                        Vector3 inside, door;
+                        FactionMember.DoorPoints(s, b, 0f, out inside, out door);
+                        if (ZoneSystem.instance.IsZoneLoaded(door)) ClearVegetation(door, 2.2f);
+                    }
                     if (!PathOf(s, b, origin, out from, out to, out paint, out width)) continue;
                     float length = Utils.DistanceXZ(from, to);
                     for (float d = 0f; d <= length; d += 2f)
@@ -548,6 +557,8 @@ namespace LivingFactions
             return false;
         }
 
+        private static readonly Dictionary<int, float> TileSeen = new Dictionary<int, float>();
+
         private static bool Compilers(Vector3 pos, float radius, List<TerrainComp> compilers)
         {
             Heightmaps.Clear();
@@ -563,6 +574,19 @@ namespace LivingFactions
                     // little after the tile itself. Making a new one meanwhile leaves two; on the next load the
                     // game keeps the one with more operations and throws the other away with all its work.
                     if (!ZNetScene.instance.IsAreaReady(hm.transform.position) || SavedCompilerExists(hm)) return false;
+                    if (!Net.IsHost)
+                    {
+                        // A guest hears of the tile's saved compiler from the host, some seconds after the tile
+                        // itself is there. Until that time has passed, nobody can tell "none" from "not here yet".
+                        int tile = hm.GetInstanceID();
+                        float seen;
+                        if (!TileSeen.TryGetValue(tile, out seen))
+                        {
+                            TileSeen[tile] = Time.time;
+                            return false;
+                        }
+                        if (Time.time - seen < 25f) return false;
+                    }
                     comp = hm.GetAndCreateTerrainCompiler();
                 }
                 // The compiler initialises a frame or two after it is created.

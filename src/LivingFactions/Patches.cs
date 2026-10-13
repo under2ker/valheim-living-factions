@@ -105,19 +105,19 @@ namespace LivingFactions
             if (Npcs.IsTemporary(member.Role))
             {
                 // Caravans and hired fighters are not counted among the inhabitants; only a murder is remembered.
-                if (killer != null) SimHost.Sim.PlayerKilledMember(settlement, killer.GetPlayerID(), member.Role != NpcRole.Trader);
+                if (killer != null) Net.PlayerKilledMember(settlement, killer.GetPlayerID(), member.Role != NpcRole.Trader);
                 return;
             }
             Materializer.NoteDeath(settlement.Id);
             bool soldier = member.Role != NpcRole.Villager;
             if (killer != null)
             {
-                SimHost.Sim.PlayerRel(SimHost.Sim.State.GetFaction(settlement.FactionId), killer.GetPlayerID()).Name = killer.GetPlayerName();
-                SimHost.Sim.PlayerKilledMember(settlement, killer.GetPlayerID(), soldier);
+                Net.NamePlayer(SimHost.Sim.State.GetFaction(settlement.FactionId), killer.GetPlayerID(), killer.GetPlayerName());
+                Net.PlayerKilledMember(settlement, killer.GetPlayerID(), soldier);
             }
             else
             {
-                SimHost.Sim.MemberDied(settlement, soldier);
+                Net.MemberDied(settlement, soldier);
             }
         }
     }
@@ -138,8 +138,8 @@ namespace LivingFactions
                 bool kin = (group == "fuling" && victim.m_faction == Character.Faction.PlainsMonsters) || (group == "greydwarf" && victim.m_faction == Character.Faction.ForestMonsters)
                     || (group == "draugr" && victim.m_faction == Character.Faction.Undead) || (group == "dvergr" && victim.m_faction == Character.Faction.Dverger);
                 if (kin) continue;
-                SimHost.Sim.PlayerRel(f, killer.GetPlayerID()).Name = killer.GetPlayerName();
-                SimHost.Sim.PlayerHelped(f, killer.GetPlayerID(), victim.IsBoss() ? 8f : 1f);
+                Net.NamePlayer(f, killer.GetPlayerID(), killer.GetPlayerName());
+                Net.PlayerHelped(f, killer.GetPlayerID(), victim.IsBoss() ? 8f : 1f);
                 return;
             }
         }
@@ -148,15 +148,15 @@ namespace LivingFactions
         {
             WorldState state = SimHost.Sim.State;
             Faction attackers = state.GetFaction(raider.FactionId);
-            if (attackers != null) SimHost.Sim.PlayerAttackedMember(attackers, killer.GetPlayerID());
+            if (attackers != null) Net.PlayerAttackedMember(attackers, killer.GetPlayerID());
             foreach (Settlement s in state.Settlements)
             {
                 if (s.Destroyed || s.FactionId == raider.FactionId) continue;
                 if (Utils.DistanceXZ(raider.transform.position, new Vector3(s.Pos.X, 0f, s.Pos.Z)) > 90f) continue;
                 Faction defenders = state.GetFaction(s.FactionId);
                 if (defenders == null) continue;
-                SimHost.Sim.PlayerRel(defenders, killer.GetPlayerID()).Name = killer.GetPlayerName();
-                SimHost.Sim.PlayerHelped(defenders, killer.GetPlayerID(), 3f);
+                Net.NamePlayer(defenders, killer.GetPlayerID(), killer.GetPlayerName());
+                Net.PlayerHelped(defenders, killer.GetPlayerID(), 3f);
                 return;
             }
         }
@@ -181,8 +181,8 @@ namespace LivingFactions
             LastPenalty[member.FactionId] = Time.time;
             Faction faction = SimHost.Sim.State.GetFaction(member.FactionId);
             if (faction == null) return;
-            SimHost.Sim.PlayerRel(faction, attacker.GetPlayerID()).Name = attacker.GetPlayerName();
-            SimHost.Sim.PlayerAttackedMember(faction, attacker.GetPlayerID());
+            Net.NamePlayer(faction, attacker.GetPlayerID(), attacker.GetPlayerName());
+            Net.PlayerAttackedMember(faction, attacker.GetPlayerID());
         }
     }
 
@@ -202,8 +202,8 @@ namespace LivingFactions
             Settlement settlement = SimHost.Sim.State.GetSettlement(settlementId);
             Faction faction = settlement != null ? SimHost.Sim.State.GetFaction(settlement.FactionId) : null;
             if (faction == null) return;
-            SimHost.Sim.PlayerRel(faction, attacker.GetPlayerID()).Name = attacker.GetPlayerName();
-            SimHost.Sim.PlayerDamagedProperty(faction, attacker.GetPlayerID());
+            Net.NamePlayer(faction, attacker.GetPlayerID(), attacker.GetPlayerName());
+            Net.PlayerDamagedProperty(faction, attacker.GetPlayerID());
         }
     }
 }

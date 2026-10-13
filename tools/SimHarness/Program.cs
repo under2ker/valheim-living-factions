@@ -332,6 +332,20 @@ namespace LivingFactions.Harness
                 Check(latin == null && Texts.Name("Vindfell") == "Виндфелл" && Texts.Name("Hrafnheim 12") == "Храфнхейм 12", "names read in Russian" + (latin != null ? " — " + latin : ""));
                 Texts.Lang = 0;
                 Check(Texts.Name("Vindfell") == "Vindfell", "names stay as they are in English");
+                // Every language the menu offers has every line, and a choice wins over the game's own language.
+                string gap = null;
+                for (int lang = 2; lang < Texts.Codes.Length; lang++)
+                {
+                    foreach (string key in Texts.Keys)
+                    {
+                        if (!key.StartsWith("lang_") && !Texts.Translated(lang, key)) gap = Texts.Codes[lang] + " " + key;
+                    }
+                }
+                Check(gap == null, Texts.Codes.Length + " languages have every line" + (gap != null ? " — missing " + gap : ""));
+                Check(Texts.Resolve("auto", "Polish") == 2 && Texts.Resolve("pl", "Russian") == 2 && Texts.Resolve("auto", "Russian") == 1 && Texts.Resolve("auto", "Korean") == 0 && Texts.Resolve("de", null) == 3,
+                    "the language follows the game unless the player chose one");
+                Texts.Lang = 2;
+                Check(Texts.Get("ui_trade") == "Handluj" && Texts.Get("ui_peace", 40) == "Zaproponuj pokój (40 monet)", "Polish reads as Polish");
                 Texts.Lang = saved;
             }
             Check(wars > 0, "wars break out across seeds (" + wars + " wars, " + alliances + " alliances, " + captures + " captures in 25 worlds)");

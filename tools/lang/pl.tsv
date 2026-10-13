@@ -1,0 +1,288 @@
+tier_Camp	obóz
+tier_Hamlet	osada
+tier_Village	wieś
+tier_Town	miasteczko
+tier_City	miasto
+res_Wood	drewno
+res_Stone	kamień
+res_Food	żywność
+res_Metal	metal
+res_Coins	monety
+b_Campfire	ognisko
+b_Hut	chata
+b_House	dom
+b_Longhouse	długi dom
+b_Storehouse	magazyn
+b_Woodcutter	chata drwala
+b_Stonecutter	plac kamieniarza
+b_Farm	farma
+b_HunterLodge	chata myśliwego
+b_Smithy	kuźnia
+b_Watchtower	wieża strażnicza
+b_Market	targ
+b_Palisade	palisada
+b_GreatHall	wielka hala
+st_War	wojna
+st_Hostile	wrogość
+st_Wary	nieufność
+st_Neutral	neutralność
+st_Friendly	przyjaźń
+st_Allied	sojusz
+tr_Peace	pokój
+tr_War	wojna
+tr_Alliance	sojusz
+ev_FactionFounded	{f} przybywają na te ziemie.
+ev_SettlementFounded	Założono nową osadę: {s} ({f}).
+ev_BuildingStarted	{s}: rusza budowa ({b}).
+ev_BuildingCompleted	{s}: budowa ukończona ({b}).
+ev_TierUp	{s} rozrasta się: teraz to {t}.
+ev_Starvation	Głód w {s}.
+ev_GoodHarvest	{s}: obfite plony zapełniają magazyny.
+ev_Sickness	{s}: choroba zbiera żniwo.
+ev_BeastAttack	{s}: atakują bestie z dziczy.
+ev_Newcomers	{s}: wędrowcy osiedlają się tutaj.
+ev_WarDeclared	Wojna! {f} chwytają za broń przeciw: {o}.
+ev_PeaceMade	Pokój: {f} i {o} składają broń.
+ev_AllianceFormed	Sojusz: {f} i {o} składają przysięgi.
+ev_AllianceBroken	Sojusz zerwany: {f} i {o}.
+ev_RaidWon	Najazd: {f} plądrują {s}.
+ev_RaidRepelled	{s} odpiera najazd ({f}).
+ev_BuildingDestroyed	{s}: spłonęła budowla ({b}).
+ev_SettlementCaptured	{s} zdobyte. Nowi panowie: {f}.
+ev_SettlementDestroyed	{s} leży opuszczone w ruinach.
+ev_TradeCaravan	Karawana między {s} a {s2}: {r0} za {r1}.
+ev_Incident_good0	{f} i {o}: małżeństwo łączy dwa rody.
+ev_Incident_good1	{f} i {o}: wspólną ucztę wspomina się ciepło.
+ev_Incident_good2	{f} i {o}: zaginieni myśliwi wracają cali.
+ev_Incident_good3	{f} i {o}: wymiana darów.
+ev_Incident_bad0	{f} i {o}: kłótnia o tereny łowieckie.
+ev_Incident_bad1	{f} i {o}: ginie bydło.
+ev_Incident_bad2	{f} i {o}: pojedynek kończy się krwią.
+ev_Incident_bad3	{f} i {o}: zniewaga przy uczcie.
+ev_PlayerWar_player	{p} wypowiada wojnę. Wróg: {f}.
+ev_PlayerWar_faction	{f} mają dość. {p} to teraz wróg: wojna!
+ev_PlayerPeace	Pokój: {f} i {p}.
+ev_PlayerAlliance	{f} i {p} są teraz sojusznikami.
+ev_PlayerAllianceBroken	Koniec sojuszu: {f} i {p}.
+ev_PlayerGift	{p} przynosi dary do {s}.
+ev_PlayerKilledMember	{p} przelewa krew w {s}. {f} tego nie zapomną.
+ui_talk	Rozmawiaj
+ui_relation	Stosunki
+ui_population	Ludność
+ui_soldiers	wojownicy
+ui_stock	Zapasy
+ui_needs	Brakuje im
+ui_gift	Podaruj coś
+ui_trade	Handluj
+ui_news	Zapytaj o wieści
+ui_politics	Zapytaj o sąsiadów
+ui_war	Wypowiedz wojnę
+ui_peace	Zaproponuj pokój ({0} monet)
+ui_alliance	Zaproponuj sojusz
+ui_break	Zerwij sojusz
+ui_leave	Odejdź
+ui_back	Wróć
+ui_buy	Kup {0} {1} za {2} monet
+ui_sell	Sprzedaj {0} {1} za {2} monet
+ui_give	Daj {0} x{1}
+ui_war_confirm	Wypowiedzieć wojnę? Wróg: {0}. Ich wojownicy zaatakują cię bez ostrzeżenia, a pokój będzie kosztował srebro.
+ui_your_coins	Twoje monety: {0}
+r_pack_full	Nie uniesiesz aż tyle.
+ui_nothing_to_give	Nie masz nic, co by ich ucieszyło.
+ui_no_news	Nic wartego opowiadania.
+ui_day	Dzień {0}
+ui_capital	stolica
+ui_strength	Siła
+ui_settlements	osady
+ui_chronicle	Kronika frakcji
+ui_factions	Frakcje
+greet_War	Śmiesz tu przychodzić? Dobądź miecza albo uciekaj.
+greet_Hostile	Nie jesteś tu mile widziany. Odejdź.
+greet_Wary	Mów, czego chcesz, obcy, i trzymaj ręce na widoku.
+greet_Neutral	Witaj, wędrowcze. Co cię sprowadza do naszego ognia?
+greet_Friendly	Dobrze cię znów widzieć, przyjacielu! Siadaj przy ogniu.
+greet_Allied	Witaj, bracie krwi! Nasza hala jest twoją halą.
+r_already_war	Już toczymy wojnę.
+r_war_declared	Niech tak będzie. Twoja krew zrosi te pola.
+r_not_at_war	Nie ma między nami wojny.
+r_blood_too_fresh	Krew jeszcze nie wyschła. Wróć za dzień.
+r_not_enough_coins	Słowa nic nie kosztują. Przynieś srebro.
+r_peace_made	Niech będzie pokój. Obyśmy tego nie żałowali.
+r_at_war	Jesteśmy w stanie wojny. Najpierw mów o pokoju.
+r_already_allied	Już wiąże nas przysięga.
+r_not_trusted	Za mało cię znamy na takie przysięgi.
+r_alliance_made	Zatem jesteśmy rodziną. Twoi wrogowie są naszymi wrogami.
+r_not_allied	Nie wiąże nas żadna przysięga.
+r_alliance_broken	Krzywoprzysięzca. Nie zapomnimy tego.
+r_no_trade	Z takimi jak ty nie handlujemy.
+r_deal_refused	Nic z tego. Tego nie możemy oddać.
+r_deal_done	Uczciwy targ.
+r_gift_thanks	Hojny dar. Zapamiętamy to. (+{0})
+r_gift_meh	Przyjmujemy.
+night_halt	Stać! Kto idzie? Po zmroku obcym nie wolno zbliżać się do naszych domów. Zawracaj!
+night_pass	...Dobrze. Zostań, skoro musisz, ale ręce z dala od broni.
+night_attack	Ostrzegaliśmy! Do broni!
+night_alarm	Nocna straż atakuje: {0}!
+msg_theft	Twoją kradzież zauważono: {0}.
+hud_hunger	kończy się żywność
+relic_title	Relikwia
+relic_unknown	Nierozpoznane. Ci, którzy to zrobili, powiedzieliby ci, co to jest, gdyby ci ufali.
+affix_keen	ostra (+25% obrażeń)
+affix_stout	mocna (+20% pancerza i bloku)
+affix_light	lekka (połowa wagi)
+affix_lasting	trwała (podwójna wytrzymałość)
+affix_merchant	kupiecka (zakupy u kupców -10%, gdy masz ją przy sobie; kondycja -20% przy ciosie)
+ui_wares	Towary specjalne
+ui_ware_sell	{0} x{1} - {2} monet
+ui_ware_relic	Relikwia: {0}, {1} - {2} monet
+ui_ware_mystery	Nierozpoznane: {0} - {1} monet
+ui_ware_locked	 (wymaga reputacji {0})
+ui_identify	Zapytaj, co to jest: {0}
+r_identified	A, to. To jest {0}.
+r_no_wares	Dla obcych nie mamy nic takiego.
+msg_chest_trade	{0}: kupiono towary z twojej skrzyni za {1} monet.
+msg_raid	Najazd! Cel: {1}. Napastnicy: {0}!
+fc_head	{0}, {1}: {2} mieszkańców, {3} strażników
+fc_ruin	{0} leży w ruinach
+fc_build0	trwa budowa: {0}, gotowe {1}%
+fc_build1	stukają młoty: {0}, już {1}%
+fc_build2	wszystkie ręce przy budowie: {0} ({1}%)
+fc_gather0	gromadzą drewno i kamień
+fc_gather1	ludzie wyszli rąbać i łupać
+fc_quiet0	spokojne dni pracy
+fc_quiet1	pola i warsztaty pełne roboty
+fc_quiet2	nic nowego: magazyny się zapełniają
+fc_quiet3	ludzie naprawiają narzędzia i czekają na kupców
+fc_starving	ludzie głodują
+fc_food_low	kończy się żywność
+fc_raided0	liżą rany po najeździe
+fc_raided1	grzebią poległych po ostatnim najeździe
+fc_war	wojna, wróg: {0}
+fc_crowded	brak miejsca: potrzeba nowych domów
+fc_unguarded	nikt nie trzyma straży
+fc_no_wood	budowa czeka na drewno
+fc_grows	wkrótce urośnie: {0}
+fc_rich	skarbiec pełny: dobry czas na handel
+fc_faction	{0} (osad: {1}, ludzi: {2}):
+fc_homeless	{0}: rozproszeni, bez domu
+fc_f_war	walczą, wróg: {0}
+fc_f_hunger	głód w {0}
+fc_f_raided	najazd na {0}
+fc_f_grows	{0} rośnie: będzie {1}
+fc_f_builds	{0} buduje: {1}
+fc_f_quiet0	trzymają się na uboczu
+fc_f_quiet1	handlują i doglądają pól
+fc_f_quiet2	na razie spokój
+ui_hire	Wynajmij dwóch wojowników ({0} monet)
+r_hired	Są twoi do końca dnia. Przyprowadź ich żywych.
+r_hire_full	Masz już dość mieczy za plecami.
+r_hire_none	Nie mamy wolnych wojowników.
+r_hire_poor	Stal kosztuje, a ty masz za mało monet.
+msg_caravan_out	Karawana opuszcza {0}.
+msg_caravan_in	Karawana zmierza do {0}.
+menu_title	Ustawienia
+menu_close	Zamknij
+menu_on	wł.
+menu_off	wył.
+menu_page_general	Ogólne
+menu_page_life	Mieszkańcy
+menu_page_world	Świat
+menu_page_sim	Frakcje
+menu_note_reload	Te ustawienia zadziałają po ponownym wczytaniu świata.
+lang_auto	jak w grze
+opt_language	Język
+opt_hud	Kronika na ekranie
+opt_messages	Komunikaty o ważnych wydarzeniach
+opt_work	Mieszkańcy pracują i noszą towary
+opt_errands	Odwiedziny i spacery drogą
+opt_sleep	Mieszkańcy śpią nocą w domach
+opt_watch	Nocna straż zatrzymuje obcych
+opt_night_attack	Szansa na atak nocnej straży
+opt_tower	Strażnik na wieży
+opt_archers	Łucznicy wśród wojowników
+opt_npcs	Widocznych mieszkańców na osadę
+opt_roads	Drogi, place i ścieżki
+opt_lamps	Latarnie przy drogach
+opt_road_reach	Drogi do sąsiadów w zasięgu
+opt_caravans	Karawany z eskortą
+opt_raids	Najazdy, które widać i w których można walczyć
+opt_chests	Towary w skrzyniach
+opt_trade	Handel
+opt_relics	Relikwie i nieznane towary
+opt_hire	Wojownicy do wynajęcia
+opt_pace	Tempo rozwoju
+opt_wars	Wojny między frakcjami
+opt_races	Frakcje ras z gry
+greet_War1	Ani kroku dalej.
+greet_War2	Tacy jak ty przelali już dość naszej krwi.
+greet_Hostile1	Zawróć, póki jeszcze możesz.
+greet_Hostile2	Pamiętamy, co zrobiłeś.
+greet_Wary1	Hm. Obcy. Mamy cię na oku.
+greet_Wary2	Handluj, jeśli musisz, i ruszaj w swoją stronę.
+greet_Wary3	Bez kłopotów, a kłopotów nie będzie.
+greet_Neutral1	Wędrowiec! Po tobie widać, że droga była długa.
+greet_Neutral2	Pokój z tobą. Wódz jest przy ogniu, jeśli masz sprawę.
+greet_Neutral3	Nowa twarz. Uważaj przy budowie, kłody się toczą.
+greet_Friendly1	No jesteś! Właśnie o tobie mówiliśmy.
+greet_Friendly2	Witaj z powrotem. Gulasz jest gorący.
+greet_Friendly3	Udanych łowów, przyjacielu.
+greet_Allied1	Bracie tarczy! Powiedz słowo, a ruszamy.
+greet_Allied2	W hali jest jaśniej, kiedy w niej jesteś.
+bark_wood	Dobra, prosta sosna. Będzie z niej belka na dach.
+bark_wood1	Uwaga na głowę, zaraz runie!
+bark_wood2	Znowu tępy. Więcej ostrzę, niż rąbię.
+bark_stone	Kamień się nie śpieszy i ja też nie.
+bark_stone1	Jeszcze jeden wóz i można stawiać mur.
+bark_stone2	Moje plecy długo popamiętają ten kamieniołom.
+bark_farm	Jak nie spadnie deszcz, plony będą niezłe.
+bark_farm1	Rzepa. Zawsze rzepa.
+bark_farm2	Dziki znowu były w nocy na polu.
+bark_build	Trzymaj tę belkę! Trzymaj, mówię!
+bark_build1	Dom przed pierwszym śniegiem, jeśli starczy drewna.
+bark_haul	Z drogi, to cięższe, niż wygląda.
+bark_haul1	Do magazynu, a potem siadam.
+bark_haul2	Tym razem policz dobrze, zarządco!
+bark_visit	Tylko zaglądam do sąsiadów.
+bark_visit1	Słyszałeś nowiny? Ja też nie. Dlatego pytam.
+bark_visit2	Wiosną pożyczyłem im topór. Czas, żeby wrócił do domu.
+bark_road	Drogą tam i z powrotem przed zmrokiem.
+bark_road1	Idę sprawdzić wnyki. Życz mi szczęścia.
+bark_idle	Chwila odpoczynku jeszcze robocie nie zaszkodziła.
+bark_idle1	Ładny dzień. Nareszcie.
+bark_idle2	Stopy mnie bolą. Jutro będzie deszcz.
+bark_guard	Wszędzie cisza. Lubię ciszę.
+bark_guard1	Za płotem trzymaj ostrze w pochwie.
+bark_guard2	Wczoraj w nocy szarzy krasnoludowie na skraju lasu. Trzech.
+bark_tower	Stąd widzę dym z trzech palenisk.
+bark_tower1	Na drodze pusto. Na razie.
+bark_chief	Osada to jej ludzie. Zapamiętaj to.
+bark_chief1	Chodź do ognia, jeśli chcesz mówić o warunkach.
+bark_chief2	Więcej rąk, więcej gąb. Tak to już jest.
+bark_trader	Futra, sól i żelazo, i najlepsza cena po tej stronie morza.
+bark_trader1	Droga długa, więc nie będę się długo targował.
+bark_trader2	Przy następnym ogniu dobrze płacą. Mam nadzieję.
+bark_escort	Trzymaj się z dala od towaru.
+bark_escort1	Ostatnio na drodze były wilki. Dwunożne.
+bark_merc	Zapłacone do zachodu słońca. Pokaż, kogo bić.
+bark_merc1	Ja idę, ty prowadzisz. Tylko nie prowadź nas na trolla.
+bark_merc2	Najpierw moneta, pieśni potem.
+hud_elsewhere	Gdzie indziej
+hud_news	Wieści
+msg_enter	{0}: {1}, {2}
+title_Chief	wódz
+title_Guard	strażnik
+title_Raider	najeźdźca
+title_Mercenary	najemnik
+title_Trader	kupiec
+title_Escort	strażnik karawany
+f_clan_raven	Klan Kruka
+f_clan_wolf	Klan Wilka
+f_clan_stag	Klan Jelenia
+f_fuling_horde	Horda Fulingów
+f_dvergr_hold	Twierdza Dvergrów
+f_greydwarf_brood	Pomiot Szarych Krasnoludów
+f_draugr_court	Dwór Draugrów
+item_LF_WolfFangAxe	Kieł Wilka
+itemd_LF_WolfFangAxe	Relikwijny topór Klanu Wilka. Żelazne ostrze, trzonek owinięty skórą, wilczy ogon na końcu.
+item_LF_StagHornAxe	Róg Jelenia
+itemd_LF_StagHornAxe	Kupiecki topór Klanu Jelenia. Trzonek z poroża, okucia z brązu, monety na łańcuszku.

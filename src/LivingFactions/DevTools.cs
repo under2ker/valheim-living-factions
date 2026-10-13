@@ -107,6 +107,36 @@ namespace LivingFactions
             menu.OnCharacterStart();
             yield return new WaitForSecondsRealtime(0.2f);
 
+            if (worldName.StartsWith("join "))
+            {
+                // A guest: the game was started with +connect and +password and joins by itself once a
+                // character is chosen; if it has not begun to after a moment, it is asked to.
+                string host = worldName.Substring(5).Trim();
+                yield return new WaitForSecondsRealtime(1f);
+                if (ZNet.instance == null && FejdStartup.instance != null)
+                {
+                    // +connect only remembers the server; the join itself is the button of the server list.
+                    if (!t.Method("HasServerToJoin").GetValue<bool>()) t.Method("AutoJoinServer", new object[] { host }).GetValue();
+                    Plugin.Log.LogInfo("[dev] autostart: joining " + host);
+                    t.Method("JoinServer").GetValue();
+                }
+                // The server asks for its password in a dialog: the test answers with the one the game was started with.
+                string[] args = System.Environment.GetCommandLineArgs();
+                int at = System.Array.IndexOf(args, "+password");
+                for (int i = 0; i < 60 && at >= 0 && at + 1 < args.Length; i++)
+                {
+                    yield return new WaitForSecondsRealtime(0.5f);
+                    if (ZNet.instance == null || Player.m_localPlayer != null) continue;
+                    if (Traverse.Create(ZNet.instance).Method("InPasswordDialog").GetValue<bool>())
+                    {
+                        Traverse.Create(ZNet.instance).Method("OnPasswordEntered", new object[] { args[at + 1] }).GetValue();
+                        Plugin.Log.LogInfo("[dev] autostart: answered the server's password dialog");
+                        break;
+                    }
+                }
+                yield break;
+            }
+
             World world = World.GetCreateWorld(worldName, FileHelpers.FileSource.Local);
             t.Field("m_world").SetValue(world);
             foreach (string toggle in new[] { "m_publicServerToggle", "m_openServerToggle", "m_crossplayServerToggle" })

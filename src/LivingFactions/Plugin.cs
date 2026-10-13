@@ -13,7 +13,7 @@ namespace LivingFactions
     {
         public const string Guid = "alexandr.livingfactions";
         public const string ModName = "Living Factions";
-        public const string Version = "0.3.4";
+        public const string Version = "0.4.0";
 
         internal static Plugin Instance;
         internal static ManualLogSource Log;
@@ -24,6 +24,7 @@ namespace LivingFactions
         {
             Instance = this;
             Log = Logger;
+            Net.Init();
             ModConfig.Bind(Config);
 
             _harmony = new Harmony(Guid);
@@ -39,6 +40,7 @@ namespace LivingFactions
         {
             if (ModConfig.DevTools.Value) DevTools.Update();
             SimHost.Update();
+            if (Net.IsDedicated) return;
             Materializer.Update();
             Discovery.Update();
             Chests.Update();

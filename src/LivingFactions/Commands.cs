@@ -79,6 +79,8 @@ namespace LivingFactions
                     int had = Player.m_localPlayer.GetInventory().NrOfItems();
                     Player.m_localPlayer.GetInventory().RemoveAll();
                     return "bag emptied, " + had + " stacks gone";
+                case "server": return Net.DevOnHost(string.Join(" ", a, 1, a.Length - 1));
+                case "net": return Net.Describe();
                 case "stamina": return DevProbes.Stamina();
                 case "damage": return DevProbes.Damage(a);
                 case "shots": return DevProbes.Shots(a);

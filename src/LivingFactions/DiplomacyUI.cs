@@ -127,7 +127,7 @@ namespace LivingFactions
             }
             long pid = _player.GetPlayerID();
             PlayerRelation rel = sim.PlayerRel(f, pid);
-            rel.Name = _player.GetPlayerName();
+            Net.NamePlayer(f, pid, _player.GetPlayerName());
             Standing standing = sim.GetStanding(f, pid);
 
             _title.text = Texts.FactionName(f) + " — " + Texts.Name(s.Name) + " (" + Texts.Get("tier_" + s.Tier) + (f.CapitalId == s.Id ? ", " + Texts.Get("ui_capital") : "") + ")";
@@ -146,7 +146,7 @@ namespace LivingFactions
                     body.AppendLine(Texts.Get("ui_war_confirm", Texts.FactionName(f)));
                     AddButton(Texts.Get("ui_war"), () =>
                     {
-                        _note = Texts.Get("r_" + sim.PlayerDeclareWar(f, pid).Reason);
+                        _note = Texts.Get("r_" + Net.PlayerDeclareWar(f, pid).Reason);
                         Go("main");
                     });
                     AddButton(Texts.Get("ui_back"), () => Go("main"));
@@ -193,15 +193,15 @@ namespace LivingFactions
                 {
                     Inventory inv = _player.GetInventory();
                     int coins = inv.CountItems("$item_coins");
-                    DiploResult result = sim.PlayerProposePeace(f, pid, Math.Min(coins, cost));
+                    DiploResult result = Net.PlayerProposePeace(f, pid, Math.Min(coins, cost));
                     if (result.Ok) inv.RemoveItem("$item_coins", cost);
                     _note = Texts.Get("r_" + result.Reason);
                 });
             }
             else
             {
-                if (rel.Allied) AddButton(Texts.Get("ui_break"), () => _note = Texts.Get("r_" + sim.PlayerBreakAlliance(f, pid).Reason));
-                else AddButton(Texts.Get("ui_alliance"), () => _note = Texts.Get("r_" + sim.PlayerProposeAlliance(f, pid).Reason));
+                if (rel.Allied) AddButton(Texts.Get("ui_break"), () => _note = Texts.Get("r_" + Net.PlayerBreakAlliance(f, pid).Reason));
+                else AddButton(Texts.Get("ui_alliance"), () => _note = Texts.Get("r_" + Net.PlayerProposeAlliance(f, pid).Reason));
                 AddButton(Texts.Get("ui_war"), () => Go("war"));
             }
             AddButton(Texts.Get("ui_leave"), Close);
@@ -273,8 +273,8 @@ namespace LivingFactions
                         return;
                     }
                     inv.RemoveItem("$item_coins", w.Price);
-                    s.Stock[(int)Res.Coins] += w.Price;
-                    sim.AddReputation(f, pid, Math.Min(1.5f, w.Price * 0.004f));
+                    Net.AddStock(s, Res.Coins, w.Price);
+                    Net.AddReputation(f, pid, Math.Min(1.5f, w.Price * 0.004f));
                     _note = Texts.Get("r_deal_done");
                 });
                 if (Buttons.Count >= 7) break;
@@ -323,7 +323,7 @@ namespace LivingFactions
                 AddButton(Texts.Get("ui_give", Localization.instance.Localize(o.Item.m_shared.m_name), amount), () =>
                 {
                     _player.GetInventory().RemoveItem(o.Item.m_shared.m_name, amount);
-                    float gain = sim.PlayerGift(s, pid, o.Res, amount * o.Units);
+                    float gain = Net.PlayerGift(s, pid, o.Res, amount * o.Units);
                     _note = gain >= 1f ? Texts.Get("r_gift_thanks", gain.ToString("0")) : Texts.Get("r_gift_meh");
                 });
             }
@@ -355,7 +355,7 @@ namespace LivingFactions
                         _note = Texts.Get("r_pack_full");
                         return;
                     }
-                    int paid = sim.PlayerBuy(s, r, units, pid, inv.CountItems("$item_coins"));
+                    int paid = Net.PlayerBuy(s, r, units, pid, inv.CountItems("$item_coins"));
                     if (paid < 0)
                     {
                         _note = Texts.Get(inv.CountItems("$item_coins") < cost ? "r_not_enough_coins" : "r_deal_refused");
@@ -377,7 +377,7 @@ namespace LivingFactions
                 if (pay <= 0) continue;
                 AddButton(Texts.Get("ui_sell", amount, Localization.instance.Localize(o.Item.m_shared.m_name), pay), () =>
                 {
-                    int got = sim.PlayerSell(s, o.Res, units, pid);
+                    int got = Net.PlayerSell(s, o.Res, units, pid);
                     if (got < 0)
                     {
                         _note = Texts.Get("r_deal_refused");

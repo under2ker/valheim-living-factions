@@ -7,6 +7,8 @@ goto 4
 unequip all
 expect took 2.00 :: stamina
 equip LF_StagHornAxe
+# the mark the Stag Clan sells it with (a test bag may hold a plain copy)
+damage merchant
 items
 expect took 1.60 :: stamina
 unequip all

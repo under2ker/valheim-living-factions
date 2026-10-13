@@ -85,8 +85,9 @@ namespace LivingFactions
 
             ItemDrop.ItemData.SharedData shared = go.GetComponent<ItemDrop>().m_itemData.m_shared;
             bool ru = Texts.Lang == 1;
-            shared.m_name = ru ? spec.NameRu : spec.NameEn;
-            shared.m_description = ru ? spec.DescRu : spec.DescEn;
+            // Other languages keep the item's name and tale in their own tables, under the prefab's name.
+            shared.m_name = Texts.Translated(Texts.Lang, "item_" + spec.Prefab) && Texts.Lang >= 2 ? Texts.Get("item_" + spec.Prefab) : ru ? spec.NameRu : spec.NameEn;
+            shared.m_description = Texts.Translated(Texts.Lang, "itemd_" + spec.Prefab) && Texts.Lang >= 2 ? Texts.Get("itemd_" + spec.Prefab) : ru ? spec.DescRu : spec.DescEn;
             Sprite icon = LoadIcon(spec.Asset);
             if (icon != null) shared.m_icons = new[] { icon };
 

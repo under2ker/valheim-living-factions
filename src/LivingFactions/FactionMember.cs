@@ -106,9 +106,7 @@ namespace LivingFactions
         public void Rename()
         {
             if (_latinName.Length == 0 || _view == null || !_view.IsValid() || !_view.IsOwner()) return;
-            string title = Role == NpcRole.Chief ? (Texts.Lang == 1 ? "вождь" : "chieftain") : Role == NpcRole.Guard ? (Texts.Lang == 1 ? "страж" : "guard")
-                : Role == NpcRole.Raider ? (Texts.Lang == 1 ? "налётчик" : "raider") : Role == NpcRole.Mercenary ? (Texts.Lang == 1 ? "наёмник" : "hired sword")
-                : Role == NpcRole.Trader ? (Texts.Lang == 1 ? "торговец" : "trader") : Role == NpcRole.Escort ? (Texts.Lang == 1 ? "охранник каравана" : "caravan guard") : "";
+            string title = Texts.Has("title_" + Role) ? Texts.Get("title_" + Role) : "";
             string personal = Texts.Name(_latinName);
             DisplayName = title.Length > 0 ? personal + ", " + title : personal;
             _view.GetZDO().Set(ZDOVars.s_overrideHoverName, DisplayName);
