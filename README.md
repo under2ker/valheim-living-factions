@@ -10,6 +10,8 @@ you are around or not, and you can take part: trade, bring gifts, make friends, 
 Made for Valheim 1.0.17 with BepInEx 5 and Jötunn. It is an early version. Single-player and
 hosting work. Dedicated servers and joining someone else's game do not work yet.
 
+Feedback, bug reports and chat: [Discord](https://discord.gg/qVfAq3fqj6).
+
 Русское описание ниже.
 
 ## The factions
@@ -150,6 +152,8 @@ on the game.
 запуском сделайте копию мира.
 
 Пока работает только одиночная игра и игра у хоста.
+
+Отзывы, баги и общение: [Discord](https://discord.gg/qVfAq3fqj6).
 
 ## Credits
 
