@@ -104,9 +104,7 @@ To make an alliance, talk to anyone in the settlement: the window shows your sta
 it is from the 70 an alliance needs, and each gift shows what it would earn. A gift of what they
 are short of counts double; many gifts in one day count for less.
 
-The card below is concept art. The numbers on it are plans, not what is in the game now.
-
-![Wolf Fang](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/wolf-fang.jpg)
+![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.0)
 
 ## On screen
 
@@ -118,6 +116,16 @@ The card below is concept art. The numbers on it are plans, not what is in the g
 - The mod speaks English, Russian, Polish, German, French, Spanish and Portuguese. It follows the
   language of the game, or you can pick one in the menu whatever the game is set to. In Russian
   the names of people and settlements are Russian too.
+
+## Screenshots
+
+![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.6.0)
+![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.6.0)
+![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.6.0)
+![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.6.0)
+![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.6.0)
+![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.6.0)
+![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.6.0)
 
 ## Install
 

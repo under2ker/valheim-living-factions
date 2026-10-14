@@ -79,7 +79,7 @@ for name in ('icon', 'cover', 'banner'):
 # the address in the README carries the version: a new number is a new address and a fresh picture.
 readme = os.path.join(ROOT, 'README.md')
 text = io.open(readme, encoding='utf-8').read()
-fresh = re.sub(r'(docs/store/cover\.jpg)(\?v=[^)\s]*)?', lambda m: m.group(1) + '?v=' + version.lstrip('v'), text)
+fresh = re.sub(r'(docs/(?:store|screenshots)/[^?)\s]+\.(?:jpg|png))(\?v=[^)\s]*)?', lambda m: m.group(1) + '?v=' + version.lstrip('v'), text)
 if fresh != text:
     io.open(readme, 'w', encoding='utf-8', newline='\n').write(fresh)
-    print('README points at the cover of', version)
+    print('README points at the pictures of', version)
