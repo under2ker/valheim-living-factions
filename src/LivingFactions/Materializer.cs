@@ -56,6 +56,8 @@ namespace LivingFactions
             Smooths.Clear();
             TerrainBusy.Clear();
             TileSeen.Clear();
+            Audited.Clear();
+            ReadySince.Clear();
             LastDeath.Clear();
             Roads.Reset();
             Company.Reset();
@@ -100,9 +102,109 @@ namespace LivingFactions
                     foreach (Building ruin in s.Buildings) ruin.SpawnedPieces = 0;
                     if (gone > 0) Plugin.Log.LogInfo("Cleared " + gone + " leftover objects of " + s.Name);
                 }
+                if (npcPass) Audit(s, centre);
                 if (budget > 0) budget = SyncBuildings(s, budget);
                 if (npcPass) SyncInhabitants(s, centre);
             }
+        }
+
+        // ------------------------------------------------------------------ the world and the record
+
+        private static readonly HashSet<int> Audited = new HashSet<int>();
+        private static readonly Dictionary<int, float> ReadySince = new Dictionary<int, float>();
+
+        /// <summary>The faction state was swapped under the world (rewound, or a guest's copy went back): look again.</summary>
+        public static void ForgetAudit()
+        {
+            Audited.Clear();
+            ReadySince.Clear();
+        }
+
+        /// <summary>
+        /// Once a session for each settlement: the record says which buildings stand, the world may
+        /// disagree. A world backup restored without the faction state leaves buildings on record with
+        /// not one piece in the world: they are put up again, their ground levelled again. Factions
+        /// rewound while the world stays leave the opposite: pieces of buildings the record has not got
+        /// that far with, or has not got at all. Those come down, and the building goes up again as far
+        /// as the record says. A building with only some pieces missing is left alone: that is wear, a
+        /// raid or the player's axe.
+        /// </summary>
+        private static void Audit(Settlement s, Vector3 centre)
+        {
+            if (Audited.Contains(s.Id) || s.Destroyed) return;
+            if (!ZNetScene.instance.IsAreaReady(centre))
+            {
+                ReadySince.Remove(s.Id);
+                return;
+            }
+            float since;
+            if (!ReadySince.TryGetValue(s.Id, out since)) ReadySince[s.Id] = since = Time.time;
+            // Pieces of a tile arrive a little after the tile itself, more so for a guest.
+            if (Time.time - since < 20f) return;
+            // Ground still being worked would read as uneven.
+            if (Terrain.Count + Flatten.Count > 0) return;
+            Audited.Add(s.Id);
+            string report = Reconcile(s, centre, true);
+            if (report.Length > 0) Plugin.Log.LogInfo(s.Name + ": the world and the record disagree (" + report + "); set right");
+        }
+
+        /// <summary>Compares a settlement's pieces in the world with its record; fixes them when asked. Empty when they agree.</summary>
+        internal static string Reconcile(Settlement s, Vector3 centre, bool fix)
+        {
+            SectorObjects.Clear();
+            ZDOMan.instance.FindSectorObjects(ZoneSystem.GetZone(centre), SimulationDistance.OriginalDistance, SectorObjects);
+            Dictionary<int, int> pieces = new Dictionary<int, int>();
+            foreach (ZDO zdo in SectorObjects)
+            {
+                if (zdo.GetInt(HashSettlement) != s.Id || Npcs.IsNpcPrefab(zdo.GetPrefab())) continue;
+                int id = zdo.GetInt(HashBuilding);
+                if (id == 0) continue;
+                int n;
+                pieces.TryGetValue(id, out n);
+                pieces[id] = n + 1;
+            }
+            int missing = 0, ahead = 0, unknown = 0;
+            HashSet<int> onRecord = new HashSet<int>();
+            foreach (Building b in s.Buildings)
+            {
+                onRecord.Add(b.Id);
+                int n;
+                pieces.TryGetValue(b.Id, out n);
+                if (n > b.SpawnedPieces || (n > 0 && b.State == BuildingState.Destroyed))
+                {
+                    ahead++;
+                    if (!fix) continue;
+                    RemoveTagged(s, centre, b.Id);
+                    b.SpawnedPieces = 0;
+                }
+                else if (n == 0 && b.SpawnedPieces > 0 && b.State != BuildingState.Destroyed && b.Plot >= 0)
+                {
+                    missing++;
+                    if (!fix) continue;
+                    b.SpawnedPieces = 0;
+                    b.TerrainRev = 0;
+                }
+            }
+            // Ground from another time (or ground work cut short by quitting) under buildings that stand.
+            int uneven = 0;
+            foreach (Building b in Terrain.Count + Flatten.Count > 0 ? new List<Building>() : s.Buildings)
+            {
+                if (b.State == BuildingState.Destroyed || b.SpawnedPieces == 0 || b.TerrainRev == 0 || PadDeviation(s, b) <= UnevenPad) continue;
+                uneven++;
+                if (fix) b.TerrainRev = 0;
+            }
+            foreach (int id in pieces.Keys)
+            {
+                if (onRecord.Contains(id)) continue;
+                unknown++;
+                if (fix) RemoveTagged(s, centre, id);
+            }
+            List<string> parts = new List<string>();
+            if (missing > 0) parts.Add(missing + " on record but gone from the world");
+            if (ahead > 0) parts.Add(ahead + " further along in the world than on record");
+            if (unknown > 0) parts.Add(unknown + " in the world but not on record");
+            if (uneven > 0) parts.Add(uneven + " standing on uneven ground");
+            return string.Join(", ", parts.ToArray());
         }
 
         // ------------------------------------------------------------------ buildings
@@ -209,6 +311,8 @@ namespace LivingFactions
                 {
                     // Older versions stacked ground changes and left pads sunk, raised or torn: shape and flatten again.
                     EnqueueTerrain(new TerrainJob { Pos = origin, Radius = radius + PadMargin });
+                    // Shaping this pad again tugs at the ones beside it, as when it was first put down.
+                    RelevelNeighbours(s, b, origin);
                     EnqueueTerrain(new TerrainJob { Pos = origin, Radius = radius + PadMargin, LevelOnly = true });
                     PaintPath(s, b, origin);
                 }
@@ -488,6 +592,44 @@ namespace LivingFactions
         private static void RemovePieces(Settlement s, Building b, Vector3 origin)
         {
             RemoveTagged(s, origin, b.Id);
+        }
+
+        /// <summary>More than this off level under a building, and the pad is levelled again.</summary>
+        private const float UnevenPad = 0.4f;
+
+        /// <summary>How far the ground under a building is from its pad height (0 when it cannot tell).</summary>
+        internal static float PadDeviation(Settlement s, Building b)
+        {
+            float radius = Blueprints.Radius(b.Kind);
+            if (float.IsNaN(b.GroundY) || radius <= 0f) return 0f;
+            Vec2 offset = new Vec2(0f, 0f);
+            float yaw;
+            if (b.Plot >= 0) Defs.PlotTransform(b.Plot, s.Seed, out offset, out yaw);
+            Vector3 origin = new Vector3(s.Pos.X + offset.X, 0f, s.Pos.Z + offset.Z);
+            float worst = 0f;
+            for (int i = 0; i < 9; i++)
+            {
+                float ang = i * Mathf.PI / 4f, r = i == 8 ? 0f : radius * 0.8f, h;
+                if (!ZoneSystem.instance.GetGroundHeight(origin + new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * r, out h)) continue;
+                worst = Mathf.Max(worst, Mathf.Abs(h - b.GroundY));
+            }
+            return worst;
+        }
+
+        /// <summary>Everything a settlement put in the world, its people too: for one the record no longer has.</summary>
+        internal static int SweepAway(Settlement s)
+        {
+            Vector3 centre = new Vector3(s.Pos.X, 0f, s.Pos.Z);
+            SectorObjects.Clear();
+            ZDOMan.instance.FindSectorObjects(ZoneSystem.GetZone(centre), SimulationDistance.OriginalDistance, SectorObjects);
+            int removed = 0;
+            foreach (ZDO zdo in SectorObjects.ToArray())
+            {
+                if (zdo.GetInt(HashSettlement) != s.Id) continue;
+                RemoveNpc(zdo);
+                removed++;
+            }
+            return removed;
         }
 
         /// <summary>Removes every non-character object tagged for the settlement (buildingId 0 = all buildings).</summary>

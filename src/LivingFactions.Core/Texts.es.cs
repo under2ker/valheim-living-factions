@@ -350,6 +350,22 @@ namespace LivingFactions.Core
                 { "r_hunt_none", "No queda ninguna bestia por cuya muerte pagaríamos." },
                 { "msg_boss_slain", "{0} ha caído. Todas las facciones lo sabrán." },
                 { "msg_state_restored", "El mundo ha vuelto a una partida anterior, y las facciones con él (día {0})." },
+                { "msg_state_rewound", "Las facciones han vuelto al día {0}." },
+                { "item_LF_GreyBlade", "Hoja Gris" },
+                { "itemd_LF_GreyBlade", "La espada del Clan del Lobo: hoja recta con huellas de lobo en el acero, empuñadura tachonada y cabeza de lobo en el pomo." },
+                { "item_LF_AntlerBlade", "Hoja Astada" },
+                { "itemd_LF_AntlerBlade", "Una hoja ancha del Clan del Ciervo con una cacería grabada, guarda de asta ramificada y empuñadura de asta y bronce." },
+                { "item_LF_BlackBeak", "Pico Negro" },
+                { "itemd_LF_BlackBeak", "Un bracamarte pavonado del Clan del Cuervo con punta de pico ganchudo, alas en la guarda y plumas atadas debajo." },
+                { "item_LF_ObsidianSaber", "Sable de Obsidiana" },
+                { "itemd_LF_ObsidianSaber", "Un sable curvo de los Fulings con el lomo de dientes astillados, guarda de hueso y dientes-trofeo en cordones." },
+                { "item_LF_RuneSword", "Espada Rúnica" },
+                { "itemd_LF_RuneSword", "Una espada enana de aleación oscura con runas brillantes en ambas caras, guarda de cobre y un cristal en el pomo." },
+                { "item_LF_RootClub", "Garrote de Raíz" },
+                { "itemd_LF_RootClub", "Una raíz nudosa partida en la cabeza alrededor de diez lascas de pedernal, con un ojo de ámbar en el mango. La llevan los guardias de una camada de enanos grises." },
+                { "item_LF_RustedBlade", "Hoja Oxidada" },
+                { "itemd_LF_RustedBlade", "Una hoja larga y picada de la Corte Draugr: un cráneo en la guarda, otro en el pomo, mortaja en la empuñadura." },
+                { "msg_trophy_club", "El guardia ha caído. Su garrote de raíz es tuyo ({0})." },
             };
         }
     }

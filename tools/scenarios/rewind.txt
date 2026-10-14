@@ -1,0 +1,34 @@
+# The factions jump ahead and are taken back while the world stays: the buildings must follow the record.
+# A fresh Stag Clan settlement is founded for it (id 39 in the lab world), so there is building to undo.
+god
+env 0.4 Clear
+tp -100 300
+waitready 240
+save
+expect advanced :: advance 1
+expect founded :: here 3 0
+speed 4
+wait 40
+expect advanced :: advance 4
+wait 60
+speed 1
+expect agree :: audit 39
+save
+expect advanced :: advance 30
+speed 4
+wait 90
+speed 1
+count
+expect agree :: audit 39
+padcheck 39
+expect taken back :: rewind -25
+expect not on record :: audit 39
+wait 45
+expect agree :: audit 39
+padcheck 39
+reject BLOCKED :: doorcheck 39
+expect founded since removed :: rewind -5
+wait 15
+expect audit <settlement> :: audit 39
+rewind
+quit

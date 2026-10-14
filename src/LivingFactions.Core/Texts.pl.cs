@@ -350,6 +350,22 @@ namespace LivingFactions.Core
                 { "r_hunt_none", "Nie ma już bestii, za której śmierć byśmy zapłacili." },
                 { "msg_boss_slain", "{0} padł. Dowie się o tym każda frakcja." },
                 { "msg_state_restored", "Świat wrócił do wcześniejszego zapisu, a frakcje razem z nim (dzień {0})." },
+                { "msg_state_rewound", "Frakcje wróciły do dnia {0}." },
+                { "item_LF_GreyBlade", "Szary Miecz" },
+                { "itemd_LF_GreyBlade", "Miecz Klanu Wilka: prosta klinga z wilczymi śladami na stali, rękojeść nabijana ćwiekami, wilczy łeb na głowicy." },
+                { "item_LF_AntlerBlade", "Rogaty Miecz" },
+                { "itemd_LF_AntlerBlade", "Szeroka klinga Klanu Jelenia z rytem polowania, jelec z rozgałęzionego poroża, rękojeść z rogu i brązu." },
+                { "item_LF_BlackBeak", "Czarny Dziób" },
+                { "itemd_LF_BlackBeak", "Oksydowany tasak Klanu Kruka z ostrzem jak dziób, skrzydłami na jelcu i piórami pod nimi." },
+                { "item_LF_ObsidianSaber", "Obsydianowa Szabla" },
+                { "itemd_LF_ObsidianSaber", "Zakrzywiona szabla fulingów: grzbiet z łupanych zębów, kościany jelec, zęby-trofea na sznurkach." },
+                { "item_LF_RuneSword", "Runiczny Miecz" },
+                { "itemd_LF_RuneSword", "Miecz dwergów z ciemnego stopu ze świecącymi runami po obu stronach, miedzianym jelcem i kryształem w głowicy." },
+                { "item_LF_RootClub", "Korzenna Pałka" },
+                { "itemd_LF_RootClub", "Sękaty korzeń rozszczepiony na końcu wokół dziesięciu krzemieni, z bursztynowym okiem przy rękojeści. Noszą ją strażnicy pomiotu Szarych Krasnoludów." },
+                { "item_LF_RustedBlade", "Zardzewiały Miecz" },
+                { "itemd_LF_RustedBlade", "Długa, wyżarta klinga Dworu Draugrów: czaszka na jelcu, czaszka na głowicy, całun na rękojeści." },
+                { "msg_trophy_club", "Strażnik padł. Jego korzenna pałka jest twoja ({0})." },
             };
         }
     }

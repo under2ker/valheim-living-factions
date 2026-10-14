@@ -350,6 +350,22 @@ namespace LivingFactions.Core
                 { "r_hunt_none", "Il ne reste aucune bête dont nous paierions la mort." },
                 { "msg_boss_slain", "{0} est tombé. Toutes les factions en entendront parler." },
                 { "msg_state_restored", "Le monde est revenu à une sauvegarde antérieure, et les factions avec lui (jour {0})." },
+                { "msg_state_rewound", "Les factions sont revenues au jour {0}." },
+                { "item_LF_GreyBlade", "Lame Grise" },
+                { "itemd_LF_GreyBlade", "L'épée du Clan du Loup : lame droite aux traces de loup sur l'acier, poignée cloutée, tête de loup au pommeau." },
+                { "item_LF_AntlerBlade", "Lame Ramée" },
+                { "itemd_LF_AntlerBlade", "Une large lame du Clan du Cerf gravée d'une chasse, une garde en bois de cerf ramifié et une poignée de corne et de bronze." },
+                { "item_LF_BlackBeak", "Bec Noir" },
+                { "itemd_LF_BlackBeak", "Un fauchon bleui du Clan du Corbeau à la pointe en bec crochu, des ailes à la garde et des plumes nouées dessous." },
+                { "item_LF_ObsidianSaber", "Sabre d'Obsidienne" },
+                { "itemd_LF_ObsidianSaber", "Un sabre courbe des Fulings au dos de dents ébréchées, une garde en os et des dents-trophées sur des cordons." },
+                { "item_LF_RuneSword", "Épée Runique" },
+                { "itemd_LF_RuneSword", "Une épée naine en alliage sombre aux runes lumineuses sur les deux faces, garde de cuivre et cristal au pommeau." },
+                { "item_LF_RootClub", "Massue de Racine" },
+                { "itemd_LF_RootClub", "Une racine noueuse fendue en tête autour de dix éclats de silex, un œil d'ambre au manche. Les gardes d’une engeance de nains gris la portent." },
+                { "item_LF_RustedBlade", "Lame Rouillée" },
+                { "itemd_LF_RustedBlade", "Une longue lame piquée de la Cour des Draugr : un crâne à la garde, un autre au pommeau, un linceul sur la poignée." },
+                { "msg_trophy_club", "Le garde est tombé. Sa massue de racine est à vous ({0})." },
             };
         }
     }

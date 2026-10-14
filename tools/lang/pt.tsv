@@ -340,3 +340,19 @@ r_hunt_poor	Nossos cofres estão vazios demais para essa recompensa agora. Volte
 r_hunt_none	Não resta nenhuma fera por cuja morte pagaríamos.
 msg_boss_slain	{0} caiu. Todas as facções vão saber.
 msg_state_restored	O mundo voltou a um salvamento anterior, e as facções com ele (dia {0}).
+msg_state_rewound	As facções voltaram ao dia {0}.
+item_LF_GreyBlade	Lâmina Cinzenta
+itemd_LF_GreyBlade	A espada do Clã do Lobo: lâmina reta com pegadas de lobo no aço, punho tachonado e cabeça de lobo no pomo.
+item_LF_AntlerBlade	Lâmina Galhada
+itemd_LF_AntlerBlade	Uma lâmina larga do Clã do Cervo com uma caçada gravada, guarda de galhada ramificada e punho de chifre e bronze.
+item_LF_BlackBeak	Bico Negro
+itemd_LF_BlackBeak	Um alfanje azulado do Clã do Corvo com ponta de bico curvo, asas na guarda e penas amarradas por baixo.
+item_LF_ObsidianSaber	Sabre de Obsidiana
+itemd_LF_ObsidianSaber	Um sabre curvo dos Fulings com dorso de dentes lascados, guarda de osso e dentes-troféu em cordões.
+item_LF_RuneSword	Espada Rúnica
+itemd_LF_RuneSword	Uma espada anã de liga escura com runas brilhantes em ambas as faces, guarda de cobre e um cristal no pomo.
+item_LF_RootClub	Clava de Raiz
+itemd_LF_RootClub	Uma raiz nodosa rachada na ponta em volta de dez lascas de sílex, com um olho de âmbar no cabo. Os guardas de uma ninhada de anões cinzentos a carregam.
+item_LF_RustedBlade	Lâmina Enferrujada
+itemd_LF_RustedBlade	Uma lâmina longa e corroída da Corte Draugr: um crânio na guarda, outro no pomo, mortalha no punho.
+msg_trophy_club	O guarda caiu. A clava de raiz dele é sua ({0}).

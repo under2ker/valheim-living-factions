@@ -1,0 +1,10 @@
+# A guest on a dedicated server must see the chronicle under the minimap, as the host does.
+god
+env 0.4 Clear
+goto 4
+wait 10
+expect guest :: net
+expect visible :: hudinfo
+expect Летопись :: hud
+shot mp_guest_chronicle
+quit

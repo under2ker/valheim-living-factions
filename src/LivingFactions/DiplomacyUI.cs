@@ -291,7 +291,7 @@ namespace LivingFactions
                     Net.AddReputation(f, pid, Math.Min(1.5f, w.Price * 0.004f));
                     _note = Texts.Get("r_deal_done");
                 });
-                if (Buttons.Count >= 7) break;
+                if (Buttons.Count >= 8) break;
             }
             AddButton(Texts.Get("ui_back"), () => Go("main"));
         }

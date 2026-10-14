@@ -340,3 +340,19 @@ r_hunt_poor	Unsere Kasse ist für diese Belohnung gerade zu leer. Komm später w
 r_hunt_none	Es gibt kein Ungeheuer mehr, für dessen Tod wir zahlen würden.
 msg_boss_slain	{0} ist gefallen. Jede Fraktion wird davon hören.
 msg_state_restored	Die Welt ist zu einem früheren Spielstand zurückgekehrt, und die Fraktionen mit ihr (Tag {0}).
+msg_state_rewound	Die Fraktionen sind zu Tag {0} zurückgekehrt.
+item_LF_GreyBlade	Graue Klinge
+itemd_LF_GreyBlade	Das Schwert des Wolfsclans: gerade Klinge mit Wolfsspuren im Stahl, beschlagener Griff, Wolfskopf als Knauf.
+item_LF_AntlerBlade	Geweihklinge
+itemd_LF_AntlerBlade	Eine breite Klinge des Hirschclans mit eingravierter Jagd, einer Parierstange aus verzweigtem Geweih und einem Griff aus Horn und Bronze.
+item_LF_BlackBeak	Schwarzer Schnabel
+itemd_LF_BlackBeak	Ein gebläutes Falchion des Rabenclans mit schnabelförmiger Spitze, Flügeln an der Parierstange und Federn darunter.
+item_LF_ObsidianSaber	Obsidiansäbel
+itemd_LF_ObsidianSaber	Ein gekrümmter Säbel der Fulings mit einem Rücken aus abgeschlagenen Zähnen, Knochenparierstange und Trophäenzähnen an Schnüren.
+item_LF_RuneSword	Runenschwert
+itemd_LF_RuneSword	Ein Zwergenschwert aus dunkler Legierung mit leuchtenden Runen auf beiden Seiten, kupferner Parierstange und einem Kristall im Knauf.
+item_LF_RootClub	Wurzelkeule
+itemd_LF_RootClub	Eine knorrige Wurzel, am Kopf um zehn Feuersteinsplitter gespalten, mit einem Bernsteinauge am Griff. Die Wachen einer Grauzwerg-Brut tragen sie.
+item_LF_RustedBlade	Rostklinge
+itemd_LF_RustedBlade	Eine lange, zerfressene Klinge des Draugr-Hofs: ein Schädel an der Parierstange, einer am Knauf, Grabtuch um den Griff.
+msg_trophy_club	Die Wache ist gefallen. Ihre Wurzelkeule gehört dir ({0}).

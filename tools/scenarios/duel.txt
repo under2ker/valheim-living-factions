@@ -1,0 +1,201 @@
+# Relic properties in a real fight: the same weapon with and without its mark, swung at a still Draugr.
+god
+env 0.4 Clear
+tp -100 300
+waitready 240
+wait 5
+emptybag
+duel Draugr LF_WolfFangAxe keen 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_WolfFangAxe none 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_GreyBlade keen 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_GreyBlade none 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_BlackgnawAxe fury 25
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_BlackgnawAxe fury 60
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_RootAxe living 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+wait 12
+duel
+duel Draugr LF_BarrowMoonAxe thirst 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_RuneAxe lasting 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_RootClub lasting 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_StagHornAxe merchant 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+duel Draugr LF_StagHornAxe none 50
+wait 2
+damage
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+swing
+wait 1.6
+duel
+quit

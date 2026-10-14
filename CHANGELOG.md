@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.6.5 - 2026-10-14
+- Seven faction swords. Six are sold by the traders of their faction as relics, the Greydwarf one
+  is taken from the guards of a brood (one guard in four leaves it):
+  - Grey Blade (Wolf Clan, +25% damage), standing 50, 480 coins;
+  - Antlered Blade (Stag Clan, double durability), standing 30, 300 coins;
+  - Black Beak (Raven Clan, half the weight), standing 40, 460 coins;
+  - Obsidian Saber (Fuling Horde, +25% damage), standing 20, 380 coins;
+  - Rune Sword (Dvergr Hold, +25% damage), standing 40, 520 coins, in place of the iron sword;
+  - Root Club (Greydwarf Brood, double durability), a bronze mace in the hand;
+  - Rusted Blade (Draugr Court, double durability), standing 10, 450 coins, in place of the iron sword.
+  A `trade.cfg` written by an older version gets the new offers added at its end; the rest of it is
+  left as the player made it.
+- New console command `lf rewind`. Without a number it lists the days it can go back to; `lf rewind
+  <day>` takes the factions back to the latest kept copy on or before that day, `lf rewind -30` goes
+  thirty days back. The world stays as it is: buildings the factions had not got to by then come
+  down, settlements founded since are cleared away. `lf advance` keeps a copy before it jumps, so a
+  jump too far is one command to undo (reported by a player who typed `lf advance 755` hoping to
+  go to day 755).
+- Settlements check themselves once a session: a building the record calls built that has no piece
+  in the world (a world backup restored without the faction state, as before 0.6.1) is put up again;
+  pieces of buildings the record has not got to come down; ground under a building that is more
+  than 0.4 m off level is levelled again, and the pads next to it with it.
+- Fixed: a guest on a server with other HUD mods saw no chronicle under the minimap (reported by a
+  player). The panel is now drawn in front of the game's interface, and if the minimap has been
+  moved off where it can hang from, it goes to the top right corner. The log says where it was put.
+- Fixed: the mod's own items were named in English in a game in another language until the next
+  start; they are named again once the mod knows its language.
+- Fixed: a trader with more than seven offers did not show the last ones (the Stag Clan's sword).
+- Fixed: a woodcutter whose tree was cleared away for a building while he was at it threw an error.
+- Checked in the game: every relic property in a real fight against a still Draugr (+25% damage,
+  fury below a third of health, 5% of damage healing, mending in the hand, double durability,
+  stamina 5.36 against 6.70 a swing with the Stag's Horn); five swords bought from five traders, the
+  club taken from a Greydwarf guard; a fresh village advanced 30 days and rewound 25: three buildings
+  came down, rewound to before it was founded: 525 objects cleared; an old world backup loaded with
+  a newer faction state: three missing buildings put up again and the ground under them levelled;
+  the chronicle seen by a guest on a dedicated server.
+- Not checked: the chronicle with the HUD mods of the player who reported it (EpicMMO, Captain Skill
+  Tree and others); two players in one village at once.
+
 ## 0.6.1 - 2026-10-14
 - Fixed: restoring a backup of the world left the factions in the future, with the deaths, days and
   standing of the later game (reported by a player). The faction state lives beside the world, not

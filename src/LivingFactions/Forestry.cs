@@ -66,6 +66,9 @@ namespace LivingFactions
         public static bool Fell(TreeBase tree, Settlement s)
         {
             if (!MayFell(tree, s) || !Net.IsBuilder(s)) return false;
+            // Cleared for a building (or taken by the player) while the woodcutter was still at it.
+            ZNetView view = tree.GetComponent<ZNetView>();
+            if (view == null || !view.IsValid()) return false;
             Vector3 p = tree.transform.position;
             // Nobody stands under it.
             Player me = Player.m_localPlayer;

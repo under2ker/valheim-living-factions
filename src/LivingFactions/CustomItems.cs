@@ -12,7 +12,7 @@ using UnityEngine;
 namespace LivingFactions
 {
     /// <summary>
-    /// One axe the mod adds: a clone of a vanilla axe whose mesh and textures are built at run time from the
+    /// One weapon the mod adds: a clone of a vanilla one whose mesh and textures are built at run time from the
     /// lowpoly-kit export embedded in the plugin (Assets/&lt;Asset&gt;.json, its PNGs and &lt;Asset&gt;-icon.png).
     /// The trade offer that sells it is in trade.cfg (Wares.cs).
     /// </summary>
@@ -23,6 +23,12 @@ namespace LivingFactions
         public string Source;
         public string NameEn, NameRu;
         public string DescEn, DescRu;
+        /// <summary>Length the model is scaled to, as the vanilla item it is cloned from (docs/reference/attach-points-items.tsv).</summary>
+        public float Length = 0.88f;
+        /// <summary>The part the hand closes on.</summary>
+        public string Grip = "grip";
+        /// <summary>Axes stand on the vanilla axe's butt (-0.16 m); swords are held by the middle of their grip.</summary>
+        public bool HeldByGrip;
     }
 
     /// <summary>Items the mod adds to the game. Each axe is listed here once.</summary>
@@ -83,13 +89,62 @@ namespace LivingFactions
                 DescEn = "A crescent axe of rust and patina with a skull at the socket and burial rags. It lies with the chief of the Draugr Court.",
                 DescRu = "Секира-полумесяц в ржавчине и патине, с черепом у втулки и погребальными лохмотьями. Она у вождя Двора драугров.",
             },
+            // The swords: six sold by their faction's traders (trade.cfg), the Greydwarf club taken from their guards (Rewards.cs).
+            new AxeSpec
+            {
+                Asset = "wolf-sword", Prefab = "LF_GreyBlade", Source = "SwordIron", Length = 1.27f, HeldByGrip = true,
+                NameEn = "Grey Blade", NameRu = "Серый Клинок",
+                DescEn = "The sword of the Wolf Clan: a straight blade with wolf tracks on the steel, a studded grip and a wolf's head at the pommel.",
+                DescRu = "Меч Клана Волка: прямой клинок с волчьими следами на стали, рукоять в заклёпках, волчья голова на навершии.",
+            },
+            new AxeSpec
+            {
+                Asset = "stag-sword", Prefab = "LF_AntlerBlade", Source = "SwordBronze", Length = 0.91f, HeldByGrip = true, Grip = "antler_grip",
+                NameEn = "Antlered Blade", NameRu = "Рогатый Клинок",
+                DescEn = "A broad Stag Clan blade with a hunt engraved on it, a guard of branching antler and a grip of antler and bronze.",
+                DescRu = "Широкий клинок Клана Оленя с гравировкой охоты, гарда из ветвистого рога, рукоять из рога и бронзы.",
+            },
+            new AxeSpec
+            {
+                Asset = "raven-sword", Prefab = "LF_BlackBeak", Source = "SwordIron", Length = 1.27f, HeldByGrip = true,
+                NameEn = "Black Beak", NameRu = "Чёрный Клюв",
+                DescEn = "A blued Raven Clan falchion with a hooked beak of a tip, wings at the guard and feathers tied below them.",
+                DescRu = "Синёный фальшион Клана Ворона с острием-клювом, крыльями на гарде и перьями под ними.",
+            },
+            new AxeSpec
+            {
+                Asset = "fuling-sword", Prefab = "LF_ObsidianSaber", Source = "SwordIron", Length = 1.27f, HeldByGrip = true,
+                NameEn = "Obsidian Saber", NameRu = "Обсидиановая Сабля",
+                DescEn = "A curved Fuling saber with a back of chipped teeth, a bone guard and trophy teeth on cords.",
+                DescRu = "Изогнутая сабля фулингов: обух из колотых зубьев, костяная гарда, зубы-трофеи на шнурах.",
+            },
+            new AxeSpec
+            {
+                Asset = "dvergr-sword", Prefab = "LF_RuneSword", Source = "SwordIron", Length = 1.27f, HeldByGrip = true,
+                NameEn = "Rune Sword", NameRu = "Рунный Меч",
+                DescEn = "A Dvergr sword of dark alloy with glowing runes on both faces, a copper guard and a crystal in the pommel.",
+                DescRu = "Меч двергов из тёмного сплава со светящимися рунами по обеим сторонам, медной гардой и кристаллом в навершии.",
+            },
+            new AxeSpec
+            {
+                Asset = "greydwarf-sword", Prefab = "LF_RootClub", Source = "MaceBronze", Length = 1.0f, HeldByGrip = true, Grip = "vine_glow",
+                NameEn = "Root Club", NameRu = "Корневая Дубина",
+                DescEn = "A knotted root split at the head round ten flint chips, with an amber eye at the butt. Greydwarf guards carry it.",
+                DescRu = "Узловатый корень, расщеплённый на конце вокруг десяти кремней, с янтарным глазом у рукояти. Её носят стражи грейдворфов.",
+            },
+            new AxeSpec
+            {
+                Asset = "draugr-sword", Prefab = "LF_RustedBlade", Source = "SwordIron", Length = 1.27f, HeldByGrip = true,
+                NameEn = "Rusted Blade", NameRu = "Ржавый Клинок",
+                DescEn = "A long pitted blade of the Draugr Court, a skull at the guard and another at the pommel, grave cloth on the grip.",
+                DescRu = "Длинный изъеденный клинок Двора драугров: череп на гарде, череп на навершии, погребальная ткань на рукояти.",
+            },
         };
 
         private static bool _created;
 
         /// <summary>The vanilla AxeIron in joint space (docs/reference/attach-points-items.tsv): handle on Z, -0.16..+0.72.</summary>
         private const float HandleMin = -0.16f;
-        private const float HandleLength = 0.88f;
         private static readonly Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static void CreatePrefabs()
@@ -120,21 +175,43 @@ namespace LivingFactions
             }
 
             ItemDrop.ItemData.SharedData shared = go.GetComponent<ItemDrop>().m_itemData.m_shared;
-            bool ru = Texts.Lang == 1;
-            // Other languages keep the item's name and tale in their own tables, under the prefab's name.
-            shared.m_name = Texts.Translated(Texts.Lang, "item_" + spec.Prefab) && Texts.Lang >= 2 ? Texts.Get("item_" + spec.Prefab) : ru ? spec.NameRu : spec.NameEn;
-            shared.m_description = Texts.Translated(Texts.Lang, "itemd_" + spec.Prefab) && Texts.Lang >= 2 ? Texts.Get("itemd_" + spec.Prefab) : ru ? spec.DescRu : spec.DescEn;
+            Name(shared, spec);
             Sprite icon = LoadIcon(spec.Asset);
             if (icon != null) shared.m_icons = new[] { icon };
 
-            ApplyModel(go, spec.Asset, spec.Prefab);
+            ApplyModel(go, spec);
             ItemManager.Instance.AddItem(new CustomItem(go, false));
             Plugin.Log.LogInfo("Registered " + spec.Prefab);
         }
 
-        /// <summary>Replaces the clone's visible mesh with the kit's axe, keeping the clone's overall size.</summary>
-        private static void ApplyModel(GameObject go, string asset, string prefab)
+        private static void Name(ItemDrop.ItemData.SharedData shared, AxeSpec spec)
         {
+            bool ru = Texts.Lang == 1;
+            // Other languages keep the item's name and tale in their own tables, under the prefab's name.
+            shared.m_name = Texts.Translated(Texts.Lang, "item_" + spec.Prefab) && Texts.Lang >= 2 ? Texts.Get("item_" + spec.Prefab) : ru ? spec.NameRu : spec.NameEn;
+            shared.m_description = Texts.Translated(Texts.Lang, "itemd_" + spec.Prefab) && Texts.Lang >= 2 ? Texts.Get("itemd_" + spec.Prefab) : ru ? spec.DescRu : spec.DescEn;
+        }
+
+        /// <summary>
+        /// The items are made before the mod knows its language (that waits for the world and the game's
+        /// own language), so they are named again once it does, and when the player picks another. Every
+        /// copy in a bag shares these names with the prefab.
+        /// </summary>
+        public static void Rename()
+        {
+            if (ObjectDB.instance == null) return;
+            foreach (AxeSpec spec in Axes)
+            {
+                GameObject prefab = ObjectDB.instance.GetItemPrefab(spec.Prefab);
+                ItemDrop drop = prefab != null ? prefab.GetComponent<ItemDrop>() : null;
+                if (drop != null) Name(drop.m_itemData.m_shared, spec);
+            }
+        }
+
+        /// <summary>Replaces the clone's visible mesh with the kit's model, keeping the clone's overall size.</summary>
+        private static void ApplyModel(GameObject go, AxeSpec spec)
+        {
+            string asset = spec.Asset, prefab = spec.Prefab;
             MeshFilter[] filters = go.GetComponentsInChildren<MeshFilter>(true);
             MeshFilter target = filters.OrderByDescending(f => f.sharedMesh != null ? f.sharedMesh.bounds.size.magnitude : 0f).FirstOrDefault();
             if (target == null || target.sharedMesh == null)
@@ -162,7 +239,7 @@ namespace LivingFactions
             Material baseMat = renderer.sharedMaterial;
 
             // The grip's centre, in joint space before fitting: the handle must pass through the joint's zero.
-            float gripX = 0f, gripY = 0f;
+            float gripX = 0f, gripY = 0f, gripZ = 0f;
             int gripN = 0;
             foreach (JObject part in (JArray)kit["meshes"])
             {
@@ -179,9 +256,9 @@ namespace LivingFactions
                     Vector3 a = new Vector3(-p[t], p[t + 2], p[t + 1]);
                     Vector3 b = new Vector3(-p[t + 3], p[t + 5], p[t + 4]);
                     Vector3 c = new Vector3(-p[t + 6], p[t + 8], p[t + 7]);
-                    if ((string)part["name"] == "grip")
+                    if ((string)part["name"] == spec.Grip)
                     {
-                        gripX += a.x + b.x + c.x; gripY += a.y + b.y + c.y; gripN += 3;
+                        gripX += a.x + b.x + c.x; gripY += a.y + b.y + c.y; gripZ += a.z + b.z + c.z; gripN += 3;
                     }
                     Vector3 n = Vector3.Cross(b - a, c - a).normalized;
                     int i = t / 3; // index of vertex a; uvs hold two floats per vertex
@@ -210,9 +287,12 @@ namespace LivingFactions
             // handle along Z through (0,0), Z from -0.16 to +0.72, head toward +X.
             Transform attach = go.transform.Find("attach") ?? go.transform;
             float length = kitBounds.size.z;
-            float scale = length > 0f ? HandleLength / length : 1f;
-            Vector3 centre = gripN > 0 ? new Vector3(gripX / gripN, gripY / gripN, 0f) : Vector3.zero;
-            Vector3 offset = new Vector3(-centre.x * scale, -centre.y * scale, HandleMin - kitBounds.min.z * scale);
+            float scale = length > 0f ? spec.Length / length : 1f;
+            Vector3 centre = gripN > 0 ? new Vector3(gripX / gripN, gripY / gripN, gripZ / gripN) : Vector3.zero;
+            if (gripN == 0 && spec.HeldByGrip) Plugin.Log.LogWarning(prefab + ": no part named " + spec.Grip + " to hold it by");
+            Vector3 offset = spec.HeldByGrip
+                ? -centre * scale
+                : new Vector3(-centre.x * scale, -centre.y * scale, HandleMin - kitBounds.min.z * scale);
             for (int i = 0; i < verts.Count; i++) verts[i] = verts[i] * scale + offset;
 
             // Joint space -> the mesh's own space. The vertices are then moved into the mesh's local space, and the
@@ -239,7 +319,7 @@ namespace LivingFactions
             {
                 if (other != renderer) other.enabled = false;
             }
-            Plugin.Log.LogInfo(prefab + ": " + subs.Count + " parts, scale " + scale.ToString("0.000") + ", handle " + HandleMin.ToString("0.00") + ".." + (HandleMin + HandleLength).ToString("0.00") + " m on Z, grip centre " + centre.ToString("0.000") + ", attach " + attach.name + ", mesh node scale " + target.transform.lossyScale.ToString("0.000"));
+            Plugin.Log.LogInfo(prefab + ": " + subs.Count + " parts, scale " + scale.ToString("0.000") + ", " + (kitBounds.min.z * scale + offset.z).ToString("0.00") + ".." + (kitBounds.max.z * scale + offset.z).ToString("0.00") + " m on Z, grip centre " + centre.ToString("0.000") + ", attach " + attach.name + ", mesh node scale " + target.transform.lossyScale.ToString("0.000"));
         }
 
         /// <summary>Bounds of every mesh under the prefab, measured in the prefab's own space.</summary>

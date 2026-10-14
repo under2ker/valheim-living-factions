@@ -119,6 +119,7 @@ namespace LivingFactions
         private static void ApplyLanguage()
         {
             Texts.Lang = Texts.Resolve(ModConfig.Language.Value, Localization.instance != null ? Localization.instance.GetSelectedLanguage() : null);
+            CustomItems.Rename();
             foreach (FactionMember member in FactionMember.All) member.Rename();
         }
 

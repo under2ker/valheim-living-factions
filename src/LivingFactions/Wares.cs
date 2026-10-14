@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using HarmonyLib;
 using LivingFactions.Core;
 using UnityEngine;
@@ -51,28 +52,55 @@ namespace LivingFactions
 *            sell    Torch                 1    4  -15
 clan_raven   sell    ArrowFire            20   40   10
 clan_raven   relic   Bow                   1  180   30  light
+clan_raven   relic   LF_BlackBeak          1  460   40  light
 clan_raven   mystery SpearFlint            1   60    0
 clan_wolf    sell    ShieldWood            1   30    0
 clan_wolf    relic   LF_WolfFangAxe        1  420   40  keen
+clan_wolf    relic   LF_GreyBlade          1  480   50  keen
 clan_wolf    mystery AxeBronze             1  120    0
 clan_stag    sell    Honey                10   25    0
 clan_stag    sell    CapeLinen             1  120   20
 clan_stag    relic   LF_StagHornAxe         1 1500   60  merchant
 clan_stag    relic   ShieldBronzeBuckler   1  260   30  lasting
+clan_stag    relic   LF_AntlerBlade        1  300   30  lasting
 clan_stag    mystery KnifeFlint            1   45    0
 dvergr_hold  sell    Bronze                5   95    0
-dvergr_hold  relic   SwordIron             1  520   40  keen
+dvergr_hold  relic   LF_RuneSword          1  520   40  keen
 dvergr_hold  relic   HelmetIron            1  380   30  stout
 dvergr_hold  mystery MaceBronze            1  140    0
 fuling_horde relic   AtgeirBronze          1  360   20  keen
 fuling_horde relic   HelmetBronze          1  300   20  stout
+fuling_horde relic   LF_ObsidianSaber      1  380   20  keen
 fuling_horde mystery Club                  1   30  -30
-draugr_court relic   SwordIron             1  450   10  lasting
+draugr_court relic   LF_RustedBlade        1  450   10  lasting
 ";
 
         private static string FilePath { get { return Path.Combine(SimHost.DataDir, "trade.cfg"); } }
 
         public static void Reload() { _all = null; }
+
+        /// <summary>
+        /// A trade.cfg written by an older version knows nothing of the items added since: their offers
+        /// are added to the end of it, once. The player's own edits are left as they are; an offer they
+        /// deleted comes back only if the item is new to the file.
+        /// </summary>
+        private static void AddNewItems()
+        {
+            string text = File.ReadAllText(FilePath);
+            StringBuilder added = new StringBuilder();
+            foreach (string raw in Defaults.Split('\n'))
+            {
+                string line = raw.Trim();
+                if (line.Length == 0 || line.StartsWith("#")) continue;
+                string[] p = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (p.Length < 3 || !p[2].StartsWith("LF_") || text.Contains(p[2])) continue;
+                added.AppendLine(line);
+            }
+            if (added.Length == 0) return;
+            File.Copy(FilePath, FilePath + ".bak", true);
+            File.AppendAllText(FilePath, (text.EndsWith("\n") ? "" : Environment.NewLine) + "# added by Living Factions " + Plugin.Version + Environment.NewLine + added);
+            Plugin.Log.LogInfo("trade.cfg: added the offers of new items:" + Environment.NewLine + added.ToString().TrimEnd());
+        }
 
         public static List<Ware> For(Faction f)
         {
@@ -92,6 +120,7 @@ draugr_court relic   SwordIron             1  450   10  lasting
             {
                 Directory.CreateDirectory(SimHost.DataDir);
                 if (!File.Exists(FilePath)) File.WriteAllText(FilePath, Defaults);
+                AddNewItems();
                 foreach (string raw in File.ReadAllLines(FilePath))
                 {
                     string line = raw.Trim();

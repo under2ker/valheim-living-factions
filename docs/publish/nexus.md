@@ -11,14 +11,14 @@ Living Factions
 
 **Version**
 ```
-0.6.1
+0.6.5
 ```
 
 **Category:** Gameplay (если есть «Overhauls» или «NPC»: тоже подходит).
 
 **Brief overview** (до 350 знаков)
 ```
-Seven NPC factions that live on their own: they build settlements piece by piece, fell and replant the forest, trade, lay roads, send caravans and go to war. Trade with them, hire their fighters, take on boss hunts, earn seven relic axes or make enemies. Single-player, hosted and dedicated servers. English, Russian, Polish, German, French, Spanish, Portuguese.
+Seven NPC factions that live on their own: they build settlements piece by piece, fell and replant the forest, trade, lay roads, send caravans and go to war. Trade with them, hire their fighters, take on boss hunts, earn relic axes and swords or make enemies. Single-player, hosted and dedicated servers. English, Russian, Polish, German, French, Spanish, Portuguese.
 ```
 
 **Language:** English (в описании указать, что мод переведён на семь языков).
@@ -34,7 +34,7 @@ Seven NPC factions that live on their own: they build settlements piece by piece
 ## Description (вставлять в редактор в режиме BBCode)
 
 ```
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.1[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.5[/img][/center]
 
 [size=5][b]Living Factions[/b][/size]
 
@@ -70,12 +70,17 @@ Seven NPC factions move into your world and live their own lives. They set up ca
 [*]Declare war or pay for peace.
 [*]Take on boss hunts: a chief names the beast and the bounty, you bring word of its death.
 [*]Earn seven relic axes, one per faction, each its own way: bought, given by a jarl or a thane, or taken from a chieftain.
+[*]Buy the sword of each faction from its traders. The Greydwarfs do not trade: their root club is taken from their guards.
 [/list]
 
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.1[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.5[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.6.5[/img][/center]
 
 [size=4][b]Playing together[/b][/size]
 Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.6.x with any 0.6.x). Tested with a dedicated server and one guest. Back up the server world before the first run.
+
+[size=4][b]Backups[/b][/size]
+Restoring a backup of the world takes the factions back to the same point. Buildings on record but missing from the world are put up again. [b]lf rewind[/b] in the console takes the factions back without touching the world.
 
 [size=4][b]Languages[/b][/size]
 English, Russian, Polish, German, French, Spanish and Portuguese. The mod follows the language of the game, or you pick one in its menu.
@@ -108,21 +113,21 @@ Made with the help of AI (Claude Code). No game files, decompiled code or extrac
 
 **File name**
 ```
-Living Factions 0.6.1
+Living Factions 0.6.5
 ```
 
-**File version:** `0.6.1`, категория файла: Main Files.
+**File version:** `0.6.5`, категория файла: Main Files.
 
 **File description**
 ```
 The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager.
 ```
 
-Файл: `dist/LivingFactions-0.6.1.zip`.
+Файл: `dist/LivingFactions-0.6.5.zip`.
 
 ## Images tab
 
-Главная картинка: `docs/store/cover.jpg`. Галерея: `docs/store/axes.jpg`, все снимки из
+Главная картинка: `docs/store/cover.jpg`. Галерея: `docs/store/axes.jpg`, `docs/store/swords.jpg`, все снимки из
 `docs/screenshots/press/`, `docs/screenshots/map_zones_0.4.2.jpg`, `docs/screenshots/village_paths_0.3.4.jpg`.
 
 ## Permissions (рекомендация)
@@ -133,12 +138,13 @@ The mod: LivingFactions.dll in a plugins folder, with manifest, README and chang
 - Use assets in other mods: ask first.
 - Use in mod packs / collections: yes.
 
-## Changelog (поле Changelogs, версия 0.6.1)
+## Changelog (поле Changelogs, версия 0.6.5)
 
 ```
-- Restoring a backup of the world now takes the factions back to the same point too.
-- Woodcutters fell real trees away from the houses and plant saplings in their place.
-- Boss hunts: chiefs name a beast and a bounty; the factions react to every boss you kill.
-- Villagers on a visit and guards on the night round no longer step about on the spot.
-- A sapling in a doorway no longer keeps people out of a house.
+- Seven faction swords: six sold by the traders of their faction, the Greydwarf root club taken from their guards.
+- lf rewind: takes the factions back to an earlier day while the world stays as it is; lf advance keeps a copy first, so a jump too far can be undone.
+- Settlements check themselves: buildings missing after a restored backup are put up again, ground under them levelled.
+- Fixed: a guest with other HUD mods saw no chronicle under the minimap.
+- Fixed: the mod's items were named in English in games in other languages until a restart.
+- Fixed: a trader with more than seven offers hid the last ones.
 ```

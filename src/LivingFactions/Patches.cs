@@ -110,7 +110,11 @@ namespace LivingFactions
                 return;
             }
             Materializer.NoteDeath(settlement.Id);
-            if (killer != null) Rewards.ChiefKilled(member, killer);
+            if (killer != null)
+            {
+                Rewards.ChiefKilled(member, killer);
+                Rewards.GuardKilled(member, killer);
+            }
             bool soldier = member.Role != NpcRole.Villager;
             if (killer != null)
             {

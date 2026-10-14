@@ -12,6 +12,7 @@ namespace LivingFactions
     ///   Rune Cleaver   a gift of a Dvergr thane to an ally of long standing (standing 80+), asked for in talk
     ///   Rootbiter      carried by the chief of a Greydwarf brood
     ///   Barrow Moon    lies with the chief of the Draugr Court
+    ///   Root Club      carried by the guards of a Greydwarf brood: one in four drops it
     /// What the player has been given is kept on the character, so it holds in any world.
     /// </summary>
     internal static class Rewards
@@ -21,6 +22,7 @@ namespace LivingFactions
         public const string DvergrAxe = "LF_RuneAxe";
         public const string GreydwarfAxe = "LF_RootAxe";
         public const string DraugrAxe = "LF_BarrowMoonAxe";
+        public const string GreydwarfClub = "LF_RootClub";
         public const int ThaneStanding = 80;
 
         /// <summary>Chief's culture -> the axe they carry and its property.</summary>
@@ -60,6 +62,16 @@ namespace LivingFactions
             if (player == Player.m_localPlayer && player.GetInventory().AddItem(data)) return true;
             ItemDrop.DropItem(data, 1, dropAt + Vector3.up, Quaternion.identity);
             return true;
+        }
+
+        /// <summary>A Greydwarf guard has fallen to a player: now and then it leaves its root club.</summary>
+        public static void GuardKilled(FactionMember guard, Player killer)
+        {
+            if (guard.Role != NpcRole.Guard || killer != Player.m_localPlayer || Has(killer, GreydwarfClub) || Random.value >= 0.25f) return;
+            Faction f = SimHost.Sim.State.GetFaction(guard.FactionId);
+            if (f == null || f.CultureId != "greydwarf_brood") return;
+            if (Give(killer, GreydwarfClub, "lasting", f, guard.transform.position) && MessageHud.instance != null)
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_trophy_club", Texts.FactionName(f)));
         }
 
         /// <summary>A chieftain of a race has fallen to a player: the axe they carried is left on the ground.</summary>

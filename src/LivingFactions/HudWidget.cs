@@ -27,9 +27,10 @@ namespace LivingFactions
             _next = Time.time + 3f;
             if (_text == null)
             {
-                if (GUIManager.Instance == null || GUIManager.CustomGUIBack == null) return;
+                // In front of the game's own interface: a HUD mod's panels drawn over the back layer hid it.
+                if (GUIManager.Instance == null || GUIManager.CustomGUIFront == null) return;
                 Vector2 corner = new Vector2(1f, 1f);
-                GameObject go = GUIManager.Instance.CreateText("", GUIManager.CustomGUIBack.transform, corner, corner, new Vector2(-180f, -300f), GUIManager.Instance.AveriaSerifBold, 13, Color.white, true, Color.black, 330f, 260f, false);
+                GameObject go = GUIManager.Instance.CreateText("", GUIManager.CustomGUIFront.transform, corner, corner, new Vector2(-180f, -300f), GUIManager.Instance.AveriaSerifBold, 13, Color.white, true, Color.black, 330f, 260f, false);
                 _text = go.GetComponent<Text>();
                 _text.alignment = TextAnchor.UpperRight;
                 _text.raycastTarget = false;
@@ -37,6 +38,21 @@ namespace LivingFactions
             _text.gameObject.SetActive(true);
             _text.text = Compose();
             PlaceUnderMinimap();
+            if (!_reported)
+            {
+                // One line in the log, so a report of an empty corner can be told from one of a text off screen.
+                _reported = true;
+                Plugin.Log.LogInfo("Chronicle shown at " + _text.rectTransform.position + " on a " + Screen.width + "x" + Screen.height + " screen" + (_mapUsed ? ", under the minimap" : ", in the corner (no minimap to hang it from)"));
+            }
+        }
+
+        private static bool _reported, _mapUsed;
+
+        public static string Describe()
+        {
+            if (_text == null) return "chronicle widget not made yet (shown " + (ModConfig.HudWidget.Value && SimHost.Active) + ")";
+            Vector3 p = _text.rectTransform.position;
+            return "chronicle widget " + (_text.gameObject.activeInHierarchy ? "visible" : "hidden") + " at " + p + " on " + Screen.width + "x" + Screen.height + (_mapUsed ? " under the minimap" : " in the corner") + ", " + _text.text.Split('\n').Length + " lines";
         }
 
         private static readonly Vector3[] MapCorners = new Vector3[4];
@@ -49,13 +65,23 @@ namespace LivingFactions
         private static void PlaceUnderMinimap()
         {
             RectTransform panel = _text.rectTransform;
-            RectTransform map = Minimap.instance != null && Minimap.instance.m_smallRoot != null ? Minimap.instance.m_smallRoot.GetComponent<RectTransform>() : null;
-            if (map == null) return;
-            map.GetWorldCorners(MapCorners);
-            // Corners come as bottom-left, top-left, top-right, bottom-right.
-            Vector3 hook = MapCorners[3];
+            RectTransform map = Minimap.instance != null && Minimap.instance.m_smallRoot != null && Minimap.instance.m_smallRoot.activeInHierarchy ? Minimap.instance.m_smallRoot.GetComponent<RectTransform>() : null;
             panel.pivot = new Vector2(1f, 1f);
-            panel.position = new Vector3(hook.x, hook.y - 10f * panel.lossyScale.y, panel.position.z);
+            _mapUsed = false;
+            if (map != null)
+            {
+                map.GetWorldCorners(MapCorners);
+                // Corners come as bottom-left, top-left, top-right, bottom-right.
+                Vector3 hook = MapCorners[3];
+                // A minimap moved or scaled by another mod can put the hook off the screen: then the corner.
+                if (hook.x > Screen.width * 0.5f && hook.x <= Screen.width + 1f && hook.y > Screen.height * 0.3f && hook.y <= Screen.height + 1f)
+                {
+                    panel.position = new Vector3(hook.x, hook.y - 10f * panel.lossyScale.y, panel.position.z);
+                    _mapUsed = true;
+                    return;
+                }
+            }
+            panel.position = new Vector3(Screen.width - 20f, Screen.height * 0.72f, panel.position.z);
         }
 
         public static string Compose()

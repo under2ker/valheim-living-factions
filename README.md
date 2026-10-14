@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.1)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.5)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -88,7 +88,7 @@ settlement when it is raided, the raiders really turn up.
 - Killing their people or breaking their buildings costs standing, and enough of it means war.
   Killing monsters near their homes or raiders attacking them earns standing.
 
-There are seven relic axes, one for each faction:
+There are seven relic axes and seven swords, one of each for every faction:
 
 | Axe | Faction | What it does | How you get it |
 |---|---|---|---|
@@ -104,7 +104,19 @@ To make an alliance, talk to anyone in the settlement: the window shows your sta
 it is from the 70 an alliance needs, and each gift shows what it would earn. A gift of what they
 are short of counts double; many gifts in one day count for less.
 
-![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.1)
+![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.5)
+
+| Sword | Faction | What it does | How you get it |
+|---|---|---|---|
+| Grey Blade | Wolf Clan | +25% damage | bought from the clan, standing 50 |
+| Antlered Blade | Stag Clan | double durability | bought from the clan, standing 30 |
+| Black Beak | Raven Clan | half the weight | bought from the clan, standing 40 |
+| Obsidian Saber | Fuling Horde | +25% damage | bought from the horde, standing 20 |
+| Rune Sword | Dvergr Hold | +25% damage | bought from the hold, standing 40 |
+| Root Club | Greydwarf Brood | double durability | one Greydwarf guard in four leaves it |
+| Rusted Blade | Draugr Court | double durability | bought from the court, standing 10 |
+
+![The seven faction swords](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.6.5)
 
 ## On screen
 
@@ -119,13 +131,13 @@ are short of counts double; many gifts in one day count for less.
 
 ## Screenshots
 
-![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.6.1)
-![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.6.1)
-![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.6.1)
-![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.6.1)
-![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.6.1)
-![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.6.1)
-![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.6.1)
+![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.6.5)
+![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.6.5)
+![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.6.5)
+![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.6.5)
+![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.6.5)
+![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.6.5)
+![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.6.5)
 
 ## Install
 
@@ -141,15 +153,17 @@ By hand:
 Back up your world before the first run. Settlements level the ground and place pieces.
 
 The state of the factions is saved in `BepInEx/config/LivingFactions/<world>_<uid>.json` every
-time the world saves. If you restore a backup of the
-world, the factions go back to the same point too (from 0.6.1 on).
+time the world saves, with a dated copy of the last 60 saves beside it. If you restore a backup of
+the world, the factions go back to the same point too (from 0.6.1 on). Buildings that are on record
+but missing from the world are put up again. `lf rewind` takes the factions back without touching
+the world, for example after an `lf advance` too far.
 
 ## Settings
 
 Use the menu in the game or edit `BepInEx/config/alexandr.livingfactions.cfg`. You can change the
 pace of the simulation, turn wars and the non-human factions on or off, limit how many villagers
 are shown, switch roads, lamps, caravans, hired fighters and the chronicle panel on or off, and
-pick the language (`auto`, `en`, `ru`).
+pick the language (`auto` follows the game, or one of `en`, `ru`, `pl`, `de`, `fr`, `es`, `pt`).
 
 ## Console
 
@@ -161,6 +175,7 @@ Start the game with `-console` and press F5.
 | `lf factions` | your standing with each faction and who is at war |
 | `lf chronicle [n]` | recent events |
 | `lf advance <days>` | runs the simulation forward |
+| `lf rewind [day]` | lists the days you can go back to, or takes the factions back (`-30`: thirty days back) |
 | `lf tp <settlement>` | takes you to a settlement |
 | `lf rep <faction#> <value>` | sets your standing |
 
@@ -191,7 +206,7 @@ on the game.
 драугров. Они ставят лагеря, добывают ресурсы, строят дома по одной детали и вырастают в деревни
 и города. Между собой торгуют, ссорятся и воюют, даже когда вас нет рядом.
 
-Дровосеки по-настоящему рубят деревья и сажают на их месте саженцы. Вожди дают охоту на боссов за награду. На большой карте земли фракций отмечены их цветом. С жителями можно говорить (`E`), торговать, дарить подарки, нанимать бойцов, заключать союз или
+Дровосеки по-настоящему рубят деревья и сажают на их месте саженцы. Вожди дают охоту на боссов за награду. У каждой фракции есть свой топор-реликвия и свой меч. На большой карте земли фракций отмечены их цветом. С жителями можно говорить (`E`), торговать, дарить подарки, нанимать бойцов, заключать союз или
 объявлять войну. Между поселениями есть дороги с фонарями, по ним ходят караваны. Настройки
 открываются плиткой «LF» в инвентаре.
 
@@ -201,6 +216,9 @@ on the game.
 
 С версии 0.4.0 можно играть вместе: на выделенном сервере или у игрока-хоста. Мод нужен всем,
 включая сервер. Проверено с сервером и одним гостем.
+
+Если восстановить мир из бэкапа, фракции тоже вернутся к тому же моменту. Команда `lf rewind`
+откатывает фракции назад, не трогая мир (например, после слишком большого `lf advance`).
 
 Отзывы, баги и общение: [Discord](https://discord.gg/qVfAq3fqj6).
 

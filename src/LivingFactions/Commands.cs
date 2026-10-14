@@ -44,6 +44,14 @@ namespace LivingFactions
                 case "factions": return Factions();
                 case "chronicle": return Chronicle(a.Length > 1 ? int.Parse(a[1]) : 15);
                 case "advance": return Advance(a.Length > 1 ? double.Parse(a[1], Inv) : 1);
+                case "rewind": return SimHost.Rewind(a);
+                case "audit":
+                    {
+                        Settlement s = SimHost.Active && a.Length > 1 ? FindSettlement(a[1]) : null;
+                        if (s == null) return "audit <settlement>";
+                        string report = Materializer.Reconcile(s, new Vector3(s.Pos.X, 0f, s.Pos.Z), a.Length > 2 && a[2] == "fix");
+                        return s.Name + ": " + (report.Length == 0 ? "world and record agree" : report);
+                    }
                 case "tp": return Teleport(a);
                 case "rep": return Rep(a);
                 case "save": SimHost.Save(); return "saved";
@@ -130,6 +138,8 @@ namespace LivingFactions
                     return "map open, show all " + ModConfig.MapShowAll.Value + "; " + MapZones.Describe();
                 case "stamina": return DevProbes.Stamina();
                 case "damage": return DevProbes.Damage(a);
+                case "duel": return Duel.Command(a);
+                case "swing": return Duel.Swing(a);
                 case "shots": return DevProbes.Shots(a);
                 case "tradechest":
                     Settlement tradeTown = a.Length > 1 ? FindSettlement(a[1]) : null;
@@ -230,7 +240,7 @@ namespace LivingFactions
                     Hud.instance.m_userHidden = a.Length < 2 || a[1] != "off";
                     return Hud.instance.m_userHidden ? "hud hidden" : "hud shown";
                 case "env": return Env(a);
-                case "god": return God();
+                case "god": return God(a);
                 case "dump": return Dump(a);
                 case "spawn": return Spawn(a);
                 case "find": return Find(a);
@@ -258,6 +268,7 @@ namespace LivingFactions
                 case "items":
                     if (Player.m_localPlayer == null) return "no player";
                     return string.Join(", ", Player.m_localPlayer.GetInventory().GetAllItems().Select(i => i.m_dropPrefab.name + "x" + i.m_stack + (Wares.AffixOf(i) != null ? "[" + Wares.AffixOf(i) + "]" : i.m_customData.ContainsKey(Wares.MysteryKey) ? "[?]" : "") + " dmg " + i.GetDamage().GetTotalDamage().ToString("0")));
+                case "hudinfo": return HudWidget.Describe();
                 case "hud": return SimHost.Active && Player.m_localPlayer != null ? HudWidget.Compose() : "no world";
                 case "npcs": return NpcReport();
                 case "chests": return Chests.Describe();
@@ -281,7 +292,7 @@ namespace LivingFactions
 
         private static string Help()
         {
-            return "lf status | factions | chronicle [n] | advance <days> | tp <settlement> | rep <faction#> <value> | save";
+            return "lf status | factions | chronicle [n] | advance <days> | rewind [day] | tp <settlement> | rep <faction#> <value> | save";
         }
 
         private static string NoSim { get { return "The faction simulation is not running here (only the host of the world runs it)."; } }
@@ -346,7 +357,8 @@ namespace LivingFactions
             if (!SimHost.Active) return NoSim;
             days = Math.Max(0, Math.Min(days, 400));
             SimHost.FastForward(days);
-            return "advanced " + days.ToString("0.##", Inv) + " days, now day " + SimHost.Sim.State.Day.ToString("0.0", Inv);
+            // The factions move on by this many days; there is no going back but a world backup.
+            return "advanced " + days.ToString("0.##", Inv) + " days, now day " + SimHost.Sim.State.Day.ToString("0.0", Inv) + " (lf advance moves the factions ahead by that many days; lf rewind takes them back)";
         }
 
         private static Settlement FindSettlement(string key)
@@ -690,13 +702,15 @@ namespace LivingFactions
             return "time " + (EnvMan.instance.m_debugTimeOfDay ? EnvMan.instance.m_debugTime.ToString(Inv) : "live") + " env '" + EnvMan.instance.m_debugEnv + "'";
         }
 
-        private static string God()
+        private static string God(string[] a)
         {
             if (Player.m_localPlayer == null) return "no player";
-            Player.m_localPlayer.SetGodMode(true);
-            Player.m_localPlayer.SetGhostMode(true);
+            // "god off": stamina and health count again (measuring what a swing costs).
+            bool on = a.Length < 2 || a[1] != "off";
+            Player.m_localPlayer.SetGodMode(on);
+            Player.m_localPlayer.SetGhostMode(on);
             Player.m_debugMode = true;
-            return "god + ghost on";
+            return on ? "god + ghost on" : "god + ghost off";
         }
 
         private static string Spawn(string[] a)

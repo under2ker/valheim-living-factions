@@ -292,6 +292,7 @@ namespace LivingFactions
             if (a.Length > 2 && a[1] == "mod") ModConfig.Language.Value = a[2];
             else if (a.Length > 1) Localization.instance.SetLanguage(a[1]);
             Texts.Lang = Texts.Resolve(ModConfig.Language.Value, Localization.instance.GetSelectedLanguage());
+            CustomItems.Rename();
             foreach (FactionMember member in FactionMember.All) member.Rename();
             return "game language " + Localization.instance.GetSelectedLanguage() + ", mod language " + Texts.Code;
         }
