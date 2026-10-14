@@ -1,0 +1,26 @@
+name: Publish Releases to Discord
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  discord:
+    name: Send Release to Discord
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Publish release changelog
+        uses: step-security/github-releases-to-discord@v1
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          username: "LivingFactions"
+          color: "2105893"
+          footer_title: "LivingFactions Changelog"
+          reduce_headings: true
