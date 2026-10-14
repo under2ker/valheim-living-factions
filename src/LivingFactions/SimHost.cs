@@ -162,6 +162,7 @@ namespace LivingFactions
             Pending.Clear();
             Net.Reset();
             Rewards.Reset();
+            Forestry.Reset();
             Materializer.Reset();
             Discovery.Reset();
             NightWatch.Reset();

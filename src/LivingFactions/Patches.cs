@@ -91,6 +91,7 @@ namespace LivingFactions
             Player killer = ___m_lastHit != null ? ___m_lastHit.GetAttacker() as Player : null;
             if (member == null)
             {
+                if (__instance.IsBoss()) BossHunt.BossKilled(__instance);
                 if (killer != null) CreditMonsterKill(__instance, killer);
                 return;
             }

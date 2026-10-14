@@ -339,6 +339,16 @@ namespace LivingFactions.Core
                 { "itemd_LF_RootAxe", "Sílex lascado sobre uma raiz viva, enrolado em cipó, com um olho de âmbar da ninhada. O chefe de uma ninhada de anões cinzentos o carrega." },
                 { "item_LF_BarrowMoonAxe", "Lua do Túmulo" },
                 { "itemd_LF_BarrowMoonAxe", "Um machado em meia-lua tomado de ferrugem e pátina, com uma caveira no alvado e trapos funerários. Ele jaz com o chefe da Corte Draugr." },
+                { "opt_felling", "Lenhadores derrubam árvores e plantam novas" },
+                { "ui_hunt", "Perguntar sobre uma caçada" },
+                { "ui_hunt_offer", "{0} já atormenta estas terras há tempo demais. Traga-nos a notícia da morte dele e {1} moedas serão suas." },
+                { "ui_hunt_take", "Aceitar a caçada" },
+                { "ui_hunt_active", "Você está caçando: {0}. Volte a qualquer um dos nossos chefes quando ele estiver morto." },
+                { "ui_hunt_claim", "Receber a recompensa ({0} moedas)" },
+                { "r_hunt_paid", "Então está morto. Aqui está sua prata, caçador." },
+                { "r_hunt_poor", "Nossos cofres estão vazios demais para essa recompensa agora. Volte mais tarde." },
+                { "r_hunt_none", "Não resta nenhuma fera por cuja morte pagaríamos." },
+                { "msg_boss_slain", "{0} caiu. Todas as facções vão saber." },
             };
         }
     }

@@ -88,6 +88,7 @@ namespace LivingFactions
 
             Page life = AddPage("menu_page_life");
             Toggle(life, "opt_work", ModConfig.VisibleWork);
+            Toggle(life, "opt_felling", ModConfig.TreeFelling);
             Toggle(life, "opt_errands", ModConfig.Errands);
             Toggle(life, "opt_sleep", ModConfig.NightSleep);
             Toggle(life, "opt_watch", ModConfig.NightWatchOn);

@@ -81,12 +81,27 @@ namespace LivingFactions
                     return "bag emptied, " + had + " stacks gone";
                 case "server": return Net.DevOnHost(string.Join(" ", a, 1, a.Length - 1));
                 case "net": return Net.Describe();
+                case "forest": return Forestry.Describe();
                 case "ally":
                 {
                     // ally <faction#>: proposes an alliance, as the button in the dialog does.
                     Faction f = a.Length > 1 && SimHost.Active ? SimHost.Sim.State.GetFaction(int.Parse(a[1])) : null;
                     if (f == null || Player.m_localPlayer == null) return "usage: ally <faction#>";
                     return Net.PlayerProposeAlliance(f, Player.m_localPlayer.GetPlayerID()).Reason;
+                }
+                case "strike":
+                {
+                    // strike <prefab>: the player kills the nearest creature of that kind (bosses included), as a real kill.
+                    Player me = Player.m_localPlayer;
+                    if (me == null || a.Length < 2) return "usage: strike <prefab>";
+                    Character target = Character.GetAllCharacters().Where(c => !c.IsDead() && Utils.GetPrefabName(c.gameObject) == a[1]).OrderBy(c => Vector3.Distance(c.transform.position, me.transform.position)).FirstOrDefault();
+                    if (target == null) return "no " + a[1] + " nearby";
+                    HitData hit = new HitData();
+                    hit.m_damage.m_slash = 1000000f;
+                    hit.m_point = target.transform.position;
+                    hit.SetAttacker(me);
+                    target.Damage(hit);
+                    return "struck " + a[1];
                 }
                 case "slay":
                 {

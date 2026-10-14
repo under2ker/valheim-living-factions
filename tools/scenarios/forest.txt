@@ -1,0 +1,12 @@
+# Woodcutters fell trees away from the buildings and plant saplings in their place.
+god
+env 0.35 Clear
+goto 15
+speed 4
+until trees felled 1 :: forest
+until saplings planted 1 :: forest
+forest
+speed 1
+expect worst deviation 0.0 :: padcheck 15
+reject BLOCKED :: doorcheck 15
+quit

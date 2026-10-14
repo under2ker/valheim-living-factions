@@ -329,3 +329,13 @@ item_LF_RootAxe	Wurzelbeißer
 itemd_LF_RootAxe	Behauener Feuerstein auf einer lebenden Wurzel, mit Ranken umwunden, ein Bernsteinauge der Brut. Der Häuptling einer Grauzwerg-Brut trägt ihn.
 item_LF_BarrowMoonAxe	Hügelmond
 itemd_LF_BarrowMoonAxe	Eine Mondsichelaxt voller Rost und Patina, mit einem Schädel an der Tülle und Grablumpen. Sie liegt beim Häuptling des Draugr-Hofs.
+opt_felling	Holzfäller fällen Bäume und pflanzen neue
+ui_hunt	Nach einer Jagd fragen
+ui_hunt_offer	{0} hat diese Lande lange genug geplagt. Bring uns Kunde von seinem Tod, und {1} Münzen gehören dir.
+ui_hunt_take	Die Jagd annehmen
+ui_hunt_active	Du jagst: {0}. Komm zu einem unserer Häuptlinge zurück, wenn es tot ist.
+ui_hunt_claim	Die Belohnung holen ({0} Münzen)
+r_hunt_paid	Es ist also tot. Hier ist dein Silber, Jäger.
+r_hunt_poor	Unsere Kasse ist für diese Belohnung gerade zu leer. Komm später wieder.
+r_hunt_none	Es gibt kein Ungeheuer mehr, für dessen Tod wir zahlen würden.
+msg_boss_slain	{0} ist gefallen. Jede Fraktion wird davon hören.

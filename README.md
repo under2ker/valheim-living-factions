@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.5.0)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.0)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -57,6 +57,15 @@ settlement keeps developing in the simulation and catches up when you come back.
 carry loads to the storehouse. Between shifts they visit a neighbour or take a walk down the
 road. At night they sit by the fire and sleep. Guards walk the rounds, one stands on the
 watchtower, some of them are archers.
+
+**Woodcutters and the forest.** Woodcutters fell real trees, at least 10 m from the buildings and
+falling away from the village. The trunk is carried off and a sapling of the same kind goes into
+the stump's place, so a village in the woods ends up in a clearing of young trees, not a bare field.
+
+**Boss hunts.** Ask a chief about a hunt and they name the next great beast they want dead, with a
+bounty in coins. Kill it, come back to any chief of that faction and collect. Every boss you kill is
+news: the clans like you better for it, while the Greydwarfs, the Draugr and the Fulings take the
+death of their own Elder, Bonemass and Yagluth badly.
 
 **Roads and caravans.** Every settlement has a road to its nearest neighbour unless they are at
 war, up to 1500 m. The road goes over dry land, has a lamp post every 30 m, and a settlement on
@@ -149,8 +158,7 @@ Start the game with `-console` and press F5.
 ## Known limits
 
 - Playing together is new and lightly tested. Back up the server world before the first run.
-- Villagers swing their tools but the trees stay standing. What a settlement produces is decided
-  by the simulation.
+- Woodcutters fell trees, but the wood a settlement gets is still counted by the simulation.
 - The non-human factions build in the same style as the clans.
 - If you remove the mod, the buildings stay in the world as normal pieces.
 
@@ -174,7 +182,7 @@ on the game.
 драугров. Они ставят лагеря, добывают ресурсы, строят дома по одной детали и вырастают в деревни
 и города. Между собой торгуют, ссорятся и воюют, даже когда вас нет рядом.
 
-На большой карте земли фракций отмечены их цветом. С жителями можно говорить (`E`), торговать, дарить подарки, нанимать бойцов, заключать союз или
+Дровосеки по-настоящему рубят деревья и сажают на их месте саженцы. Вожди дают охоту на боссов за награду. На большой карте земли фракций отмечены их цветом. С жителями можно говорить (`E`), торговать, дарить подарки, нанимать бойцов, заключать союз или
 объявлять войну. Между поселениями есть дороги с фонарями, по ним ходят караваны. Настройки
 открываются плиткой «LF» в инвентаре.
 

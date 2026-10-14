@@ -1,0 +1,23 @@
+# A boss hunt: the chief names the beast and the bounty, the player kills it, the chief pays.
+god
+env 0.4 Clear
+goto 4
+ui open chief
+expect Спросить об охоте :: ui state
+expect 150 монет :: ui press Спросить об охоте
+ui press Взяться за охоту
+expect Вы охотитесь :: ui state
+ui close
+factions
+spawn Eikthyr 0 12
+wait 4
+expect struck Eikthyr :: strike Eikthyr
+wait 4
+factions
+ui open chief
+ui press Спросить об охоте
+expect Получить награду (150 :: ui state
+expect Вот твоё серебро :: ui press Получить награду
+ui close
+expect Coins :: items
+quit

@@ -339,6 +339,16 @@ namespace LivingFactions.Core
                 { "itemd_LF_RootAxe", "Du silex taillé sur une racine vivante, entouré de lianes, avec un œil d’ambre de l’engeance. Le chef d’une engeance de nains gris la porte." },
                 { "item_LF_BarrowMoonAxe", "Lune du Tertre" },
                 { "itemd_LF_BarrowMoonAxe", "Une hache en croissant rongée de rouille et de patine, un crâne à la douille et des haillons funéraires. Elle repose auprès du chef de la Cour des Draugr." },
+                { "opt_felling", "Les bûcherons abattent des arbres et en plantent de nouveaux" },
+                { "ui_hunt", "Demander une chasse" },
+                { "ui_hunt_offer", "{0} tourmente ces terres depuis trop longtemps. Apporte-nous la nouvelle de sa mort et {1} pièces sont à toi." },
+                { "ui_hunt_take", "Accepter la chasse" },
+                { "ui_hunt_active", "Tu chasses : {0}. Reviens voir un de nos chefs quand il sera mort." },
+                { "ui_hunt_claim", "Toucher la prime ({0} pièces)" },
+                { "r_hunt_paid", "Il est donc mort. Voici ton argent, chasseur." },
+                { "r_hunt_poor", "Notre trésor est trop maigre pour cette prime en ce moment. Reviens plus tard." },
+                { "r_hunt_none", "Il ne reste aucune bête dont nous paierions la mort." },
+                { "msg_boss_slain", "{0} est tombé. Toutes les factions en entendront parler." },
             };
         }
     }

@@ -329,3 +329,13 @@ item_LF_RootAxe	Korzeniogryz
 itemd_LF_RootAxe	Łupany krzemień na żywym korzeniu, owinięty pnączem, z bursztynowym okiem pomiotu. Nosi go wódz pomiotu Szarych Krasnoludów.
 item_LF_BarrowMoonAxe	Księżyc Kurhanu
 itemd_LF_BarrowMoonAxe	Topór-półksiężyc w rdzy i patynie, z czaszką przy tulei i grobowymi łachmanami. Leży przy wodzu Dworu Draugrów.
+opt_felling	Drwale ścinają drzewa i sadzą nowe
+ui_hunt	Zapytaj o łowy
+ui_hunt_offer	{0} zbyt długo niepokoi te ziemie. Przynieś nam wieść o jego śmierci, a {1} monet będzie twoje.
+ui_hunt_take	Podejmij łowy
+ui_hunt_active	Polujesz: {0}. Wróć do któregoś z naszych wodzów, gdy padnie.
+ui_hunt_claim	Odbierz nagrodę ({0} monet)
+r_hunt_paid	A więc nie żyje. Oto twoje srebro, łowco.
+r_hunt_poor	Nasz skarbiec jest teraz zbyt pusty na taką nagrodę. Wróć później.
+r_hunt_none	Nie ma już bestii, za której śmierć byśmy zapłacili.
+msg_boss_slain	{0} padł. Dowie się o tym każda frakcja.

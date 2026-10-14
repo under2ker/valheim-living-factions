@@ -141,6 +141,7 @@ namespace LivingFactions
                 case "trade": TradePage(sim, s, f, pid, body); break;
                 case "wares": WaresPage(sim, s, f, pid, rel, body); break;
                 case "news": NewsPage(sim, f, body); break;
+                case "hunt": HuntPage(s, f, body); break;
                 case "politics": PoliticsPage(sim, f, body); break;
                 case "war":
                     body.AppendLine(Texts.Get("ui_war_confirm", Texts.FactionName(f)));
@@ -195,6 +196,7 @@ namespace LivingFactions
             {
                 AddButton(Texts.Get("ui_thane_gift"), () => _note = Texts.Get(Rewards.ThaneGift(f, _player) ? "r_thane_gift" : "r_pack_full"));
             }
+            if (!rel.AtWar && BossHunt.OffersHunts(f)) AddButton(Texts.Get("ui_hunt"), () => Go("hunt"));
             AddButton(Texts.Get("ui_news"), () => Go("news"));
             AddButton(Texts.Get("ui_politics"), () => Go("politics"));
             if (rel.AtWar)
@@ -341,6 +343,40 @@ namespace LivingFactions
                     float gain = Net.PlayerGift(s, pid, o.Res, amount * o.Units);
                     _note = gain >= 1f ? Texts.Get("r_gift_thanks", gain.ToString("0")) : Texts.Get("r_gift_meh");
                 });
+            }
+            AddButton(Texts.Get("ui_back"), () => Go("main"));
+        }
+
+        /// <summary>A hunt for one of the world's great beasts: offered, under way, or ready to be paid.</summary>
+        private static void HuntPage(Settlement s, Faction f, StringBuilder body)
+        {
+            KeyValuePair<string, int>? hunt = BossHunt.Current(_player);
+            if (hunt != null && hunt.Value.Value == f.Id && BossHunt.Done(_player))
+            {
+                int coins = BossHunt.Bounty(hunt.Value.Key);
+                AddButton(Texts.Get("ui_hunt_claim", coins), () =>
+                {
+                    _note = Texts.Get(BossHunt.Claim(_player, s, f) ? "r_hunt_paid" : "r_hunt_poor");
+                    Go("main");
+                });
+            }
+            else if (hunt != null)
+            {
+                body.AppendLine(Texts.Get("ui_hunt_active", BossHunt.BossName(hunt.Value.Key)));
+            }
+            else
+            {
+                string boss = BossHunt.Offer(f, _player);
+                if (boss == null) body.AppendLine(Texts.Get("r_hunt_none"));
+                else
+                {
+                    body.AppendLine(Texts.Get("ui_hunt_offer", BossHunt.BossName(boss), BossHunt.Bounty(boss)));
+                    AddButton(Texts.Get("ui_hunt_take"), () =>
+                    {
+                        BossHunt.Take(_player, f, boss);
+                        Go("hunt");
+                    });
+                }
             }
             AddButton(Texts.Get("ui_back"), () => Go("main"));
         }

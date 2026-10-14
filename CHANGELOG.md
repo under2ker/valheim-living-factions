@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.6.0 - 2026-10-14
+- Woodcutters fell real trees. Only trees at least 10 m from every building, falling away from the
+  village, and only by the player who builds the settlement (one felling per tree when playing
+  together). The trunk is carried off and a sapling of the same kind is planted in the stump's
+  place, so the wood round a village turns into a clearing of young trees instead of vanishing.
+  Woodcutters prefer trees that may come down. Switch in the menu, page Villagers.
+- Boss hunts. A chief names the next great beast they want dead and the bounty: 150 coins for
+  Eikthyr, more for each one after. Kill it, come back to any chief of that faction, collect.
+  Killing a boss is news everywhere: the clans think better of you (+10), the Dvergr too (+5), and
+  the Greydwarfs, the Draugr and the Fulings take the death of their Elder, Bonemass and Yagluth
+  badly (-25). Those three never put a bounty on their own.
+- Fixed: villagers on a visit and guards at the end of a night round kept stepping about on the
+  spot, which read as jerking. They now stand still once they get there. Measured: no jerky
+  movement among 26 inhabitants (was up to 10 in the evening).
+- Fixed: a sapling inside a doorway could keep people out of a house; the whole way in is cleared.
+- Checked in the game: a tree felled and a sapling planted in 26 s; a hunt taken, Eikthyr killed,
+  the bounty paid; features, life, track, hired fighters, caravan, road, ground across two
+  restarts, names, map, town, smoke, checks, languages all passed.
+- Not checked: how long a sapling takes to grow into a tree in a normal game, and the bounty
+  with two players at once.
+
 ## 0.5.0 - 2026-10-14
 - Five more relic axes, none of them sold, each come by its own way and given once to a character:
   - Raven's Wing (Raven Clan, +25% damage): strike down two raiders attacking a Raven Clan place

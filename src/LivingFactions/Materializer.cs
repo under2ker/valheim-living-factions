@@ -267,7 +267,11 @@ namespace LivingFactions
                         // The way in: a sapling that came up on the doorstep keeps everyone out of the house.
                         Vector3 inside, door;
                         FactionMember.DoorPoints(s, b, 0f, out inside, out door);
-                        if (ZoneSystem.instance.IsZoneLoaded(door)) ClearVegetation(door, 2.2f);
+                        // The whole way in, from the doorstep to the spot inside, not only the step in front.
+                        if (ZoneSystem.instance.IsZoneLoaded(door))
+                        {
+                            for (int k = 0; k <= 3; k++) ClearVegetation(Vector3.Lerp(door, inside, k / 3f), k == 0 ? 2.2f : 1.4f);
+                        }
                     }
                     if (!PathOf(s, b, origin, out from, out to, out paint, out width)) continue;
                     float length = Utils.DistanceXZ(from, to);

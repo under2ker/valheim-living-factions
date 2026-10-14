@@ -329,3 +329,13 @@ item_LF_RootAxe	Muerderraíces
 itemd_LF_RootAxe	Pedernal tallado sobre una raíz viva, envuelto en lianas, con un ojo de ámbar de la camada. La lleva el jefe de una camada de enanos grises.
 item_LF_BarrowMoonAxe	Luna del Túmulo
 itemd_LF_BarrowMoonAxe	Un hacha de media luna llena de óxido y pátina, con una calavera en el cubo y harapos funerarios. Yace con el jefe de la Corte Draugr.
+opt_felling	Los leñadores talan árboles y plantan otros nuevos
+ui_hunt	Preguntar por una cacería
+ui_hunt_offer	{0} lleva demasiado tiempo atormentando estas tierras. Tráenos la noticia de su muerte y {1} monedas serán tuyas.
+ui_hunt_take	Aceptar la cacería
+ui_hunt_active	Estás cazando: {0}. Vuelve con cualquiera de nuestros jefes cuando haya muerto.
+ui_hunt_claim	Cobrar la recompensa ({0} monedas)
+r_hunt_paid	Así que está muerto. Aquí tienes tu plata, cazador.
+r_hunt_poor	Nuestras arcas están demasiado vacías para esa recompensa. Vuelve más tarde.
+r_hunt_none	No queda ninguna bestia por cuya muerte pagaríamos.
+msg_boss_slain	{0} ha caído. Todas las facciones lo sabrán.

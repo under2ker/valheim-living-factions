@@ -95,6 +95,9 @@ namespace LivingFactions
 
         private Vector3 _workSpot;
         private Vector3 _workTarget;
+        /// <summary>The tree being felled, and the swings it has taken so far.</summary>
+        private TreeBase _tree;
+        private int _treeSwings;
         private bool _working;
         private bool _talking;
         private bool _hasClaim;
@@ -109,6 +112,9 @@ namespace LivingFactions
         private bool _hauling;
         private GameObject _cargo;
         private string _errand;
+        private Vector3 _errandAt;
+        /// <summary>Where the night watch is heading on its round.</summary>
+        private Vector3 _legAt;
         private bool _onTower;
         private float _towerSince;
         private float _journeyAt;
@@ -217,6 +223,8 @@ namespace LivingFactions
 
         private void StopWork()
         {
+            _tree = null;
+            _treeSwings = 0;
             _working = false;
             _hauling = false;
             _errand = null;
@@ -384,6 +392,11 @@ namespace LivingFactions
                 }
                 return;
             }
+            if (_errand != null && _ai.m_randomMoveRange > 0.5f && Utils.DistanceXZ(transform.position, _errandAt) < 2.5f)
+            {
+                // Arrived: they stand and talk instead of wandering round the doorstep in little steps.
+                SetPatrol(_errandAt, 0.35f);
+            }
             if (!_working) return;
 
             float distance = Utils.DistanceXZ(transform.position, _workSpot);
@@ -398,6 +411,12 @@ namespace LivingFactions
             if (Time.time < _nextSwing) return;
             _nextSwing = Time.time + Random.Range(2.4f, 3.8f);
             Swing();
+            if (_tree != null && ++_treeSwings >= Forestry.SwingsToFell)
+            {
+                // The tree comes down; the woodcutter carries the wood in.
+                if (Forestry.Fell(_tree, s)) _phaseUntil = Time.time + 2.5f;
+                _tree = null;
+            }
         }
 
         private bool FindWork(Settlement s, Vector3 centre)
@@ -431,6 +450,7 @@ namespace LivingFactions
             TreeBase best = null;
             float bestDist = float.MaxValue;
             HashSet<TreeBase> seen = new HashSet<TreeBase>();
+            Settlement home = SimHost.Sim.State.GetSettlement(SettlementId);
             foreach (Collider collider in Physics.OverlapSphere(centre, radius))
             {
                 TreeBase tree = collider.GetComponentInParent<TreeBase>();
@@ -440,6 +460,8 @@ namespace LivingFactions
                 if (taken >= limit) continue;
                 // Prefer near trees, with some spread so the crew fans out.
                 float d = Utils.DistanceXZ(tree.transform.position, transform.position) + Random.Range(0f, 12f);
+                // Trees that may come down are worth the longer walk: the village keeps its shade, the wood its edge.
+                if (home != null && !Forestry.MayFell(tree, home)) d += 40f;
                 if (d < bestDist)
                 {
                     bestDist = d;
@@ -478,7 +500,11 @@ namespace LivingFactions
         private bool WorkAtTree(Vector3 centre)
         {
             TreeBase tree = FreeTree(centre, 55f);
-            return tree != null && SetSpot(tree.transform.position, StandBeside(tree.transform.position, centre, 1.7f), "AxeStone");
+            if (tree == null || !SetSpot(tree.transform.position, StandBeside(tree.transform.position, centre, 1.7f), "AxeStone")) return false;
+            Settlement s = SimHost.Sim.State.GetSettlement(SettlementId);
+            _tree = s != null && Forestry.MayFell(tree, s) ? tree : null;
+            _treeSwings = 0;
+            return true;
         }
 
         /// <summary>What this inhabitant would talk about right now: the key of a line in Texts.</summary>
@@ -694,6 +720,7 @@ namespace LivingFactions
                 stand.y = transform.position.y;
                 _errand = "visiting";
                 _phaseUntil = Time.time + Random.Range(35f, 55f);
+                _errandAt = stand;
                 SetPatrol(stand, 1.5f);
                 Roads.WornTrail(s.Id, new Vector3(Home.x, 0f, Home.z), new Vector3(stand.x, 0f, stand.z));
                 return true;
@@ -706,6 +733,7 @@ namespace LivingFactions
                 if (!ZoneSystem.instance.IsZoneLoaded(far) || !ZoneSystem.instance.GetGroundHeight(far, out ground) || ground < ZoneSystem.c_WaterLevel + 0.3f) return false;
                 _errand = "on-the-road";
                 _phaseUntil = Time.time + Random.Range(70f, 100f);
+                _errandAt = far;
                 SetPatrol(far, 2f);
                 return true;
             }
@@ -895,8 +923,11 @@ namespace LivingFactions
                 _patrolLeg = _patrolLeg < 0 ? Mathf.Abs(Seed) % 8 : (_patrolLeg + 1) % 8;
                 _phaseUntil = Time.time + 35f;
                 float a = _patrolLeg * Mathf.PI / 4f;
-                SetPatrol(centre + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * ring, 3f);
+                _legAt = centre + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * ring;
+                SetPatrol(_legAt, 3f);
             }
+            // At the end of a leg the guard stands and watches, rather than stepping about on the spot.
+            else if (_ai.m_randomMoveRange > 0.5f && Utils.DistanceXZ(transform.position, _legAt) < 3.5f) SetPatrol(_legAt, 0.35f);
 
             Player player = Player.m_localPlayer;
             if (player == null || Time.time < _nextBark || !ModConfig.NightWatchOn.Value) return;
@@ -912,7 +943,8 @@ namespace LivingFactions
             {
                 // The guard leaves the round and walks up to the stranger.
                 _phaseUntil = Time.time + 20f;
-                SetPatrol(StandBeside(player.transform.position, transform.position, 3f), 1.5f);
+                _legAt = StandBeside(player.transform.position, transform.position, 3f);
+                SetPatrol(_legAt, 1.5f);
             }
             if (Chat.instance != null) Chat.instance.SetNpcText(gameObject, Vector3.up * 2.2f, 30f, 6f, "", Texts.Get(line), false);
             if (line == "night_attack" && MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("night_alarm", Texts.Name(s.Name)));
