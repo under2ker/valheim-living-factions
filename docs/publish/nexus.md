@@ -1,6 +1,6 @@
 # Nexus Mods
 
-Загрузка: https://www.nexusmods.com/valheim → Upload a mod. Ниже — что вписывать в каждое поле.
+Загрузка: https://www.nexusmods.com/valheim → Upload a mod. Ниже: что вписывать в каждое поле.
 
 ## Mod details
 
@@ -14,7 +14,7 @@ Living Factions
 0.6.0
 ```
 
-**Category:** Gameplay (если есть «Overhauls» или «NPC» — тоже подходит).
+**Category:** Gameplay (если есть «Overhauls» или «NPC»: тоже подходит).
 
 **Brief overview** (до 350 знаков)
 ```
@@ -24,8 +24,8 @@ Seven NPC factions that live on their own: they build settlements piece by piece
 **Language:** English (в описании указать, что мод переведён на семь языков).
 
 **Requirements** (в разделе Requirements, Nexus requirements / Off-site requirements)
-- BepInExPack Valheim — https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/ (на Nexus: «BepInEx pack for Valheim»)
-- Jötunn, the Valheim Library — https://thunderstore.io/c/valheim/p/ValheimModding/Jotunn/ (на Nexus есть как «Jotunn - The Valheim Library»)
+- BepInExPack Valheim: https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/ (на Nexus: «BepInEx pack for Valheim»)
+- Jötunn, the Valheim Library: https://thunderstore.io/c/valheim/p/ValheimModding/Jotunn/ (на Nexus есть как «Jotunn - The Valheim Library»)
 
 **AI content:** отметить, что мод сделан с помощью ИИ (код, модели, тексты). Это правило сайта.
 
