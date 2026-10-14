@@ -81,6 +81,14 @@ namespace LivingFactions
                     return "bag emptied, " + had + " stacks gone";
                 case "server": return Net.DevOnHost(string.Join(" ", a, 1, a.Length - 1));
                 case "net": return Net.Describe();
+                case "map":
+                    // map large [zoom] [all]: opens the big map around the player; `all` shows every settlement.
+                    if (Minimap.instance == null) return "no map";
+                    if (a.Length > 1 && a[1] == "off") { Minimap.instance.SetMapMode(Minimap.MapMode.Small); return "map closed"; }
+                    ModConfig.MapShowAll.Value = System.Array.IndexOf(a, "all") > 0;
+                    Minimap.instance.SetMapMode(Minimap.MapMode.Large);
+                    if (a.Length > 2 && a[2] != "all") HarmonyLib.Traverse.Create(Minimap.instance).Field("m_largeZoom").SetValue(float.Parse(a[2], Inv));
+                    return "map open, show all " + ModConfig.MapShowAll.Value + "; " + MapZones.Describe();
                 case "stamina": return DevProbes.Stamina();
                 case "damage": return DevProbes.Damage(a);
                 case "shots": return DevProbes.Shots(a);

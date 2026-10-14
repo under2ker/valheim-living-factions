@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.4.1)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.4.2)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -91,6 +91,8 @@ The card below is concept art. The numbers on it are plans, not what is in the g
 
 - A chronicle panel shows what the nearest settlement is doing and what the other factions are
   up to.
+- The large map shows the land of every settlement you know of in its faction's colour, with
+  a legend of the factions.
 - Settings are behind the "LF" tile on the inventory screen (Tab).
 - The mod speaks English, Russian, Polish, German, French, Spanish and Portuguese. It follows the
   language of the game, or you can pick one in the menu whatever the game is set to. In Russian
@@ -160,7 +162,7 @@ on the game.
 драугров. Они ставят лагеря, добывают ресурсы, строят дома по одной детали и вырастают в деревни
 и города. Между собой торгуют, ссорятся и воюют, даже когда вас нет рядом.
 
-С жителями можно говорить (`E`), торговать, дарить подарки, нанимать бойцов, заключать союз или
+На большой карте земли фракций отмечены их цветом. С жителями можно говорить (`E`), торговать, дарить подарки, нанимать бойцов, заключать союз или
 объявлять войну. Между поселениями есть дороги с фонарями, по ним ходят караваны. Настройки
 открываются плиткой «LF» в инвентаре.
 

@@ -13,7 +13,9 @@ namespace LivingFactions
         public static void Reset()
         {
             Pins.Clear();
+            MapZones.Clear();
             _nextPins = 0f;
+            _look = "";
         }
 
         public static void Update()
@@ -44,8 +46,20 @@ namespace LivingFactions
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_enter", Texts.Name(s.Name), Texts.Get("tier_" + s.Tier), Texts.FactionName(f)));
                 }
             }
-            if (changed || Time.time >= _nextPins) RefreshPins(known);
+            // Showing every settlement is the player's choice in the menu; otherwise only those they have found.
+            List<int> shown = known;
+            if (ModConfig.MapShowAll.Value)
+            {
+                shown = new List<int>();
+                foreach (Settlement s in state.Settlements) if (!s.Destroyed) shown.Add(s.Id);
+            }
+            string look = ModConfig.MapZones.Value + "|" + ModConfig.MapShowAll.Value + "|" + Texts.Lang;
+            if (look != _look) changed = true;
+            _look = look;
+            if (changed || Time.time >= _nextPins) RefreshPins(shown);
         }
+
+        private static string _look = "";
 
         private static void RefreshPins(List<int> known)
         {
@@ -53,6 +67,7 @@ namespace LivingFactions
             if (Minimap.instance == null) return;
             foreach (Minimap.PinData pin in Pins) Minimap.instance.RemovePin(pin);
             Pins.Clear();
+            MapZones.Clear();
             WorldState state = SimHost.Sim.State;
             foreach (int id in known)
             {
@@ -60,8 +75,12 @@ namespace LivingFactions
                 if (s == null || s.Destroyed) continue;
                 Faction f = state.GetFaction(s.FactionId);
                 string label = Texts.Name(s.Name) + " (" + Texts.Get("tier_" + s.Tier) + ") — " + Texts.FactionName(f);
-                Pins.Add(Minimap.instance.AddPin(new Vector3(s.Pos.X, 0f, s.Pos.Z), Minimap.PinType.Icon1, label, false, false));
+                MapZones.AddZone(s, f, Pins);
+                Minimap.PinData mark = Minimap.instance.AddPin(new Vector3(s.Pos.X, 0f, s.Pos.Z), Minimap.PinType.Icon1, label, false, false);
+                Pins.Add(mark);
+                MapZones.Mark(mark, f);
             }
+            MapZones.UpdateLegend(known);
         }
     }
 

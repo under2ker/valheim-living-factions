@@ -1,0 +1,45 @@
+# Pictures for the mod page, part one: the city of Steinvik by day, evening and night, inside its
+# houses, and the mod's own windows in English.
+god
+env 0.35 Clear
+goto 4
+hidehud on
+view 4 36 22 135
+shot press_city_morning
+view 4 44 30 300
+shot press_city_above
+view 4 24 9 60
+shot press_city_street
+view 4 30 14 200
+shot press_city_square
+inside 4 GreatHall 3 2.4
+shot press_great_hall
+inside 4 Hut 1.3 1.9
+shot press_hut
+env 0.74 Clear
+wait 4
+view 4 38 16 240
+shot press_city_evening
+env 0.97 Clear
+wait 70
+view 4 18 8 135
+shot press_night_fire
+view 4 36 20 135
+shot press_city_night
+env 0.4 Clear
+wait 25
+cam
+hidehud off
+lang mod en
+ui open chief
+shot press_ui_dialog
+ui click 1
+shot press_ui_trade
+ui close
+modmenu open
+shot press_ui_menu
+modmenu close
+wait 4
+shot press_ui_chronicle
+lang mod auto
+quit

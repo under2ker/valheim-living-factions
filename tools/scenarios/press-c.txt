@@ -1,0 +1,24 @@
+# Part three: what the other peoples build, and a village in the woods from above.
+god
+env 0.4 Clear
+hidehud on
+goto 15
+wait 25
+view 15 10 55 135
+shot press_village_above
+view 15 30 14 45
+shot press_village
+goto 3
+view 3 40 24 135
+shot press_fuling_city
+view 3 24 10 300
+shot press_fuling_street
+goto 6
+view 6 38 22 135
+shot press_dvergr_hold
+goto 5
+view 5 38 22 135
+shot press_greydwarf_brood
+cam
+hidehud off
+quit

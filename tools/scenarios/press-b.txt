@@ -1,0 +1,37 @@
+# Part two: the road with its lamps by day and night, a caravan, and a raid being fought off.
+god
+env 0.4 Clear
+goto 1
+hidehud on
+view 1 40 26 135
+shot press_mountain_city
+roadtp 1 dry 150
+waitready 120
+wait 25
+roadview 1 dry
+shot press_road_day
+lampview
+shot press_road_lamp
+env 0.97 Clear
+wait 6
+roadview 1 dry
+shot press_road_night
+lampview
+shot press_road_lamp_night
+env 0.4 Clear
+goto 1
+caravan 1 in
+until journey :: npcs
+watch journey
+wait 3
+shot press_caravan
+war 2 9
+raid 5 1
+until ALERT :: npcs
+wait 4
+watch ALERT
+shot press_raid
+war 2 9 peace
+cam
+hidehud off
+quit

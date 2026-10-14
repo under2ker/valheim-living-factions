@@ -292,6 +292,8 @@ namespace LivingFactions.Core
             { "opt_pace", new[] { "Pace of development", "Скорость развития" } },
             { "opt_wars", new[] { "Wars between factions", "Войны между фракциями" } },
             { "opt_races", new[] { "Factions of the game's races", "Фракции игровых рас" } },
+            { "opt_map_zones", new[] { "Faction lands on the map", "Земли фракций на карте" } },
+            { "opt_map_all", new[] { "Every settlement on the map", "Все поселения на карте" } },
             { "greet_War1", new[] { "Not one step closer.", "Ни шагу ближе." } },
             { "greet_War2", new[] { "Your kind has spilled enough of our blood.", "Такие, как ты, пролили довольно нашей крови." } },
             { "greet_Hostile1", new[] { "Turn around while you still can.", "Поворачивай, пока можешь." } },

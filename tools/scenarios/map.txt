@@ -1,0 +1,16 @@
+god
+env 0.4 Clear
+goto 4
+wait 3
+map large 0.5 all
+wait 20
+shot map_all_wide
+map large 0.12 all
+wait 3
+shot map_all_close
+map off
+wait 3
+shot map_small
+map large 0.5
+map off
+quit

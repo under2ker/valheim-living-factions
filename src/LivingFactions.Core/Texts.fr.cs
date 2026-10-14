@@ -297,6 +297,8 @@ namespace LivingFactions.Core
                 { "itemd_LF_WolfFangAxe", "La hache relique du Clan du Loup. Lame de fer, manche gainé de cuir, une queue de loup au pommeau." },
                 { "item_LF_StagHornAxe", "Corne du Cerf" },
                 { "itemd_LF_StagHornAxe", "Une hache de marchand du Clan du Cerf. Manche en bois de cerf, garnitures de bronze, pièces au bout d'une chaîne." },
+                { "opt_map_zones", "Terres des factions sur la carte" },
+                { "opt_map_all", "Toutes les colonies sur la carte" },
             };
         }
     }

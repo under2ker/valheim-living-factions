@@ -297,6 +297,8 @@ namespace LivingFactions.Core
                 { "itemd_LF_WolfFangAxe", "El hacha reliquia del Clan del Lobo. Hoja de hierro, mango forrado de cuero, una cola de lobo en el pomo." },
                 { "item_LF_StagHornAxe", "Asta del Ciervo" },
                 { "itemd_LF_StagHornAxe", "Un hacha de mercader del Clan del Ciervo. Mango de asta, herrajes de bronce, monedas en una cadena." },
+                { "opt_map_zones", "Tierras de las facciones en el mapa" },
+                { "opt_map_all", "Todos los asentamientos en el mapa" },
             };
         }
     }

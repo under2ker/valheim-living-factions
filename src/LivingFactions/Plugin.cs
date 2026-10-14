@@ -13,7 +13,7 @@ namespace LivingFactions
     {
         public const string Guid = "alexandr.livingfactions";
         public const string ModName = "Living Factions";
-        public const string Version = "0.4.1";
+        public const string Version = "0.4.2";
 
         internal static Plugin Instance;
         internal static ManualLogSource Log;

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 - 2026-10-14
+- Faction lands on the map. Every settlement you know of has a circle around it in its faction's
+  colour, wider the bigger the place, and its mark is in that colour too. The large map has a
+  legend of the factions you have met. Far zoomed out the lands stay visible as patches of colour.
+  The small map shows only the marks, so the corner of the screen stays clear.
+- Two new switches in the mod menu, page World: faction lands on the map (on), and every
+  settlement on the map from the start (off, so you still find them yourself).
+- Checked in the game: the large map close and far, with known settlements and with all of them,
+  and the small map (docs/screenshots/map_zones_0.4.2.jpg).
+
 ## 0.4.1 - 2026-10-14
 - Fixed: on a large or full screen the chronicle panel slid behind the minimap. It now hangs from
   the bottom edge of the minimap, right edges in line, at any screen size. Checked at 1280x720

@@ -97,6 +97,8 @@ namespace LivingFactions
             Choice(life, "opt_npcs", ModConfig.MaxVisibleNpcs, new[] { 6, 10, 14, 20, 30 });
 
             Page world = AddPage("menu_page_world");
+            Toggle(world, "opt_map_zones", ModConfig.MapZones);
+            Toggle(world, "opt_map_all", ModConfig.MapShowAll);
             Toggle(world, "opt_roads", ModConfig.Roads);
             Toggle(world, "opt_lamps", ModConfig.RoadLamps);
             Choice(world, "opt_road_reach", ModConfig.RoadReach, new[] { 0f, 800f, 1500f, 2500f, 5000f }, v => v.ToString("0") + " m");

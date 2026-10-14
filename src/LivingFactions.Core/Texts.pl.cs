@@ -297,6 +297,8 @@ namespace LivingFactions.Core
                 { "itemd_LF_WolfFangAxe", "Relikwijny topór Klanu Wilka. Żelazne ostrze, trzonek owinięty skórą, wilczy ogon na końcu." },
                 { "item_LF_StagHornAxe", "Róg Jelenia" },
                 { "itemd_LF_StagHornAxe", "Kupiecki topór Klanu Jelenia. Trzonek z poroża, okucia z brązu, monety na łańcuszku." },
+                { "opt_map_zones", "Ziemie frakcji na mapie" },
+                { "opt_map_all", "Wszystkie osady na mapie" },
             };
         }
     }

@@ -17,6 +17,7 @@ namespace LivingFactions
         public static ConfigEntry<bool> Roads, VisibleWork, NightSleep, NightWatchOn, ChestsOn, StagedRaids, TradeOn, HudWidget, Relics, Archers;
         public static ConfigEntry<bool> Caravans, Mercenaries, TowerGuards, Errands, RoadLamps;
         public static ConfigEntry<float> RoadReach;
+        public static ConfigEntry<bool> MapZones, MapShowAll;
         public static ConfigEntry<string> Language;
         public static ConfigEntry<bool> ShowChronicleMessages;
         public static ConfigEntry<bool> DevTools;
@@ -47,6 +48,8 @@ namespace LivingFactions
             TowerGuards = cfg.Bind("Features", "TowerGuards", true, "One guard keeps watch from the deck of the watchtower.");
             Errands = cfg.Bind("Features", "Errands", true, "Between shifts villagers visit other buildings or walk out along the road and back.");
             RoadLamps = cfg.Bind("Features", "RoadLamps", true, "Lamp posts stand along the roads between settlements, one every 30 m.");
+            MapZones = cfg.Bind("Map", "FactionZones", true, "The land of each settlement is drawn on the map in its faction's colour, with a legend of the factions on the large map.");
+            MapShowAll = cfg.Bind("Map", "ShowAllSettlements", false, "Every settlement is on the map from the start, not only those you have found.");
             RoadReach = cfg.Bind("World", "RoadReach", 1500f, new ConfigDescription("Settlements closer than this to a neighbour they are not at war with lay a road to it.", new AcceptableValueRange<float>(0f, 5000f)));
             Language = cfg.Bind("General", "Language", "auto", "Mod text language: auto (follow the game when the mod speaks its language, otherwise English) or one of en, ru, pl, de, fr, es, pt.");
             ShowChronicleMessages = cfg.Bind("General", "ShowChronicleMessages", true, "Show notable faction events (wars, new settlements, raids) as on-screen messages.");

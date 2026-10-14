@@ -297,6 +297,8 @@ namespace LivingFactions.Core
                 { "itemd_LF_WolfFangAxe", "O machado relíquia do Clã do Lobo. Lâmina de ferro, cabo envolto em couro, uma cauda de lobo no pomo." },
                 { "item_LF_StagHornAxe", "Chifre do Cervo" },
                 { "itemd_LF_StagHornAxe", "Um machado de mercador do Clã do Cervo. Cabo de galhada, guarnições de bronze, moedas em uma corrente." },
+                { "opt_map_zones", "Terras das facções no mapa" },
+                { "opt_map_all", "Todos os assentamentos no mapa" },
             };
         }
     }

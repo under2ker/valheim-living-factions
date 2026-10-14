@@ -286,3 +286,5 @@ item_LF_WolfFangAxe	Wolfszahn
 itemd_LF_WolfFangAxe	Die Reliktaxt des Wolfsklans. Eiserne Klinge, lederumwickelter Stiel, ein Wolfsschwanz am Knauf.
 item_LF_StagHornAxe	Hirschhorn
 itemd_LF_StagHornAxe	Eine Händleraxt des Hirschklans. Stiel aus Geweih, Beschläge aus Bronze, Münzen an einer Kette.
+opt_map_zones	Gebiete der Fraktionen auf der Karte
+opt_map_all	Alle Siedlungen auf der Karte
