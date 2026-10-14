@@ -349,6 +349,7 @@ namespace LivingFactions.Core
                 { "r_hunt_poor", "Nuestras arcas están demasiado vacías para esa recompensa. Vuelve más tarde." },
                 { "r_hunt_none", "No queda ninguna bestia por cuya muerte pagaríamos." },
                 { "msg_boss_slain", "{0} ha caído. Todas las facciones lo sabrán." },
+                { "msg_state_restored", "El mundo ha vuelto a una partida anterior, y las facciones con él (día {0})." },
             };
         }
     }

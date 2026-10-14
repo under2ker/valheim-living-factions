@@ -165,6 +165,8 @@ namespace LivingFactions.Core
         public double Day;
         /// <summary>Days the simulation runs ahead of the game clock (set when the sim starts in an old world, or by fast-forwarding).</summary>
         public double ClockOffset;
+        /// <summary>The world's own clock (seconds) when this state was saved: tells a restored world backup from the present.</summary>
+        public double SavedAtTime;
         public ulong RngState = 0x9E3779B97F4A7C15UL;
         /// <summary>Direction the first human clan settled in; the others are spread around from it.</summary>
         public float SeedAngle;

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.1 - 2026-10-14
+- Fixed: restoring a backup of the world left the factions in the future, with the deaths, days and
+  standing of the later game (reported by a player). The faction state lives beside the world, not
+  in it, so the mod now keeps a dated copy at every save (the last 60) and, when a world loads with
+  its clock behind the state, takes back the latest copy that is not ahead of it. The newer state is
+  kept beside the save as a file of its own, and the player sees a message that the factions went
+  back with the world. Copies are kept from this version on: a backup made before updating cannot
+  be matched.
+- Checked in the game: saved the world, kept a copy of it, played on and turned the Raven Clan
+  hostile, put the copy back: the Raven Clan was friendly again and the day went back with it.
+
 ## 0.6.0 - 2026-10-14
 - Woodcutters fell real trees. Only trees at least 10 m from every building, falling away from the
   village, and only by the player who builds the settlement (one felling per tree when playing

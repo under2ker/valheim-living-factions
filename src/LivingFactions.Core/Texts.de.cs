@@ -349,6 +349,7 @@ namespace LivingFactions.Core
                 { "r_hunt_poor", "Unsere Kasse ist für diese Belohnung gerade zu leer. Komm später wieder." },
                 { "r_hunt_none", "Es gibt kein Ungeheuer mehr, für dessen Tod wir zahlen würden." },
                 { "msg_boss_slain", "{0} ist gefallen. Jede Fraktion wird davon hören." },
+                { "msg_state_restored", "Die Welt ist zu einem früheren Spielstand zurückgekehrt, und die Fraktionen mit ihr (Tag {0})." },
             };
         }
     }

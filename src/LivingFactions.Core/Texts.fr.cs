@@ -349,6 +349,7 @@ namespace LivingFactions.Core
                 { "r_hunt_poor", "Notre trésor est trop maigre pour cette prime en ce moment. Reviens plus tard." },
                 { "r_hunt_none", "Il ne reste aucune bête dont nous paierions la mort." },
                 { "msg_boss_slain", "{0} est tombé. Toutes les factions en entendront parler." },
+                { "msg_state_restored", "Le monde est revenu à une sauvegarde antérieure, et les factions avec lui (jour {0})." },
             };
         }
     }

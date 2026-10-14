@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using LivingFactions.Core;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -56,6 +57,11 @@ namespace LivingFactions
             }
             Sim.AdvanceTo(WorldDay + Sim.State.ClockOffset, 6);
             Net.HostUpdate();
+            if (_restoredNote != null && MessageHud.instance != null && Player.m_localPlayer != null)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_state_restored", _restoredNote));
+                _restoredNote = null;
+            }
         }
 
         /// <summary>A guest's copy of the host's state: read like the real thing, never run forward.</summary>
@@ -92,6 +98,7 @@ namespace LivingFactions
                 {
                     state = JsonConvert.DeserializeObject<WorldState>(File.ReadAllText(_savePath));
                     Plugin.Log.LogInfo("Loaded faction state: " + state.Factions.Count + " factions, " + state.Settlements.Count + " settlements, day " + state.Day.ToString("0.0"));
+                    state = MatchWorld(state);
                 }
                 catch (Exception e)
                 {
@@ -126,6 +133,87 @@ namespace LivingFactions
             }
         }
 
+        // ------------------------------------------------------------------ world backups
+
+        private const int SnapshotsKept = 60;
+        private static string _restoredNote;
+
+        private static string HistoryDir
+        {
+            get { return Path.Combine(Path.Combine(DataDir, "history"), Path.GetFileNameWithoutExtension(_savePath)); }
+        }
+
+        /// <summary>
+        /// The faction state is kept beside the world, not inside it, so restoring a backup of the world
+        /// leaves it in the future: days ahead, with deaths and deeds the world no longer has. Every save
+        /// therefore also keeps a copy stamped with the world's clock, and a world that loads with a clock
+        /// behind the state gets the latest copy that is not ahead of it.
+        /// </summary>
+        private static WorldState MatchWorld(WorldState state)
+        {
+            double now = ZNet.instance.GetTimeSeconds();
+            if (state.SavedAtTime <= now + 60.0) return state;
+            string best = null;
+            long bestTime = -1;
+            if (Directory.Exists(HistoryDir))
+            {
+                foreach (string file in Directory.GetFiles(HistoryDir, "*.json.gz"))
+                {
+                    long time;
+                    string stamp = Path.GetFileName(file).Split('.')[0];
+                    if (!long.TryParse(stamp, out time) || time > now + 60.0 || time <= bestTime) continue;
+                    bestTime = time;
+                    best = file;
+                }
+            }
+            if (best == null)
+            {
+                Plugin.Log.LogWarning("The world's clock (" + now.ToString("0") + " s) is behind the faction state (" + state.SavedAtTime.ToString("0") + " s), as after restoring a backup, but no earlier copy of the state is kept; going on with this one.");
+                return state;
+            }
+            try
+            {
+                using (FileStream fs = File.OpenRead(best))
+                using (GZipStream gz = new GZipStream(fs, CompressionMode.Decompress))
+                using (StreamReader reader = new StreamReader(gz))
+                {
+                    WorldState older = JsonConvert.DeserializeObject<WorldState>(reader.ReadToEnd());
+                    Plugin.Log.LogInfo("The world was restored from a backup (clock " + now.ToString("0") + " s, state " + state.SavedAtTime.ToString("0") + " s): faction state of " + bestTime + " s taken back, day " + older.Day.ToString("0.0"));
+                    // The newer state is not thrown away: it stays beside the save under its own name.
+                    File.Copy(_savePath, _savePath + ".before-restore-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"), true);
+                    _restoredNote = older.Day.ToString("0");
+                    return older;
+                }
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.LogError("Could not read the kept copy " + best + ": " + e.Message);
+                return state;
+            }
+        }
+
+        private static void KeepCopy(string json, double time)
+        {
+            try
+            {
+                Directory.CreateDirectory(HistoryDir);
+                string file = Path.Combine(HistoryDir, ((long)time).ToString("D12") + ".json.gz");
+                using (FileStream fs = File.Create(file))
+                using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
+                using (StreamWriter writer = new StreamWriter(gz))
+                {
+                    writer.Write(json);
+                }
+                string[] all = Directory.GetFiles(HistoryDir, "*.json.gz");
+                Array.Sort(all, StringComparer.Ordinal);
+                for (int i = 0; i < all.Length - SnapshotsKept; i++) File.Delete(all[i]);
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.LogWarning("Could not keep a copy of the faction state: " + e.Message);
+            }
+        }
+
         private static int ResolveLanguage()
         {
             return Texts.Resolve(ModConfig.Language.Value, Localization.instance != null ? Localization.instance.GetSelectedLanguage() : null);
@@ -143,7 +231,10 @@ namespace LivingFactions
             try
             {
                 string tmp = _savePath + ".tmp";
-                File.WriteAllText(tmp, JsonConvert.SerializeObject(Sim.State, Formatting.Indented));
+                Sim.State.SavedAtTime = ZNet.instance != null ? ZNet.instance.GetTimeSeconds() : Sim.State.SavedAtTime;
+                string json = JsonConvert.SerializeObject(Sim.State, Formatting.Indented);
+                File.WriteAllText(tmp, json);
+                KeepCopy(json, Sim.State.SavedAtTime);
                 if (File.Exists(_savePath)) File.Copy(_savePath, _savePath + ".bak", true);
                 File.Copy(tmp, _savePath, true);
                 File.Delete(tmp);

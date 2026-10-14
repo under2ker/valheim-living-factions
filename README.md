@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.0)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.1)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -104,7 +104,7 @@ To make an alliance, talk to anyone in the settlement: the window shows your sta
 it is from the 70 an alliance needs, and each gift shows what it would earn. A gift of what they
 are short of counts double; many gifts in one day count for less.
 
-![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.0)
+![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.1)
 
 ## On screen
 
@@ -119,13 +119,13 @@ are short of counts double; many gifts in one day count for less.
 
 ## Screenshots
 
-![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.6.0)
-![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.6.0)
-![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.6.0)
-![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.6.0)
-![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.6.0)
-![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.6.0)
-![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.6.0)
+![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.6.1)
+![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.6.1)
+![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.6.1)
+![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.6.1)
+![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.6.1)
+![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.6.1)
+![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.6.1)
 
 ## Install
 
@@ -141,7 +141,8 @@ By hand:
 Back up your world before the first run. Settlements level the ground and place pieces.
 
 The state of the factions is saved in `BepInEx/config/LivingFactions/<world>_<uid>.json` every
-time the world saves.
+time the world saves. If you restore a backup of the
+world, the factions go back to the same point too (from 0.6.1 on).
 
 ## Settings
 

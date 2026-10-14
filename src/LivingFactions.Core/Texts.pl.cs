@@ -349,6 +349,7 @@ namespace LivingFactions.Core
                 { "r_hunt_poor", "Nasz skarbiec jest teraz zbyt pusty na taką nagrodę. Wróć później." },
                 { "r_hunt_none", "Nie ma już bestii, za której śmierć byśmy zapłacili." },
                 { "msg_boss_slain", "{0} padł. Dowie się o tym każda frakcja." },
+                { "msg_state_restored", "Świat wrócił do wcześniejszego zapisu, a frakcje razem z nim (dzień {0})." },
             };
         }
     }

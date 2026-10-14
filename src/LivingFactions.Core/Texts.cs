@@ -311,6 +311,7 @@ namespace LivingFactions.Core
             { "r_hunt_poor", new[] { "Our coffer is too thin for that bounty now. Come back later.", "Сейчас наша казна слишком пуста для такой награды. Приходи позже." } },
             { "r_hunt_none", new[] { "There is no beast left we would pay to see dead.", "Не осталось зверя, за чью смерть мы бы заплатили." } },
             { "msg_boss_slain", new[] { "{0} has fallen. Every faction will hear of it.", "{0} пал. Об этом узнают все фракции." } },
+            { "msg_state_restored", new[] { "The world went back to an earlier save, and the factions went back with it (day {0}).", "Мир вернулся к прежнему сохранению, и фракции вернулись вместе с ним (день {0})." } },
             { "opt_felling", new[] { "Woodcutters fell trees and plant new ones", "Дровосеки рубят деревья и сажают новые" } },
             { "opt_map_zones", new[] { "Faction lands on the map", "Земли фракций на карте" } },
             { "opt_map_all", new[] { "Every settlement on the map", "Все поселения на карте" } },
