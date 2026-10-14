@@ -11,7 +11,7 @@ Living Factions
 
 **Version**
 ```
-0.6.0
+0.6.1
 ```
 
 **Category:** Gameplay (если есть «Overhauls» или «NPC»: тоже подходит).
@@ -34,7 +34,7 @@ Seven NPC factions that live on their own: they build settlements piece by piece
 ## Description (вставлять в редактор в режиме BBCode)
 
 ```
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.1[/img][/center]
 
 [size=5][b]Living Factions[/b][/size]
 
@@ -72,7 +72,7 @@ Seven NPC factions move into your world and live their own lives. They set up ca
 [*]Earn seven relic axes, one per faction, each its own way: bought, given by a jarl or a thane, or taken from a chieftain.
 [/list]
 
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.1[/img][/center]
 
 [size=4][b]Playing together[/b][/size]
 Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.6.x with any 0.6.x). Tested with a dedicated server and one guest. Back up the server world before the first run.
@@ -108,17 +108,17 @@ Made with the help of AI (Claude Code). No game files, decompiled code or extrac
 
 **File name**
 ```
-Living Factions 0.6.0
+Living Factions 0.6.1
 ```
 
-**File version:** `0.6.0`, категория файла: Main Files.
+**File version:** `0.6.1`, категория файла: Main Files.
 
 **File description**
 ```
 The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager.
 ```
 
-Файл: `dist/LivingFactions-0.6.0.zip`.
+Файл: `dist/LivingFactions-0.6.1.zip`.
 
 ## Images tab
 
@@ -133,9 +133,10 @@ The mod: LivingFactions.dll in a plugins folder, with manifest, README and chang
 - Use assets in other mods: ask first.
 - Use in mod packs / collections: yes.
 
-## Changelog (поле Changelogs, версия 0.6.0)
+## Changelog (поле Changelogs, версия 0.6.1)
 
 ```
+- Restoring a backup of the world now takes the factions back to the same point too.
 - Woodcutters fell real trees away from the houses and plant saplings in their place.
 - Boss hunts: chiefs name a beast and a bounty; the factions react to every boss you kill.
 - Villagers on a visit and guards on the night round no longer step about on the spot.
