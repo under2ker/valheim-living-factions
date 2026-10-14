@@ -109,6 +109,7 @@ namespace LivingFactions
                 return;
             }
             Materializer.NoteDeath(settlement.Id);
+            if (killer != null) Rewards.ChiefKilled(member, killer);
             bool soldier = member.Role != NpcRole.Villager;
             if (killer != null)
             {
@@ -157,6 +158,7 @@ namespace LivingFactions
                 if (defenders == null) continue;
                 Net.NamePlayer(defenders, killer.GetPlayerID(), killer.GetPlayerName());
                 Net.PlayerHelped(defenders, killer.GetPlayerID(), 3f);
+                Rewards.RaiderKilled(s, killer);
                 return;
             }
         }

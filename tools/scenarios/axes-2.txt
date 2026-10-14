@@ -1,0 +1,24 @@
+# The rest of axes.txt: the thane's gift and the jarl's gift.
+god
+env 0.4 Clear
+# Rune Cleaver: the thane's gift to an ally of long standing
+goto 6
+rep 10 85
+ally 10
+ui open chief
+ui state
+ui press Принять дар тана
+ui close
+expect LF_RuneAxe :: items
+# Raven's Wing: help throw back a raid on a Raven Clan settlement
+goto 4
+war 8 9
+raid 5 4
+until Raider :: npcs
+wait 3
+slay Raider 2
+wait 3
+expect LF_RavenWingAxe :: items
+war 8 9 peace
+items
+quit

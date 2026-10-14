@@ -161,6 +161,7 @@ namespace LivingFactions
             Sim = null;
             Pending.Clear();
             Net.Reset();
+            Rewards.Reset();
             Materializer.Reset();
             Discovery.Reset();
             NightWatch.Reset();

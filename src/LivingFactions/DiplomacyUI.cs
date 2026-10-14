@@ -168,6 +168,13 @@ namespace LivingFactions
             body.AppendLine(Texts.Get("ui_population") + ": " + s.Population.ToString("0") + ", " + Texts.Get("ui_soldiers") + ": " + s.Soldiers.ToString("0"));
             body.AppendLine(Texts.Get("ui_stock") + ": " + StockLine(s));
             body.AppendLine(Texts.Get("ui_needs") + ": <color=#FFD27F>" + Texts.Get("res_" + sim.NeededResource(s)) + "</color>");
+            // How far the player is from an alliance, so the way there is never a guess.
+            if (!rel.AtWar && !rel.Allied)
+            {
+                bool ready = rel.Reputation >= Simulation.AllianceFrom;
+                body.AppendLine(ready ? "<color=#5AD7FF>" + Texts.Get("ui_alliance_ready") + "</color>"
+                    : Texts.Get("ui_alliance_need", rel.Reputation.ToString("0"), Simulation.AllianceFrom.ToString("0")));
+            }
 
             if (sim.WillTrade(f, pid))
             {
@@ -183,6 +190,10 @@ namespace LivingFactions
             if (ModConfig.Mercenaries.Value && sim.WillTrade(f, pid))
             {
                 AddButton(Texts.Get("ui_hire", Company.HirePrice(s)), () => _note = Texts.Get(Company.Hire(s, _player, false)));
+            }
+            if (Rewards.ThaneWillGive(f, rel, _player))
+            {
+                AddButton(Texts.Get("ui_thane_gift"), () => _note = Texts.Get(Rewards.ThaneGift(f, _player) ? "r_thane_gift" : "r_pack_full"));
             }
             AddButton(Texts.Get("ui_news"), () => Go("news"));
             AddButton(Texts.Get("ui_politics"), () => Go("politics"));
@@ -201,7 +212,8 @@ namespace LivingFactions
             else
             {
                 if (rel.Allied) AddButton(Texts.Get("ui_break"), () => _note = Texts.Get("r_" + Net.PlayerBreakAlliance(f, pid).Reason));
-                else AddButton(Texts.Get("ui_alliance"), () => _note = Texts.Get("r_" + Net.PlayerProposeAlliance(f, pid).Reason));
+                else AddButton(Texts.Get("ui_alliance") + (rel.Reputation < Simulation.AllianceFrom ? " (" + rel.Reputation.ToString("0") + "/" + Simulation.AllianceFrom.ToString("0") + ")" : ""),
+                    () => _note = Texts.Get("r_" + Net.PlayerProposeAlliance(f, pid).Reason));
                 AddButton(Texts.Get("ui_war"), () => Go("war"));
             }
             AddButton(Texts.Get("ui_leave"), Close);
@@ -314,13 +326,16 @@ namespace LivingFactions
         private static void GiftPage(Simulation sim, Settlement s, Faction f, long pid, StringBuilder body)
         {
             body.AppendLine(Texts.Get("ui_needs") + ": <color=#FFD27F>" + Texts.Get("res_" + sim.NeededResource(s)) + "</color>");
+            body.AppendLine(Texts.Get("ui_gift_hint"));
             List<Offer> goods = PlayerGoods(true);
             if (goods.Count == 0) body.AppendLine(Texts.Get("ui_nothing_to_give"));
             foreach (Offer offer in goods.Take(6))
             {
                 Offer o = offer;
                 int amount = Math.Min(o.Count, o.Res == Res.Coins ? 50 : 20);
-                AddButton(Texts.Get("ui_give", Localization.instance.Localize(o.Item.m_shared.m_name), amount), () =>
+                // What this gift would earn now: the number changes as gifts pile up.
+                float expect = sim.GiftGain(s, pid, o.Res, amount * o.Units);
+                AddButton(Texts.Get("ui_give", Localization.instance.Localize(o.Item.m_shared.m_name), amount) + " (+" + expect.ToString("0") + ")", () =>
                 {
                     _player.GetInventory().RemoveItem(o.Item.m_shared.m_name, amount);
                     float gain = Net.PlayerGift(s, pid, o.Res, amount * o.Units);
@@ -448,6 +463,14 @@ namespace LivingFactions
             {
                 int index = int.Parse(a[2]);
                 if (!IsOpen || index < 0 || index >= Actions.Count) return "no such button";
+                Click(Actions[index]);
+            }
+            else if (verb == "press" && a.Length > 2)
+            {
+                // press <words>: the first button whose label has these words, as a player would pick it by reading.
+                string words = string.Join(" ", a, 2, a.Length - 2);
+                int index = Labels.FindIndex(l => l.IndexOf(words, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (!IsOpen || index < 0) return "no button with '" + words + "'";
                 Click(Actions[index]);
             }
             else if (verb == "close") Close();

@@ -13,7 +13,7 @@ namespace LivingFactions
     {
         public const string Guid = "alexandr.livingfactions";
         public const string ModName = "Living Factions";
-        public const string Version = "0.4.2";
+        public const string Version = "0.5.0";
 
         internal static Plugin Instance;
         internal static ManualLogSource Log;
@@ -44,6 +44,7 @@ namespace LivingFactions
             Materializer.Update();
             Discovery.Update();
             Chests.Update();
+            Rewards.Update();
             HudWidget.Update();
             DiplomacyUI.Update();
         }

@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.4.2)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.5.0)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -79,9 +79,21 @@ settlement when it is raided, the raiders really turn up.
 - Killing their people or breaking their buildings costs standing, and enough of it means war.
   Killing monsters near their homes or raiders attacking them earns standing.
 
-There are two relic axes so far. Wolf's Fang is sold by the Wolf Clan and hits 25% harder.
-Stag's Horn is sold by the Stag Clan, costs 20% less stamina to swing and makes traders charge
-you 10% less while you carry it. More weapons are being worked on.
+There are seven relic axes, one for each faction:
+
+| Axe | Faction | What it does | How you get it |
+|---|---|---|---|
+| Wolf's Fang | Wolf Clan | +25% damage | bought from the clan, standing 40 |
+| Stag's Horn | Stag Clan | traders 10% cheaper, swings cost 20% less stamina | bought from the clan, standing 60 |
+| Raven's Wing | Raven Clan | +25% damage | strike down two raiders attacking a Raven Clan place |
+| Blackgnaw | Fuling Horde | +25% damage below a third of your health | taken from a Fuling chieftain |
+| Rune Cleaver | Dvergr Hold | double durability | a thane's gift to an ally at standing 80 |
+| Rootbiter | Greydwarf Brood | mends itself in the hand | carried by a Greydwarf chief |
+| Barrow Moon | Draugr Court | 5% of the damage you deal heals you | carried by a Draugr chief |
+
+To make an alliance, talk to anyone in the settlement: the window shows your standing and how far
+it is from the 70 an alliance needs, and each gift shows what it would earn. A gift of what they
+are short of counts double; many gifts in one day count for less.
 
 The card below is concept art. The numbers on it are plans, not what is in the game now.
 

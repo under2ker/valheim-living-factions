@@ -81,6 +81,30 @@ namespace LivingFactions
                     return "bag emptied, " + had + " stacks gone";
                 case "server": return Net.DevOnHost(string.Join(" ", a, 1, a.Length - 1));
                 case "net": return Net.Describe();
+                case "ally":
+                {
+                    // ally <faction#>: proposes an alliance, as the button in the dialog does.
+                    Faction f = a.Length > 1 && SimHost.Active ? SimHost.Sim.State.GetFaction(int.Parse(a[1])) : null;
+                    if (f == null || Player.m_localPlayer == null) return "usage: ally <faction#>";
+                    return Net.PlayerProposeAlliance(f, Player.m_localPlayer.GetPlayerID()).Reason;
+                }
+                case "slay":
+                {
+                    // slay <Role> [n]: the player strikes down the n nearest of that role, as a real kill (for testing rewards).
+                    Player me = Player.m_localPlayer;
+                    if (me == null || a.Length < 2) return "usage: slay <Chief|Raider|Guard|Villager> [n]";
+                    int n = a.Length > 2 ? int.Parse(a[2]) : 1, done = 0;
+                    foreach (FactionMember m in FactionMember.All.Where(m => m.Role.ToString() == a[1] && m.Humanoid != null && !m.Humanoid.IsDead()).OrderBy(m => Vector3.Distance(m.transform.position, me.transform.position)).Take(n).ToList())
+                    {
+                        HitData hit = new HitData();
+                        hit.m_damage.m_slash = 100000f;
+                        hit.m_point = m.transform.position;
+                        hit.SetAttacker(me);
+                        m.Humanoid.Damage(hit);
+                        done++;
+                    }
+                    return "struck down " + done + " " + a[1];
+                }
                 case "map":
                     // map large [zoom] [all]: opens the big map around the player; `all` shows every settlement.
                     if (Minimap.instance == null) return "no map";

@@ -164,8 +164,11 @@ namespace LivingFactions.Core
 
         // ------------------------------------------------------------------ deeds
 
-        /// <summary>A gift of goods to a settlement. Returns the reputation gained.</summary>
-        public float PlayerGift(Settlement s, long playerId, Res res, float amount)
+        /// <summary>
+        /// What a gift would earn right now, without giving it: a gift is worth more when it is what the
+        /// settlement is short of, at most 15, and less with every gift given lately.
+        /// </summary>
+        public float GiftGain(Settlement s, long playerId, Res res, float amount)
         {
             Faction f = State.GetFaction(s.FactionId);
             if (f == null || amount <= 0f) return 0f;
@@ -173,7 +176,17 @@ namespace LivingFactions.Core
             float value = amount * Balance.CoinValue[(int)res];
             float need = res != Res.Coins && NeededResource(s) == res ? 2f : 1f;
             float gain = Math.Min(15f, value * 0.12f * need / (1f + rel.GiftFatigue / 40f));
-            if (rel.AtWar) gain *= 0.25f;
+            return rel.AtWar ? gain * 0.25f : gain;
+        }
+
+        /// <summary>A gift of goods to a settlement. Returns the reputation gained.</summary>
+        public float PlayerGift(Settlement s, long playerId, Res res, float amount)
+        {
+            Faction f = State.GetFaction(s.FactionId);
+            if (f == null || amount <= 0f) return 0f;
+            PlayerRelation rel = PlayerRel(f, playerId);
+            float value = amount * Balance.CoinValue[(int)res];
+            float gain = GiftGain(s, playerId, res, amount);
             rel.GiftFatigue += value * 0.12f;
             float cap = res == Res.Coins ? StorageCap(s) * 4f : StorageCap(s);
             s.Stock[(int)res] = Math.Min(cap, s.Stock[(int)res] + amount);

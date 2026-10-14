@@ -345,6 +345,10 @@ namespace LivingFactions.Harness
                 Check(Texts.Resolve("auto", "Polish") == 2 && Texts.Resolve("pl", "Russian") == 2 && Texts.Resolve("auto", "Russian") == 1 && Texts.Resolve("auto", "Korean") == 0 && Texts.Resolve("de", null) == 3,
                     "the language follows the game unless the player chose one");
                 Texts.Lang = 2;
+                Check(Texts.Name("Barkthicket") == "Gąszcz Kory" && Texts.Name("Vindfell") == "Vindfell" && Texts.Name("Hrolf the Drowned") == "Hrolf Topielec", "names follow the mod's language: " + Texts.Name("Barkthicket"));
+                Texts.Lang = 3;
+                Check(Texts.Name("Barkthicket") == "Borkendickicht" && Texts.Name("Mosshollow 12") == "Moosmulde 12", "German puts the halves together: " + Texts.Name("Mosshollow 12"));
+                Texts.Lang = 2;
                 Check(Texts.Get("ui_trade") == "Handluj" && Texts.Get("ui_peace", 40) == "Zaproponuj pokój (40 monet)", "Polish reads as Polish");
                 Texts.Lang = saved;
             }

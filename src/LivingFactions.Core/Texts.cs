@@ -292,6 +292,16 @@ namespace LivingFactions.Core
             { "opt_pace", new[] { "Pace of development", "Скорость развития" } },
             { "opt_wars", new[] { "Wars between factions", "Войны между фракциями" } },
             { "opt_races", new[] { "Factions of the game's races", "Фракции игровых рас" } },
+            { "ui_alliance_need", new[] { "An alliance needs their trust: standing {0} of {1}. Gifts, trade and help in a fight earn it.", "Для союза нужно их доверие: отношение {0} из {1}. Его дают подарки, торговля и помощь в бою." } },
+            { "ui_alliance_ready", new[] { "They trust you enough to swear an alliance.", "Они доверяют вам достаточно, чтобы заключить союз." } },
+            { "ui_gift_hint", new[] { "The number is what a gift earns now. What they are short of counts double; many gifts in a day count for less.", "Число в скобках — сколько даст подарок сейчас. То, чего им не хватает, ценится вдвое; много подарков за день ценятся меньше." } },
+            { "affix_fury", new[] { "fury (+25% damage below a third of your health)", "ярость (+25% к урону, когда здоровья меньше трети)" } },
+            { "affix_thirst", new[] { "thirst (5% of the damage dealt heals you)", "жажда (5% нанесённого урона лечит вас)" } },
+            { "affix_living", new[] { "living (mends itself in the hand)", "живой (сам чинится в руке)" } },
+            { "ui_thane_gift", new[] { "Accept the thane's gift", "Принять дар тана" } },
+            { "r_thane_gift", new[] { "Few outside the Hold have held it. Bear it well, friend of the Dvergr.", "Мало кто вне Чертога держал его в руках. Носи с честью, друг двергов." } },
+            { "msg_jarl_gift", new[] { "The jarl of {0} gives you Raven's Wing for your part in the fight.", "Ярл поселения {0} дарит вам Воронье Крыло за помощь в бою." } },
+            { "msg_trophy", new[] { "The chieftain has fallen. His axe is yours ({0}).", "Вождь пал. Его топор теперь ваш ({0})." } },
             { "opt_map_zones", new[] { "Faction lands on the map", "Земли фракций на карте" } },
             { "opt_map_all", new[] { "Every settlement on the map", "Все поселения на карте" } },
             { "greet_War1", new[] { "Not one step closer.", "Ни шагу ближе." } },
@@ -396,6 +406,7 @@ namespace LivingFactions.Core
         /// </summary>
         public static string Name(string name)
         {
+            if (Lang >= 2) return OtherName(name);
             if (Lang != 1 || string.IsNullOrEmpty(name)) return name;
             string known;
             if (Ru.TryGetValue(name, out known)) return known;
@@ -412,6 +423,37 @@ namespace LivingFactions.Core
             {
                 string first, second;
                 if (Ru.TryGetValue(name.Substring(0, i), out first) && Ru.TryGetValue(name.Substring(i), out second)) return first + second + tail;
+            }
+            return name + tail;
+        }
+
+        /// <summary>
+        /// A name in a language other than English and Russian. Norse, Fuling and Dvergr names are names
+        /// in any language that writes in Latin letters and stay as they are; what is made of English
+        /// words (the Greydwarf places, the Draugr's by-names) comes from the language's table, the two
+        /// halves of a place put together in the order the table gives ("n_order").
+        /// </summary>
+        private static string OtherName(string name)
+        {
+            Dictionary<string, string> table = Lang < More.Length ? More[Lang] : null;
+            if (table == null || string.IsNullOrEmpty(name)) return name;
+            string known;
+            if (table.TryGetValue("n_" + name, out known)) return known;
+            int space = name.LastIndexOf(' ');
+            string tail = "";
+            int number;
+            if (space > 0 && int.TryParse(name.Substring(space + 1), out number))
+            {
+                tail = name.Substring(space);
+                name = name.Substring(0, space);
+            }
+            string order;
+            if (!table.TryGetValue("n_order", out order)) order = "{0}{1}";
+            for (int i = 2; i <= name.Length - 2; i++)
+            {
+                string first, second;
+                if (table.TryGetValue("n_" + name.Substring(0, i), out first) && table.TryGetValue("n_" + name.Substring(i), out second))
+                    return string.Format(order, first, second) + tail;
             }
             return name + tail;
         }

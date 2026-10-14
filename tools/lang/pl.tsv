@@ -288,3 +288,44 @@ item_LF_StagHornAxe	Róg Jelenia
 itemd_LF_StagHornAxe	Kupiecki topór Klanu Jelenia. Trzonek z poroża, okucia z brązu, monety na łańcuszku.
 opt_map_zones	Ziemie frakcji na mapie
 opt_map_all	Wszystkie osady na mapie
+ui_alliance_need	Sojusz wymaga ich zaufania: stosunki {0} z {1}. Zdobywa się je darami, handlem i pomocą w walce.
+ui_alliance_ready	Ufają ci na tyle, by zawrzeć sojusz.
+ui_gift_hint	Liczba to, ile da dar teraz. To, czego im brakuje, liczy się podwójnie; wiele darów jednego dnia liczy się mniej.
+# names made of English words
+n_order	{1} {0}
+n_Moss	Mchu
+n_Root	Korzenia
+n_Thorn	Ciernia
+n_Bark	Kory
+n_Gloom	Mroku
+n_Fern	Paproci
+n_Mire	Bagna
+n_Knot	Sęka
+n_hollow	Kotlina
+n_nest	Gniazdo
+n_thicket	Gąszcz
+n_den	Nora
+n_grove	Gaj
+n_burrow	Jama
+n_Hrolf the Drowned	Hrolf Topielec
+n_Old Styr	Stary Styr
+n_Agnar Bog-King	Agnar Król Bagien
+n_Thorkel Rot	Thorkel Zgnilizna
+n_Yrsa Pale	Blada Yrsa
+affix_fury	furia (+25% obrażeń poniżej jednej trzeciej zdrowia)
+affix_thirst	pragnienie (5% zadanych obrażeń leczy ciebie)
+affix_living	żywy (sam się naprawia w dłoni)
+ui_thane_gift	Przyjmij dar thana
+r_thane_gift	Niewielu spoza Twierdzy trzymało go w dłoni. Noś go z honorem, przyjacielu Dvergrów.
+msg_jarl_gift	Jarl osady {0} daje ci Krucze Skrzydło za pomoc w walce.
+msg_trophy	Wódz poległ. Jego topór jest twój ({0}).
+item_LF_RavenWingAxe	Krucze Skrzydło
+itemd_LF_RavenWingAxe	Długi topór brodaty Klanu Kruka: oksydowana stal, kruczy dziób na obuchu, trzy pióra. Jarl daje go temu, kto pokona najeźdźców atakujących osadę klanu.
+item_LF_BlackgnawAxe	Czarnogryz
+itemd_LF_BlackgnawAxe	Tasak Fulingów z czarnego żelaza z piłą zamiast ostrza i zębami-trofeami. Nikt go nie dostaje w darze: zdobywa się go na wodzu Fulingów.
+item_LF_RuneAxe	Runiczny Dwusiecznik
+itemd_LF_RuneAxe	Dwusieczny topór Dvergrów z ciemnego stopu i miedzi, z runami na ostrzach. Than Twierdzy daje go dawnemu sojusznikowi.
+item_LF_RootAxe	Korzeniogryz
+itemd_LF_RootAxe	Łupany krzemień na żywym korzeniu, owinięty pnączem, z bursztynowym okiem pomiotu. Nosi go wódz pomiotu Szarych Krasnoludów.
+item_LF_BarrowMoonAxe	Księżyc Kurhanu
+itemd_LF_BarrowMoonAxe	Topór-półksiężyc w rdzy i patynie, z czaszką przy tulei i grobowymi łachmanami. Leży przy wodzu Dworu Draugrów.

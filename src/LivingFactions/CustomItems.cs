@@ -47,6 +47,42 @@ namespace LivingFactions
                 DescEn = "A merchant's axe of the Stag Clan. Antler haft, bronze fittings, coins on a chain.",
                 DescRu = "Торговый топор Клана Оленя. Рукоять из оленьего рога, бронзовая оковка, монеты на цепи.",
             },
+            // The five that are not sold: how each one is come by is in Rewards.cs.
+            new AxeSpec
+            {
+                Asset = "raven-wing-axe", Prefab = "LF_RavenWingAxe", Source = "AxeIron",
+                NameEn = "Raven's Wing", NameRu = "Воронье Крыло",
+                DescEn = "The long bearded axe of the Raven Clan: blued steel, a raven's beak on the back, three feathers. A jarl gives it to whoever cuts down raiders attacking a Raven Clan settlement.",
+                DescRu = "Длинная секира Клана Ворона: синёная сталь, вороний клюв на обухе, три пера. Ярл дарит её тому, кто сразит налётчиков у поселения клана.",
+            },
+            new AxeSpec
+            {
+                Asset = "fuling-blackgnaw", Prefab = "LF_BlackgnawAxe", Source = "AxeIron",
+                NameEn = "Blackgnaw", NameRu = "Черногрыз",
+                DescEn = "A Fuling cleaver of black iron with a saw for an edge and trophy teeth. Nobody is given it: it is taken from a Fuling chieftain.",
+                DescRu = "Тесак фулингов из чёрного железа с пилой вместо лезвия и зубами-трофеями. Его не дарят: его берут с вождя фулингов.",
+            },
+            new AxeSpec
+            {
+                Asset = "dvergr-rune-axe", Prefab = "LF_RuneAxe", Source = "AxeIron",
+                NameEn = "Rune Cleaver", NameRu = "Рунная Двусечка",
+                DescEn = "A double-bitted Dvergr axe of dark alloy and copper, with runes along the blades. A thane of the Dvergr Hold gives it to an ally of long standing.",
+                DescRu = "Двусторонний топор двергов из тёмного сплава и меди, с рунами по лезвиям. Тан Чертога дарит его давнему союзнику.",
+            },
+            new AxeSpec
+            {
+                Asset = "greydwarf-root-axe", Prefab = "LF_RootAxe", Source = "AxeIron",
+                NameEn = "Rootbiter", NameRu = "Корнеруб",
+                DescEn = "Knapped flint on a living root, wound with vine, an amber eye of the brood. The chief of a Greydwarf brood carries it.",
+                DescRu = "Колотый кремень на живом корне, обвитый лианой, с янтарным глазом выводка. Его носит вождь выводка грейдворфов.",
+            },
+            new AxeSpec
+            {
+                Asset = "draugr-barrow-moon", Prefab = "LF_BarrowMoonAxe", Source = "AxeIron",
+                NameEn = "Barrow Moon", NameRu = "Курганная Луна",
+                DescEn = "A crescent axe of rust and patina with a skull at the socket and burial rags. It lies with the chief of the Draugr Court.",
+                DescRu = "Секира-полумесяц в ржавчине и патине, с черепом у втулки и погребальными лохмотьями. Она у вождя Двора драугров.",
+            },
         };
 
         private static bool _created;

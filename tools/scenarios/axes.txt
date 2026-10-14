@@ -1,0 +1,35 @@
+# The five relic axes that are not sold, each the way it is come by.
+god
+env 0.4 Clear
+emptybag
+# Blackgnaw: from a Fuling chieftain
+goto 3
+expect struck down 1 :: slay Chief
+wait 3
+expect LF_BlackgnawAxe :: items
+# Rootbiter: from the chief of a Greydwarf brood
+goto 5
+expect struck down 1 :: slay Chief
+wait 3
+expect LF_RootAxe :: items
+# Rune Cleaver: the thane's gift to an ally of long standing
+goto 6
+rep 10 85
+expect alliance_made :: ally 10
+ui open chief
+expect Принять дар тана :: ui state
+expect Носи с честью :: ui press Принять дар тана
+ui close
+expect LF_RuneAxe :: items
+# Raven's Wing: help throw back a raid on a Raven Clan settlement
+goto 4
+war 8 9
+raid 5 4
+until Raider :: npcs
+wait 3
+slay Raider 2
+wait 3
+expect LF_RavenWingAxe :: items
+war 8 9 peace
+items
+quit

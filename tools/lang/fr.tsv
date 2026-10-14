@@ -288,3 +288,44 @@ item_LF_StagHornAxe	Corne du Cerf
 itemd_LF_StagHornAxe	Une hache de marchand du Clan du Cerf. Manche en bois de cerf, garnitures de bronze, pièces au bout d'une chaîne.
 opt_map_zones	Terres des factions sur la carte
 opt_map_all	Toutes les colonies sur la carte
+ui_alliance_need	Une alliance demande leur confiance : réputation {0} sur {1}. Présents, commerce et aide au combat la font monter.
+ui_alliance_ready	Ils te font assez confiance pour une alliance.
+ui_gift_hint	Le chiffre indique ce que rapporte un présent maintenant. Ce qui leur manque compte double ; beaucoup de présents le même jour comptent moins.
+# names made of English words
+n_order	{1} {0}
+n_Moss	de Mousse
+n_Root	des Racines
+n_Thorn	des Épines
+n_Bark	d'Écorce
+n_Gloom	de l'Ombre
+n_Fern	des Fougères
+n_Mire	du Marais
+n_Knot	des Nœuds
+n_hollow	Creux
+n_nest	Nid
+n_thicket	Fourré
+n_den	Antre
+n_grove	Bosquet
+n_burrow	Terrier
+n_Hrolf the Drowned	Hrolf le Noyé
+n_Old Styr	Vieux Styr
+n_Agnar Bog-King	Agnar Roi-des-Marais
+n_Thorkel Rot	Thorkel le Pourri
+n_Yrsa Pale	Yrsa la Pâle
+affix_fury	furie (+25% de dégâts sous le tiers de la santé)
+affix_thirst	soif (5% des dégâts infligés vous soignent)
+affix_living	vivante (se répare seule en main)
+ui_thane_gift	Accepter le présent du thane
+r_thane_gift	Peu, hors du Bastion, l’ont tenue en main. Porte-la avec honneur, ami des Dvergr.
+msg_jarl_gift	Le jarl de {0} t’offre l’Aile du Corbeau pour ton aide au combat.
+msg_trophy	Le chef est tombé. Sa hache est à toi ({0}).
+item_LF_RavenWingAxe	Aile du Corbeau
+itemd_LF_RavenWingAxe	La longue hache barbue du Clan du Corbeau : acier bleui, un bec de corbeau au dos, trois plumes. Un jarl l’offre à qui abat les pillards qui attaquent une colonie du clan.
+item_LF_BlackgnawAxe	Rongenoir
+itemd_LF_BlackgnawAxe	Un couperet fuling en fer noir, une scie en guise de tranchant et des dents en trophée. Personne ne le reçoit : on le prend sur un chef fuling.
+item_LF_RuneAxe	Fendeuse runique
+itemd_LF_RuneAxe	Une hache dvergr à double tranchant, en alliage sombre et cuivre, des runes le long des lames. Un thane du Bastion l’offre à un allié de longue date.
+item_LF_RootAxe	Mord-racine
+itemd_LF_RootAxe	Du silex taillé sur une racine vivante, entouré de lianes, avec un œil d’ambre de l’engeance. Le chef d’une engeance de nains gris la porte.
+item_LF_BarrowMoonAxe	Lune du Tertre
+itemd_LF_BarrowMoonAxe	Une hache en croissant rongée de rouille et de patine, un crâne à la douille et des haillons funéraires. Elle repose auprès du chef de la Cour des Draugr.

@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.5.0 - 2026-10-14
+- Five more relic axes, none of them sold, each come by its own way and given once to a character:
+  - Raven's Wing (Raven Clan, +25% damage): strike down two raiders attacking a Raven Clan place
+    and the jarl gives it to you;
+  - Blackgnaw (Fuling Horde, +25% damage below a third of your health): taken from a Fuling chieftain;
+  - Rune Cleaver (Dvergr Hold, double durability): a thane's gift to an ally at standing 80, asked
+    for in talk;
+  - Rootbiter (Greydwarf Brood, mends itself in the hand): carried by a Greydwarf chief;
+  - Barrow Moon (Draugr Court, 5% of the damage you deal heals you): carried by a Draugr chief.
+- The way to an alliance is shown: the dialog says how far your standing is from the 70 an
+  alliance needs, the button shows it too, and every gift says what it would earn right now.
+- Names follow the mod's language in all seven: the Greydwarf places and the Draugr's by-names,
+  which are made of English words, are translated; Norse, Fuling and Dvergr names stay names.
+- Checked in the game: each of the five axes comes the way it should (a Fuling and a Greydwarf
+  chief struck down, the thane's gift asked for, two raiders struck down at a Raven Clan city) and
+  sits in the hand (6 to 13 mm from the palm); smoke 15/15, checks 8/8, languages 15/15.
+- Not checked in a real fight: the three new properties (fury, thirst, a self-mending blade).
+
 ## 0.4.2 - 2026-10-14
 - Faction lands on the map. Every settlement you know of has a circle around it in its faction's
   colour, wider the bigger the place, and its mark is in that colour too. The large map has a

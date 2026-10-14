@@ -190,7 +190,11 @@ draugr_court relic   SwordIron             1  450   10  lasting
         [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetDamage), typeof(int), typeof(float)), HarmonyPostfix]
         private static void Damage(ItemDrop.ItemData __instance, ref HitData.DamageTypes __result)
         {
-            if (Wares.AffixOf(__instance) == "keen") __result.Modify(1.25f);
+            string affix = Wares.AffixOf(__instance);
+            if (affix == "keen") __result.Modify(1.25f);
+            // Blackgnaw: a quarter harder in the hand of someone with less than a third of their health left.
+            Player me = Player.m_localPlayer;
+            if (affix == "fury" && me != null && me.GetCurrentWeapon() == __instance && me.GetHealth() < me.GetMaxHealth() / 3f) __result.Modify(1.25f);
         }
 
         [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetArmor), typeof(int), typeof(float)), HarmonyPostfix]
