@@ -127,6 +127,36 @@ namespace LivingFactions.Core
             { "ev_PlayerAlliance", new[] { "{f} and {p} are now allies.", "Союз: {f} и {p} теперь союзники." } },
             { "ev_PlayerAllianceBroken", new[] { "The alliance of {f} and {p} is over.", "Союз расторгнут: {f} и {p}." } },
             { "ev_PlayerGift", new[] { "{p} brings gifts to {s}.", "{p} приносит дары в {s}." } },
+            { "ev_ExpeditionOut", new[] { "{s} sends a band out for {r}.", "Из {s} ушёл отряд за ресурсом: {r}." } },
+            { "ev_ExpeditionBack", new[] { "A band is back at {s} with {n} {r}.", "Отряд вернулся в {s}: {r}, {n}." } },
+            { "ev_SquadLost", new[] { "A band from {s} did not come back.", "Отряд из {s} не вернулся." } },
+            { "ev_RaidMarch", new[] { "{f} march from {s2} on {s}.", "{f} выступили из {s2} на {s}." } },
+            { "ev_CampaignBegun", new[] { "{f} make ready to take {s}: their scouts are out.", "{f} готовятся взять {s}: их разведчики в пути." } },
+            { "ev_CampaignScouted", new[] { "The scouts of {f} are back from {s}.", "Разведчики фракции {f} вернулись от {s}." } },
+            { "ev_CampaignCamp", new[] { "{f} set up a war camp at {s}, on the way to {s2}.", "{f} разбили военный лагерь {s} на пути к {s2}." } },
+            { "ev_CampaignAssault", new[] { "{f} march from their camp at {s2} on {s}.", "{f} выступили из лагеря {s2} на {s}." } },
+            { "ev_CampaignWon", new[] { "{f} have taken {s}.", "{f} взяли {s}." } },
+            { "ev_CampaignOver", new[] { "{f} give up their campaign against {s}.", "{f} отказались от похода на {s}." } },
+            { "ev_CampaignOver_strong", new[] { "{f} call off their campaign against {s}: it is too strongly held.", "{f} отменили поход на {s}: там слишком сильная оборона." } },
+            { "ev_CampaignOver_repelled", new[] { "{f} were thrown back from {s} and give up the campaign.", "{f} отбиты от {s} и прекращают поход." } },
+            { "ev_CampaignOver_camp", new[] { "{f} lost their war camp and give up the campaign against {s}.", "{f} потеряли военный лагерь и прекращают поход на {s}." } },
+            { "ev_CampaignOver_lost", new[] { "{f} have lost {s} again, and their campaign with it.", "{f} снова потеряли {s}, и с ним весь поход." } },
+            { "ev_CampaignCounter", new[] { "{f} march from {s2} to take {s} back.", "{f} выступили из {s2}, чтобы отбить {s}." } },
+            { "ev_AllyAid", new[] { "{f} send warriors to {s} to stand by {o}.", "{f} шлют воинов в {s} на помощь союзникам: {o}." } },
+            { "ev_Migration", new[] { "{n} people leave {s2} to live in {s}.", "Из {s2} в {s} переселяются люди: {n}." } },
+            { "ev_OutpostFounded", new[] { "{f} put an outpost up at {s} to send {r} home to {s2}.", "{f} поставили форпост {s}: добывать {r} для {s2}." } },
+            { "ev_OutpostFounded_road", new[] { "{f} put a watch post up at {s}, on the long road from {s2}.", "{f} поставили сторожевой форпост {s} на долгой дороге из {s2}." } },
+            { "ev_CampaignOver_ours", new[] { "{f} call off their campaign: {s} is theirs already.", "{f} прекращают поход: {s} уже их." } },
+            { "ev_CampaignOver_other", new[] { "{f} give up their campaign: {s} has passed into other hands.", "{f} прекращают поход: {s} перешло в чужие руки." } },
+            { "ev_CampaignOver_peace", new[] { "Peace ends the campaign of {f} against {s}.", "Мир положил конец походу фракции {f} на {s}." } },
+            { "title_squad_Expedition", new[] { "forager", "добытчик" } },
+            { "title_squad_Raid", new[] { "warrior", "воин" } },
+            { "title_squad_Scouts", new[] { "scout", "разведчик" } },
+            { "ev_BuildingWrecked", new[] { "{s}: the {b} lies in ruins.", "{s}: постройка разрушена ({b})." } },
+            { "ev_BuildingWrecked_p", new[] { "{p} has wrecked the {b} at {s}.", "{p} разрушает постройку в {s} ({b})." } },
+            { "ev_ChiefFell", new[] { "{s} has lost its chief and is without a head.", "Поселение {s} лишилось вождя и осталось без главы." } },
+            { "ev_NewChief", new[] { "{s} has chosen a new chief.", "В поселении {s} выбрали нового вождя." } },
+            { "ev_PlayerCrimeFound", new[] { "{f} have found out who killed one of their people at {s}: {p}.", "{f} узнали, кто убил их человека в {s}: {p}." } },
             { "ev_PlayerKilledMember", new[] { "{p} spills blood at {s}. {f} will remember.", "{p} пролил кровь в {s}. {f} этого не забудет." } },
             // dialog
             { "ui_talk", new[] { "Talk", "Поговорить" } },
@@ -189,7 +219,13 @@ namespace LivingFactions.Core
             { "night_pass", new[] { "...Fine. Stay if you must, but keep your hands off your steel.", "...Ладно. Оставайся, раз пришёл, но руки от стали держи подальше." } },
             { "night_attack", new[] { "You were warned! To arms!", "Тебя предупреждали! К оружию!" } },
             { "night_alarm", new[] { "The night watch of {0} attacks!", "Ночная стража поселения {0} нападает!" } },
+            { "msg_thief_count", new[] { "Someone stirs in their sleep... {0}", "Кто-то ворочается во сне... {0}" } },
+            { "msg_thief_away", new[] { "You slip away into the dark.", "Вы ускользнули в темноту." } },
+            { "msg_thief_alarm", new[] { "Thief! {0} wakes to the alarm!", "Вор! {0} поднимается по тревоге!" } },
+            { "night_thief_shout", new[] { "Thief! Wake up, everyone, a thief!", "Вор! Вставайте все, вор!" } },
             { "msg_theft", new[] { "Your theft in {0} has been noticed.", "Вашу кражу в поселении {0} заметили." } },
+            { "msg_chronicle_hidden", new[] { "Chronicle hidden ({0} shows it again).", "Хроника скрыта ({0} покажет её снова)." } },
+            { "msg_chronicle_shown", new[] { "Chronicle shown ({0} hides it).", "Хроника показана ({0} скроет её)." } },
             { "hud_hunger", new[] { "food is running out", "еда на исходе" } },
             { "relic_title", new[] { "Relic", "Реликвия" } },
             { "relic_unknown", new[] { "Unidentified. Those who made it could tell you what it is - if they trusted you.", "Не опознано. Те, кто это сделал, могли бы рассказать, что это, — если бы доверяли вам." } },
@@ -197,7 +233,7 @@ namespace LivingFactions.Core
             { "affix_stout", new[] { "stout (+20% armour and block)", "крепкая (+20% к броне и блоку)" } },
             { "affix_light", new[] { "light (half the weight)", "лёгкая (вдвое меньше вес)" } },
             { "affix_lasting", new[] { "lasting (double durability)", "долговечная (двойная прочность)" } },
-            { "affix_merchant", new[] { "merchant's (buying from traders -10% while carried; stamina -20% when wielded)", "торговая (покупка у торговцев -10%, пока при вас; выносливость -20% при ударе)" } },
+            { "affix_merchant", new[] { "merchant's (prices -10%, stamina -20%)", "торговая (цены -10%, выносливость -20%)" } },
             { "ui_wares", new[] { "Special wares", "Особые товары" } },
             { "ui_ware_sell", new[] { "{0} x{1} - {2} coins", "{0} ×{1} — {2} монет" } },
             { "ui_ware_relic", new[] { "Relic: {0}, {1} - {2} coins", "Реликвия: {0}, {1} — {2} монет" } },
@@ -240,7 +276,7 @@ namespace LivingFactions.Core
             { "fc_f_quiet1", new[] { "trading and tending fields", "торгуют и пашут" } },
             { "fc_f_quiet2", new[] { "quiet for now", "пока тихо" } },
             { "ui_hire", new[] { "Hire two fighters ({0} coins)", "Нанять двух бойцов ({0} монет)" } },
-            { "r_hired", new[] { "They are yours until the day is out. Bring them back alive.", "Они с тобой до конца дня. Верни их живыми." } },
+            { "r_hired", new[] { "They are yours for {0} minutes. Bring them back alive.", "Они с тобой на {0} мин. Верни их живыми." } },
             { "r_hire_full", new[] { "You have swords enough at your back already.", "За тобой и так уже достаточно мечей." } },
             { "r_hire_none", new[] { "We have no fighters to spare.", "Лишних бойцов у нас нет." } },
             { "r_hire_poor", new[] { "Steel costs coin, and you have too little.", "Сталь стоит монет, а у тебя их мало." } },
@@ -265,6 +301,21 @@ namespace LivingFactions.Core
             { "lang_pt", new[] { "Português", "Português" } },
             { "title_Chief", new[] { "chieftain", "вождь" } },
             { "title_Guard", new[] { "guard", "страж" } },
+            { "title_Envoy", new[] { "envoy", "посол" } },
+            { "envoy_greet", new[] { "Speak freely: here nobody raises a hand against you.", "Говори без опаски: здесь на тебя никто не поднимет руку." } },
+            { "envoy_between", new[] { "What stands between us:", "Что стоит между нами:" } },
+            { "envoy_r_war", new[] { "We are at war. Peace would cost you {0} coins.", "Мы воюем. Мир обойдётся тебе в {0} монет." } },
+            { "envoy_r_theft", new[] { "You were caught stealing from us. For a day we take nothing from your hands.", "Тебя поймали на краже у нас. День мы ничего не примем из твоих рук." } },
+            { "envoy_r_blood", new[] { "There is blood between us: our goodwill comes back slowly.", "Между нами кровь: наше расположение возвращается медленно." } },
+            { "envoy_r_suspect", new[] { "One of ours died, and eyes turn to you. Nothing is proven yet.", "Погиб один из наших, и взгляды обращаются к тебе. Пока ничего не доказано." } },
+            { "envoy_r_damage", new[] { "You struck our buildings.", "Ты бил по нашим постройкам." } },
+            { "envoy_r_hostile", new[] { "You raised your hand against our people lately.", "Недавно ты поднял руку на наших людей." } },
+            { "envoy_r_side", new[] { "You stand with our enemies, the {0}.", "Ты на стороне наших врагов: {0}." } },
+            { "envoy_r_gifts", new[] { "You have given us much lately; each new gift counts for less.", "Ты много дарил нам в последнее время: каждый новый дар значит меньше." } },
+            { "envoy_r_old", new[] { "Nothing new; but what you did before is not forgotten yet.", "Ничего нового, но прежнее ещё не забыто." } },
+            { "envoy_r_none", new[] { "Nothing. We hold nothing against you.", "Ничего. Мы не держим на тебя зла." } },
+            { "envoy_r_drift_up", new[] { "Left alone, our goodwill toward you comes back toward {0} over the days.", "Если ничего не случится, наше отношение к тебе со временем поднимется к {0}." } },
+            { "envoy_r_drift_down", new[] { "Without new deeds, our goodwill toward you fades toward {0} over the days.", "Без новых дел наше отношение к тебе со временем опустится к {0}." } },
             { "title_Raider", new[] { "raider", "налётчик" } },
             { "title_Mercenary", new[] { "hired sword", "наёмник" } },
             { "title_Trader", new[] { "trader", "торговец" } },
@@ -276,6 +327,7 @@ namespace LivingFactions.Core
             { "opt_errands", new[] { "Visits and walks along the road", "Походы в гости и по дороге" } },
             { "opt_sleep", new[] { "Villagers sleep indoors at night", "Ночью жители спят в домах" } },
             { "opt_watch", new[] { "Night watch challenges strangers", "Ночная стража окликает чужаков" } },
+            { "opt_rep_decay", new[] { "How fast standing fades", "Скорость угасания отношений" } },
             { "opt_night_attack", new[] { "Chance the night watch attacks", "Шанс нападения ночной стражи" } },
             { "opt_tower", new[] { "A guard on the watchtower", "Стражник на вышке" } },
             { "opt_archers", new[] { "Archers among the fighters", "Лучники среди бойцов" } },
@@ -301,6 +353,18 @@ namespace LivingFactions.Core
             { "ui_thane_gift", new[] { "Accept the thane's gift", "Принять дар тана" } },
             { "r_thane_gift", new[] { "Few outside the Hold have held it. Bear it well, friend of the Dvergr.", "Мало кто вне Чертога держал его в руках. Носи с честью, друг двергов." } },
             { "msg_jarl_gift", new[] { "The jarl of {0} gives you Raven's Wing for your part in the fight.", "Ярл поселения {0} дарит вам Воронье Крыло за помощь в бою." } },
+            { "msg_not_yours", new[] { "This belongs to the {0}.", "Это принадлежит: {0}." } },
+            { "r_thief", new[] { "\"Our own goods, from your hands? Not today, thief.\"", "«Наше же добро из твоих рук? Не сегодня, вор.»" } },
+            { "warn_alliance", new[] { "{0} warn you: strike their people again and the alliance is over.", "{0} предупреждают: ещё один удар по их людям, и союзу конец." } },
+            { "warn_war", new[] { "{0} warn you: keep this up and it is war.", "{0} предупреждают: продолжишь, и будет война." } },
+            { "warn_trust", new[] { "{0} no longer trust you.", "{0} больше тебе не доверяют." } },
+            { "msg_unseen_kill", new[] { "Nobody saw it. For now.", "Никто не видел. Пока." } },
+            { "bark_hit", new[] { "Hey! Watch where you swing!", "Эй! Смотри, куда машешь!" } },
+            { "bark_hit1", new[] { "Careful, friend!", "Осторожнее, друг!" } },
+            { "bark_hit2", new[] { "Do that again and you will regret it.", "Ещё раз, и пожалеешь." } },
+            { "bark_to_arms", new[] { "To arms!", "К оружию!" } },
+            { "bark_to_arms1", new[] { "Get them!", "Бей его!" } },
+            { "msg_trophy_shield", new[] { "The guard has fallen. Its bark shield is yours ({0}).", "Страж пал. Его корковый щит теперь ваш ({0})." } },
             { "msg_trophy_club", new[] { "The guard has fallen. Its root club is yours ({0}).", "Страж пал. Его корневая дубина теперь ваша ({0})." } },
             { "msg_trophy", new[] { "The chieftain has fallen. His axe is yours ({0}).", "Вождь пал. Его топор теперь ваш ({0})." } },
             { "ui_hunt", new[] { "Ask about a hunt", "Спросить об охоте" } },
@@ -315,8 +379,15 @@ namespace LivingFactions.Core
             { "msg_state_restored", new[] { "The world went back to an earlier save, and the factions went back with it (day {0}).", "Мир вернулся к прежнему сохранению, и фракции вернулись вместе с ним (день {0})." } },
             { "msg_state_rewound", new[] { "The factions went back to day {0}.", "Фракции вернулись в день {0}." } },
             { "opt_felling", new[] { "Woodcutters fell trees and plant new ones", "Дровосеки рубят деревья и сажают новые" } },
+            { "opt_loot_sweep", new[] { "Settlements clear away loose items", "Поселения убирают брошенные вещи" } },
             { "opt_map_zones", new[] { "Faction lands on the map", "Земли фракций на карте" } },
             { "opt_map_all", new[] { "Every settlement on the map", "Все поселения на карте" } },
+            { "opt_map_npcs", new[] { "Faction people on the minimap", "Жители фракций на мини-карте" } },
+            { "map_warcamp", new[] { "war camp", "военный лагерь" } },
+            { "map_outpost", new[] { "outpost", "форпост" } },
+            { "map_roadpost", new[] { "road post", "дорожная застава" } },
+            { "map_threat", new[] { "under attack by the {0}", "под ударом: {0}" } },
+            { "map_wars", new[] { "at war with {0}", "воюет: {0}" } },
             { "greet_War1", new[] { "Not one step closer.", "Ни шагу ближе." } },
             { "greet_War2", new[] { "Your kind has spilled enough of our blood.", "Такие, как ты, пролили довольно нашей крови." } },
             { "greet_Hostile1", new[] { "Turn around while you still can.", "Поворачивай, пока можешь." } },
@@ -512,6 +583,9 @@ namespace LivingFactions.Core
             string[] a = e.Args ?? new string[0];
             if (e.Kind == EventKind.Incident && a.Length > 2) key += "_" + a[2];
             if (e.Kind == EventKind.PlayerWar && a.Length > 2) key += "_" + a[2];
+            if (e.Kind == EventKind.CampaignOver && a.Length > 1 && Has(key + "_" + a[1])) key += "_" + a[1];
+            if (e.Kind == EventKind.BuildingWrecked && a.Length > 2 && a[2].Length > 0) key += "_p";
+            if (e.Kind == EventKind.OutpostFounded && a.Length > 2 && a[2] == "road") key += "_road";
 
             Settlement s = state.GetSettlement(e.SettlementId);
             Settlement s2 = state.GetSettlement(e.OtherSettlementId);
@@ -526,7 +600,8 @@ namespace LivingFactions.Core
                 case EventKind.BuildingStarted:
                 case EventKind.BuildingCompleted:
                 case EventKind.BuildingDestroyed:
-                    text = text.Replace("{b}", a.Length > 1 ? Get("b_" + a[1]) : "?");
+                case EventKind.BuildingWrecked:
+                    text = text.Replace("{b}", a.Length > 1 ? Get("b_" + a[1]) : "?").Replace("{p}", a.Length > 2 ? a[2] : "?");
                     break;
                 case EventKind.TierUp:
                     text = text.Replace("{t}", a.Length > 1 ? Get("tier_" + a[1]) : "?");
@@ -540,8 +615,19 @@ namespace LivingFactions.Core
                 case EventKind.PlayerAllianceBroken:
                     text = text.Replace("{p}", a.Length > 1 ? a[1] : "?");
                     break;
+                case EventKind.OutpostFounded:
+                    text = text.Replace("{r}", a.Length > 2 && a[2] != "road" ? Get("res_" + a[2]) : "?");
+                    break;
+                case EventKind.Migration:
+                    text = text.Replace("{n}", a.Length > 2 ? a[2] : "?");
+                    break;
+                case EventKind.ExpeditionOut:
+                case EventKind.ExpeditionBack:
+                    text = text.Replace("{r}", a.Length > 1 ? Get("res_" + a[1]) : "?").Replace("{n}", a.Length > 2 ? a[2] : "?");
+                    break;
                 case EventKind.PlayerGift:
                 case EventKind.PlayerKilledMember:
+                case EventKind.PlayerCrimeFound:
                     text = text.Replace("{p}", a.Length > 0 ? a[0] : "?");
                     break;
             }

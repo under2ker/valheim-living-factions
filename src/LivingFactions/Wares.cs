@@ -53,26 +53,32 @@ namespace LivingFactions
 clan_raven   sell    ArrowFire            20   40   10
 clan_raven   relic   Bow                   1  180   30  light
 clan_raven   relic   LF_BlackBeak          1  460   40  light
+clan_raven   relic   LF_RavenShield        1  340   40  stout
 clan_raven   mystery SpearFlint            1   60    0
 clan_wolf    sell    ShieldWood            1   30    0
 clan_wolf    relic   LF_WolfFangAxe        1  420   40  keen
 clan_wolf    relic   LF_GreyBlade          1  480   50  keen
+clan_wolf    relic   LF_WolfHideShield     1  260   30  stout
 clan_wolf    mystery AxeBronze             1  120    0
 clan_stag    sell    Honey                10   25    0
 clan_stag    sell    CapeLinen             1  120   20
 clan_stag    relic   LF_StagHornAxe         1 1500   60  merchant
 clan_stag    relic   ShieldBronzeBuckler   1  260   30  lasting
 clan_stag    relic   LF_AntlerBlade        1  300   30  lasting
+clan_stag    relic   LF_StagTrailShield    1  300   30  stout
 clan_stag    mystery KnifeFlint            1   45    0
 dvergr_hold  sell    Bronze                5   95    0
 dvergr_hold  relic   LF_RuneSword          1  520   40  keen
+dvergr_hold  relic   LF_CopperShield       1  420   40  stout
 dvergr_hold  relic   HelmetIron            1  380   30  stout
 dvergr_hold  mystery MaceBronze            1  140    0
 fuling_horde relic   AtgeirBronze          1  360   20  keen
 fuling_horde relic   HelmetBronze          1  300   20  stout
 fuling_horde relic   LF_ObsidianSaber      1  380   20  keen
+fuling_horde relic   LF_BoneShield         1  280   20  stout
 fuling_horde mystery Club                  1   30  -30
 draugr_court relic   LF_RustedBlade        1  450   10  lasting
+draugr_court relic   LF_BonePlateShield    1  300   10  stout
 ";
 
         private static string FilePath { get { return Path.Combine(SimHost.DataDir, "trade.cfg"); } }

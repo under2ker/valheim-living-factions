@@ -1,0 +1,14 @@
+# Hired fighters go through a portal (any teleport) with the player who hired them: hire at Steinvik (4),
+# then jump far away to Ketilthorp (10); they must be there beside the player.
+god
+env 0.4 Clear
+goto 4
+waitready 300
+hire 2
+wait 6
+expect [Mercenary] :: npcs
+goto 10
+waitready 300
+wait 10
+expect [Mercenary] :: npcs
+quit

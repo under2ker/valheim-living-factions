@@ -1,0 +1,19 @@
+# The way out of a dialogue is not pushed off by all the other buttons a friendly faction offers.
+# An allied Dvergr at standing 90 offers gift, trade, wares, hire, the thane's gift, hunt, news,
+# politics, breaking the alliance, war and leave: eleven buttons, one more than fits. Ten are shown,
+# and the last one (index 9) is still the way out, in place of the last offer.
+# Durhall, the Dvergr city, stands at (1437, -2520) in the lab world.
+god
+env 0.4 Clear
+resetgifts
+rep 10 90
+ally 10
+waitready 120
+tp 1437 -2520
+wait 10
+ui open chief
+expect (9) Уйти :: ui state
+ui state
+shot dialogue_buttons
+ui close
+quit

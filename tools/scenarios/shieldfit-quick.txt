@@ -1,0 +1,8 @@
+# Quick: the forearm room of the Wolf Clan's guards (1), where it comes closest.
+god
+env 0.4 Clear
+goto 1
+waitready 240
+shieldfit 8
+until shieldfit done :: shieldfit
+quit

@@ -103,7 +103,7 @@ namespace LivingFactions
                     if (verb == "goto")
                     {
                         string travel = Safe("tp " + (a.Length > 1 ? a[1] : ""));
-                        LivingFactions.Core.Settlement target = SimHost.Sim.State.Settlements.FirstOrDefault(s => s.Id.ToString() == (a.Length > 1 ? a[1] : "") || s.Name.StartsWith(a.Length > 1 ? a[1] : "?", StringComparison.OrdinalIgnoreCase));
+                        LivingFactions.Core.Settlement target = Commands.FindSettlement(a.Length > 1 ? a[1] : "?");
                         if (target == null)
                         {
                             fail++;
@@ -220,7 +220,7 @@ namespace LivingFactions
                     bool ok = verb == "expect" ? found : !found;
                     if (ok) pass++;
                     else fail++;
-                    result = (ok ? "PASS" : "FAIL") + "  " + verb + " '" + wanted + "' in `" + command + "`" + (ok ? "" : "\n" + Clip(output, 900));
+                    result = (ok ? "PASS" : "FAIL") + "  " + verb + " '" + wanted + "' in `" + command + "`" + (ok ? "" : "\n" + Clip(verb == "reject" ? string.Join("\n", output.Split('\n').Where(l => l.IndexOf(wanted, StringComparison.OrdinalIgnoreCase) >= 0).ToArray()) : output, 900));
                 }
                 else
                 {

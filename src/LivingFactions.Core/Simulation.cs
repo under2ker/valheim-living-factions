@@ -56,7 +56,9 @@ namespace LivingFactions.Core
                 if (!s.Destroyed) StepSettlement(s, dt * Balance.Pace);
             }
 
+            StepSquads(dt * Balance.Pace);
             if (Math.Floor(State.Day) > Math.Floor(before)) Daily();
+            for (int i = 0; i < State.Settlements.Count; i++) KeepOutpostSmall(State.Settlements[i]);
             State.RngState = _rng.State;
         }
 
@@ -75,10 +77,16 @@ namespace LivingFactions.Core
             }
             for (int i = 0; i < State.Settlements.Count; i++)
             {
-                if (!State.Settlements[i].Destroyed) DailyFortune(State.Settlements[i]);
+                if (State.Settlements[i].Destroyed) continue;
+                DailyFortune(State.Settlements[i]);
+                DailyLeadership(State.Settlements[i]);
             }
             if (State.Seeded) LateArrivals();
             DailyPolitics();
+            DailyExpeditions();
+            DailyCampaigns();
+            DailyMigration();
+            DailyOutposts();
             DailyPlayerRelations();
             if (State.Chronicle.Count > Balance.ChronicleLimit)
             {
@@ -156,7 +164,7 @@ namespace LivingFactions.Core
             Settlement best = null;
             foreach (Settlement s in State.Settlements)
             {
-                if (s.Destroyed || s.FactionId != f.Id) continue;
+                if (s.Destroyed || s.FactionId != f.Id || s.CampaignId != 0) continue;
                 if (best == null || s.Population > best.Population) best = s;
             }
             if (best != null) f.CapitalId = best.Id;
@@ -279,12 +287,17 @@ namespace LivingFactions.Core
             // Soldiers are drawn from the population and do not gather.
             bool atWar = IsAtWarWithAnyone(f);
             float soldierTarget = pop >= 4 ? Util.Clamp(pop * (0.10f + 0.15f * f.Aggression + (atWar ? 0.08f : 0f)), 1f, pop * 0.4f) : 0f;
+            // A road post is mostly a watch; a working outpost keeps one on guard.
+            if (IsOutpost(s)) soldierTarget = s.RoadPost ? pop * 0.5f : Math.Min(1f, pop * 0.3f);
             s.Soldiers = Util.MoveToward(s.Soldiers, soldierTarget, dt);
             if (s.Soldiers > pop) s.Soldiers = pop;
             float workers = Math.Max(0f, pop - s.Soldiers);
 
+            // Without a chief nobody starts anything new, and work goes slower.
+            bool leaderless = IsLeaderless(s);
+            if (leaderless) workers *= Balance.LeaderlessWork;
             Building project = CurrentProject(s);
-            if (project == null) project = StartProject(s, f);
+            if (project == null && !leaderless && s.CampaignId == 0) project = StartProject(s, f);
             float builders = project != null ? Util.Clamp(workers * 0.3f, Math.Min(1f, workers), 4 + 2 * (int)s.Tier) : 0f;
             float gatherers = workers - builders;
 
@@ -299,14 +312,16 @@ namespace LivingFactions.Core
             float wWood = Math.Max(0.15f, 1f - s.Stock[(int)Res.Wood] / Math.Max(1f, DesiredStock(s, Res.Wood)));
             float wStone = Math.Max(0.10f, 1f - s.Stock[(int)Res.Stone] / Math.Max(1f, DesiredStock(s, Res.Stone)));
             float wMetal = Has(s, BuildingKind.Smithy) ? Math.Max(0.08f, 0.6f * (1f - s.Stock[(int)Res.Metal] / Math.Max(1f, DesiredStock(s, Res.Metal)))) : 0f;
+            // An outpost out for ore digs it without a smithy.
+            if (IsOutpost(s) && s.OutpostGoal == Res.Metal) wMetal = 1f;
             float wSum = wWood + wStone + wMetal;
 
-            Produce(s, Res.Food, foodWorkers * foodRate * dt, cap);
-            Produce(s, Res.Wood, rest * wWood / wSum * Balance.WoodPerWorkerDay * Defs.Yield(s.Biome, Res.Wood) * (1f + Boost(s, Res.Wood)) * s.Industry * dt, cap);
-            Produce(s, Res.Stone, rest * wStone / wSum * Balance.StonePerWorkerDay * Defs.Yield(s.Biome, Res.Stone) * (1f + Boost(s, Res.Stone)) * s.Industry * dt, cap);
+            Produce(s, Res.Food, foodWorkers * foodRate * OutpostWork(s, Res.Food) * dt, cap);
+            Produce(s, Res.Wood, rest * wWood / wSum * Balance.WoodPerWorkerDay * Defs.Yield(s.Biome, Res.Wood) * (1f + Boost(s, Res.Wood)) * s.Industry * OutpostWork(s, Res.Wood) * dt, cap);
+            Produce(s, Res.Stone, rest * wStone / wSum * Balance.StonePerWorkerDay * Defs.Yield(s.Biome, Res.Stone) * (1f + Boost(s, Res.Stone)) * s.Industry * OutpostWork(s, Res.Stone) * dt, cap);
             if (wMetal > 0f)
             {
-                Produce(s, Res.Metal, rest * wMetal / wSum * Balance.MetalPerWorkerDay * Defs.Yield(s.Biome, Res.Metal) * dt, cap);
+                Produce(s, Res.Metal, rest * wMetal / wSum * Balance.MetalPerWorkerDay * Defs.Yield(s.Biome, Res.Metal) * OutpostWork(s, Res.Metal) * dt, cap);
             }
             float income = pop * 0.2f + (Has(s, BuildingKind.Market) ? 2f * (1 + (int)s.Tier) * (0.5f + f.Mercantile) : 0f);
             Produce(s, Res.Coins, income * dt, cap * 4f);
@@ -333,7 +348,8 @@ namespace LivingFactions.Core
             {
                 s.HungerDays = Math.Max(0f, s.HungerDays - dt * 2f);
                 float housing = Math.Min(Housing(s), Defs.PopCapByTier[(int)s.Tier]);
-                if (foodDays > 2f && pop < housing)
+                if (IsOutpost(s)) housing = Math.Min(housing, OutpostPeople);
+                if (foodDays > 2f && pop < housing && s.CampaignId == 0)
                 {
                     float growth = Math.Max(Balance.MinGrowthPerDay, pop * Balance.GrowthPerDay) * dt * (foodDays > 6f ? 1f : 0.5f) * s.Fertility;
                     s.Population = Math.Min(housing, pop + growth);
@@ -353,7 +369,8 @@ namespace LivingFactions.Core
                 }
             }
 
-            if (s.Tier < Tier.City && Defs.TierRequirementsMet(s, s.Tier + 1))
+            KeepOutpostSmall(s);
+            if (s.Tier < Tier.City && !IsOutpost(s) && Defs.TierRequirementsMet(s, s.Tier + 1))
             {
                 s.Tier = s.Tier + 1;
                 Raise(new SimEvent { Kind = EventKind.TierUp, FactionId = f.Id, SettlementId = s.Id, Args = new[] { s.Name, s.Tier.ToString() } });
@@ -412,8 +429,22 @@ namespace LivingFactions.Core
 
         private int FindFreePlot(Settlement s)
         {
+            // The plots of the settlement's size first; if not one of them is dry and level enough
+            // (a site on a shore or a slope), the next ring out, or it would never build at all.
+            // Plots that can be walked to from the fire come first: a house on a ledge nobody can climb to
+            // is no part of the village. Only a settlement on rough ground with no such plot left takes a steeper one.
             int count = Defs.PlotCount(s.Tier);
-            for (int plot = 0; plot < count; plot++)
+            int outer = s.Tier >= Tier.City ? count : Defs.PlotCount(s.Tier + 1);
+            int plot = FreePlot(s, 0, count, false);
+            if (plot < 0) plot = FreePlot(s, count, outer, false);
+            if (plot < 0) plot = FreePlot(s, 0, count, true);
+            if (plot < 0) plot = FreePlot(s, count, outer, true);
+            return plot;
+        }
+
+        private int FreePlot(Settlement s, int from, int count, bool lenient)
+        {
+            for (int plot = from; plot < count; plot++)
             {
                 bool taken = false;
                 foreach (Building b in s.Buildings)
@@ -427,9 +458,9 @@ namespace LivingFactions.Core
                 if (taken) continue;
                 Vec2 offset;
                 float yaw;
-                Defs.PlotTransform(plot, s.Seed, out offset, out yaw);
+                Defs.PlotTransform(s, plot, out offset, out yaw);
                 Biome biome;
-                if (World.ProbeSite(s.Pos + offset, 6f, out biome)) return plot;
+                if (World.ProbeSite(s.Pos + offset, 6f, out biome) && World.GentleWay(s.Pos, s.Pos + offset, lenient)) return plot;
             }
             return -1;
         }
@@ -437,7 +468,8 @@ namespace LivingFactions.Core
         private bool CanAdd(Settlement s, BuildingKind kind)
         {
             BuildingDef def = Defs.Buildings[kind];
-            if (s.Tier < def.MinTier) return false;
+            // A road post may have its tower while still a camp.
+            if (s.Tier < def.MinTier && !(IsOutpost(s) && kind == BuildingKind.Watchtower)) return false;
             int max = def.MaxByTier[(int)s.Tier];
             if (max >= 0 && CountBuildings(s, kind, false) >= max) return false;
 
@@ -463,6 +495,7 @@ namespace LivingFactions.Core
 
         private BuildingKind? ChooseProject(Settlement s, Faction f)
         {
+            if (IsOutpost(s)) return OutpostProject(s);
             float housing = Housing(s);
             float pop = s.Population;
 
@@ -632,7 +665,7 @@ namespace LivingFactions.Core
             return true;
         }
 
-        private Settlement FoundSettlement(Faction f, Vec2 site, Biome biome)
+        private Settlement FoundSettlement(Faction f, Vec2 site, Biome biome, bool announce = true)
         {
             CultureDef culture = Defs.Culture(f.CultureId);
             Settlement s = new Settlement
@@ -649,7 +682,8 @@ namespace LivingFactions.Core
                 Industry = _rng.Range(0.8f, 1.25f),
                 Seed = (int)(_rng.NextU64() & 0x7FFFFFFF),
                 FoundedDay = State.Day,
-                LastExpansionDay = State.Day
+                LastExpansionDay = State.Day,
+                Layout = 1
             };
             s.Stock[(int)Res.Wood] = _rng.Range(45f, 80f);
             s.Stock[(int)Res.Stone] = _rng.Range(8f, 25f);
@@ -657,7 +691,7 @@ namespace LivingFactions.Core
             s.Stock[(int)Res.Coins] = 20f;
             s.Buildings.Add(new Building { Id = s.NextBuildingId++, Kind = BuildingKind.Campfire, State = BuildingState.Complete });
             State.Settlements.Add(s);
-            Raise(new SimEvent { Kind = EventKind.SettlementFounded, FactionId = f.Id, SettlementId = s.Id, Args = new[] { f.Name, s.Name } });
+            if (announce) Raise(new SimEvent { Kind = EventKind.SettlementFounded, FactionId = f.Id, SettlementId = s.Id, Args = new[] { f.Name, s.Name } });
             return s;
         }
 
@@ -682,6 +716,18 @@ namespace LivingFactions.Core
             return true;
         }
 
+        /// <summary>Puts a place in another faction's hands at once, as a won assault would (testing).</summary>
+        public string DebugCapture(int settlementId, int factionId)
+        {
+            Settlement s = State.GetSettlement(settlementId);
+            Faction owner = State.GetFaction(factionId);
+            if (s == null || s.Destroyed || owner == null) return "no such settlement or faction";
+            Faction defender = State.GetFaction(s.FactionId);
+            if (defender == null || defender.Id == owner.Id) return "it already belongs to them";
+            CaptureSettlement(s, owner, defender, 3f);
+            return s.Name + " taken by " + owner.Name;
+        }
+
         private string MakeSettlementName(CultureDef culture)
         {
             for (int attempt = 0; attempt < 30; attempt++)
@@ -699,7 +745,7 @@ namespace LivingFactions.Core
 
         private void TryExpand(Faction f)
         {
-            if (CountSettlements(f.Id) >= Balance.MaxSettlementsPerFaction) return;
+            if (CountTowns(f.Id) >= Balance.MaxSettlementsPerFaction) return;
             if (CountLiveSettlements() >= Balance.MaxSettlementsTotal) return;
             CultureDef culture = Defs.Culture(f.CultureId);
             Biome[] allowed = culture.ExpandBiomes ?? culture.HomeBiomes;
@@ -709,7 +755,7 @@ namespace LivingFactions.Core
             for (int i = 0; i < count; i++)
             {
                 Settlement s = State.Settlements[i];
-                if (s.Destroyed || s.FactionId != f.Id) continue;
+                if (s.Destroyed || s.FactionId != f.Id || s.CampaignId != 0) continue;
                 if (s.Tier < Tier.Hamlet || s.Population < 12f) continue;
                 if (s.Stock[(int)Res.Food] < 55f || s.Stock[(int)Res.Wood] < 70f) continue;
                 if (State.Day - s.LastExpansionDay < cooldown) continue;

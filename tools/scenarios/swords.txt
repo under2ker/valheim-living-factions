@@ -1,5 +1,6 @@
 # The faction swords: bought from five traders, the Greydwarf club taken from their guards.
 god
+resetgifts
 env 0.4 Clear
 emptybag
 

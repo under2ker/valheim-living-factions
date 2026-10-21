@@ -131,7 +131,7 @@ affix_keen	affûtée (+25% de dégâts)
 affix_stout	robuste (+20% d'armure et de parade)
 affix_light	légère (moitié du poids)
 affix_lasting	durable (durabilité doublée)
-affix_merchant	de marchand (achats chez les marchands -10% tant que vous la portez ; endurance -20% à chaque coup)
+affix_merchant	de marchand (prix -10%, endurance -20%)
 ui_wares	Marchandises spéciales
 ui_ware_sell	{0} x{1} - {2} pièces
 ui_ware_relic	Relique : {0}, {1} - {2} pièces
@@ -174,7 +174,7 @@ fc_f_quiet0	restent entre eux
 fc_f_quiet1	commercent et travaillent les champs
 fc_f_quiet2	calme pour l'instant
 ui_hire	Engager deux combattants ({0} pièces)
-r_hired	Ils sont à toi jusqu'à la fin du jour. Ramène-les vivants.
+r_hired	Ils sont à toi pour {0} minutes. Ramène-les vivants.
 r_hire_full	Tu as déjà assez d'épées derrière toi.
 r_hire_none	Nous n'avons aucun combattant à te céder.
 r_hire_poor	L'acier se paie, et tu n'as pas assez de pièces.
@@ -288,6 +288,12 @@ item_LF_StagHornAxe	Corne du Cerf
 itemd_LF_StagHornAxe	Une hache de marchand du Clan du Cerf. Manche en bois de cerf, garnitures de bronze, pièces au bout d'une chaîne.
 opt_map_zones	Terres des factions sur la carte
 opt_map_all	Toutes les colonies sur la carte
+opt_map_npcs	Habitants des factions sur la mini-carte
+map_warcamp	camp de guerre
+map_outpost	avant-poste
+map_roadpost	poste de route
+map_threat	attaqué par : {0}
+map_wars	en guerre contre : {0}
 ui_alliance_need	Une alliance demande leur confiance : réputation {0} sur {1}. Présents, commerce et aide au combat la font monter.
 ui_alliance_ready	Ils te font assez confiance pour une alliance.
 ui_gift_hint	Le chiffre indique ce que rapporte un présent maintenant. Ce qui leur manque compte double ; beaucoup de présents le même jour comptent moins.
@@ -330,6 +336,7 @@ itemd_LF_RootAxe	Du silex taillé sur une racine vivante, entouré de lianes, av
 item_LF_BarrowMoonAxe	Lune du Tertre
 itemd_LF_BarrowMoonAxe	Une hache en croissant rongée de rouille et de patine, un crâne à la douille et des haillons funéraires. Elle repose auprès du chef de la Cour des Draugr.
 opt_felling	Les bûcherons abattent des arbres et en plantent de nouveaux
+opt_loot_sweep	Les colonies ramassent les objets abandonnés
 ui_hunt	Demander une chasse
 ui_hunt_offer	{0} tourmente ces terres depuis trop longtemps. Apporte-nous la nouvelle de sa mort et {1} pièces sont à toi.
 ui_hunt_take	Accepter la chasse
@@ -356,3 +363,81 @@ itemd_LF_RootClub	Une racine noueuse fendue en tête autour de dix éclats de si
 item_LF_RustedBlade	Lame Rouillée
 itemd_LF_RustedBlade	Une longue lame piquée de la Cour des Draugr : un crâne à la garde, un autre au pommeau, un linceul sur la poignée.
 msg_trophy_club	Le garde est tombé. Sa massue de racine est à vous ({0}).
+item_LF_WolfHideShield	Bouclier en Peau de Loup
+itemd_LF_WolfHideShield	Un bouclier rond sous une peau de loup gris entière, la queue pendant sous le bord, cerclage et umbo de fer. Le bouclier du Clan du Loup.
+item_LF_StagTrailShield	Bouclier de la Piste du Cerf
+itemd_LF_StagTrailShield	Peau de cerf sur un bouclier rond, garniture et umbo de bronze, deux andouillers et des pièces de bronze au bord. Le bouclier du Clan du Cerf.
+item_LF_RavenShield	Bouclier du Corbeau
+itemd_LF_RavenShield	Un grand bouclier en amande de bois noirci couvert de cuir noir, umbo d’acier sombre et plumes de corbeau en haut. Le bouclier du Clan du Corbeau.
+item_LF_BoneShield	Bouclier d’Os
+itemd_LF_BoneShield	Une seule grande pièce d’os à bourrelet, umbo d’os et deux défenses croisées au-dessus. Le bouclier de la Horde Fuling.
+item_LF_CopperShield	Bouclier de Cuivre
+itemd_LF_CopperShield	Cuivre martelé à bourrelet, bandes de runes sur le champ et une gemme dans l’umbo. Le bouclier du Fort nain.
+item_LF_BarkShield	Bouclier d’Écorce
+itemd_LF_BarkShield	Cinq plaques d’écorce liées de lianes, résine d’ambre au centre et racines au-delà du bord. Les gardes d’une engeance de nains gris le portent.
+item_LF_BonePlateShield	Bouclier à Plaques d’Os
+itemd_LF_BonePlateShield	Écailles d’os pâle sur un fond sombre, cerclage de fer, umbo en croissant et amulettes d’os sur des cordons. Le bouclier de la Cour des Draugr.
+msg_trophy_shield	Le garde est tombé. Son bouclier d’écorce est à vous ({0}).
+ev_ChiefFell	{s} a perdu son chef et se retrouve sans meneur.
+ev_NewChief	{s} s’est choisi un nouveau chef.
+ev_PlayerCrimeFound	{f} ont découvert qui a tué l’un des leurs à {s} : {p}.
+warn_alliance	{0} vous préviennent : encore un coup contre les leurs et l’alliance est finie.
+warn_war	{0} vous préviennent : continuez ainsi et ce sera la guerre.
+warn_trust	{0} ne vous font plus confiance.
+msg_unseen_kill	Personne n’a rien vu. Pour l’instant.
+bark_hit	Hé ! Attention où tu frappes !
+bark_hit1	Doucement, l’ami !
+bark_hit2	Refais ça et tu le regretteras.
+bark_to_arms	Aux armes !
+bark_to_arms1	Attrapez-le !
+ev_ExpeditionOut	{s} envoie une troupe chercher : {r}.
+ev_ExpeditionBack	Une troupe est de retour à {s} : {r}, {n}.
+ev_SquadLost	Une troupe de {s} n’est pas revenue.
+ev_RaidMarch	{f} partent de {s2} contre {s}.
+ev_CampaignBegun	{f} se préparent à prendre {s} : leurs éclaireurs sont en route.
+ev_CampaignScouted	Les éclaireurs de {f} sont revenus de {s}.
+ev_CampaignCamp	{f} dressent un camp de guerre {s} sur la route de {s2}.
+ev_CampaignAssault	{f} partent de leur camp {s2} contre {s}.
+ev_CampaignWon	{f} ont pris {s}.
+ev_CampaignOver	{f} renoncent à leur campagne contre {s}.
+ev_CampaignOver_strong	{f} annulent leur campagne contre {s} : trop bien défendue.
+ev_CampaignOver_repelled	{f} ont été repoussés de {s} et abandonnent la campagne.
+ev_CampaignOver_camp	{f} ont perdu leur camp de guerre et abandonnent la campagne contre {s}.
+ev_CampaignOver_peace	La paix met fin à la campagne de {f} contre {s}.
+title_squad_Expedition	cueilleur
+title_squad_Raid	guerrier
+title_squad_Scouts	éclaireur
+msg_not_yours	Ceci appartient à : {0}.
+r_thief	« Nos propres biens, de tes mains ? Pas aujourd’hui, voleur. »
+ev_BuildingWrecked	{s} : un bâtiment est en ruines ({b}).
+ev_BuildingWrecked_p	{p} a détruit un bâtiment à {s} ({b}).
+ev_CampaignOver_lost	{f} ont reperdu {s}, et leur campagne avec.
+ev_CampaignCounter	{f} partent de {s2} pour reprendre {s}.
+ev_AllyAid	{f} envoient des guerriers à {s} pour soutenir {o}.
+ev_Migration	{n} personnes quittent {s2} pour vivre à {s}.
+ev_OutpostFounded	{f} ont établi un avant-poste à {s} pour envoyer {r} à {s2}.
+ev_OutpostFounded_road	{f} ont établi un poste de guet à {s}, sur la longue route depuis {s2}.
+msg_thief_count	Quelqu'un remue dans son sommeil... {0}
+msg_thief_away	Vous vous éclipsez dans l'obscurité.
+msg_thief_alarm	Au voleur ! {0} se réveille en alerte !
+night_thief_shout	Au voleur ! Debout, tout le monde, un voleur !
+opt_rep_decay	Vitesse à laquelle la réputation s'estompe
+msg_chronicle_hidden	Chronique masquée ({0} l'affiche à nouveau).
+msg_chronicle_shown	Chronique affichée ({0} la masque).
+title_Envoy	émissaire
+envoy_greet	Parle librement : ici, personne ne lève la main sur toi.
+envoy_between	Ce qui se dresse entre nous :
+envoy_r_war	Nous sommes en guerre. La paix te coûterait {0} pièces.
+envoy_r_theft	Tu as été pris à nous voler. Pendant un jour, nous ne prenons rien de tes mains.
+envoy_r_blood	Il y a du sang entre nous : notre bienveillance revient lentement.
+envoy_r_suspect	L'un des nôtres est mort, et les regards se tournent vers toi. Rien n'est encore prouvé.
+envoy_r_damage	Tu as frappé nos bâtiments.
+envoy_r_hostile	Tu as récemment levé la main sur les nôtres.
+envoy_r_side	Tu te tiens aux côtés de nos ennemis : {0}.
+envoy_r_gifts	Tu nous as beaucoup donné ces derniers temps ; chaque nouveau présent compte moins.
+envoy_r_none	Rien. Nous ne t'en voulons pas.
+envoy_r_drift_up	Si rien ne se passe, notre bienveillance envers toi remontera vers {0} au fil des jours.
+envoy_r_drift_down	Sans nouveaux actes, notre bienveillance envers toi déclinera vers {0} au fil des jours.
+envoy_r_old	Rien de nouveau ; mais ce que tu as fait autrefois n'est pas encore oublié.
+ev_CampaignOver_ours	{f} arrêtent leur campagne : {s} est déjà à eux.
+ev_CampaignOver_other	{f} renoncent à leur campagne : {s} est passé en d'autres mains.

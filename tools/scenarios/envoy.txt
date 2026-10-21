@@ -1,0 +1,33 @@
+# The envoy: a tent outside Steinvik (4) with its envoy. A player the Raven Clan is hostile to (-60) is left
+# alone by the envoy, talks to the envoy, hears what stands between them and gives a gift that counts.
+god
+env 0.4 Clear
+goto 4
+waitready 240
+wait 20
+waitready 120
+expect tent's post :: envoy 4
+rep 8 -60
+envoy 4 go
+wait 3
+waitready 120
+wait 5
+expect m from the post :: envoy 4
+expect sheltered :: envoy 4
+reject not sheltered :: envoy 4
+hidehud on
+hideme
+envoy 4 view
+wait 2
+shot envoy_tent
+cam
+hidehud off
+coins 200
+ui open envoy
+expect [main] :: ui state
+ui click 0
+expect [gift] :: ui state
+ui click 0
+ui close
+reject standing -60.0 :: grudge 8
+quit

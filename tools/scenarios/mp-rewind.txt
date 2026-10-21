@@ -1,0 +1,15 @@
+# The host takes the factions back: the guest's copy is reset to the new timeline (a new epoch).
+# net now shows the epoch of the state the guest reads.
+god
+env 0.4 Clear
+goto 4
+waitready 120
+expect guest :: net
+expect epoch 0 :: net
+server advance 2
+wait 20
+server rewind -1
+wait 20
+expect epoch 1 :: net
+expect unconfirmed building reports 0 :: net
+quit

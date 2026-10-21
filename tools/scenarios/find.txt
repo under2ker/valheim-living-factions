@@ -1,0 +1,10 @@
+find tent
+find dvergrprops
+find banner
+find rack
+find cloth
+find barrel
+find crate
+find skull
+find sack
+quit

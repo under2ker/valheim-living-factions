@@ -1,0 +1,19 @@
+# Slopes inside Steinvik (4): the paths from the square to the buildings and the streets go up banks
+# by ramps, not steps (no step over 0.6 m per 1.5 m off the pads), and the pads keep their level
+# floors. Settlement 10 in slope-10.txt. Run twice: the second run must find little or nothing left
+# to cut (log lines "a ramp of N spots", "spots of its streets"). About 5 min: LF_TIMEOUT=600.
+god
+env 0.4 Clear
+goto 4
+waitready 240
+wait 30
+waitready 240
+pathcheck 4
+reject BANK :: pathcheck 4
+expect worst deviation 0.0 :: padcheck 4
+roadcheck 4
+doorcheck 4
+reject BLOCKED :: doorcheck 4
+mat
+seams 200
+quit

@@ -1,0 +1,18 @@
+# How a wall torch sits on a wall and on a lamp post; the war camp.
+god
+env 0.8 Clear
+waitready 200
+hidehud on
+hideme
+war 8 9
+expect campaign :: campaign 8 5 camp
+squads
+goto camp
+waitready 240
+wait 20
+view camp 22 9 135
+shot war_camp_a
+view camp 16 4 300
+shot war_camp_b
+war 8 9 peace
+quit

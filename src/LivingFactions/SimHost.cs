@@ -18,6 +18,11 @@ namespace LivingFactions
 
         private static string _savePath;
         private static bool _hooked;
+        /// <summary>
+        /// False while the state file on disk is one that could not be read: it must not replace the last good
+        /// backup (.bak) at the next save. True once it was read or written this session, or when there is none.
+        /// </summary>
+        private static bool _saveFileOk = true;
 
         public static bool Active { get { return Sim != null; } }
 
@@ -55,6 +60,8 @@ namespace LivingFactions
                 if (!WorldReady()) return;
                 Load();
             }
+            // Changed in the menu while playing: counts from now on.
+            Sim.Balance.ReputationDecay = ModConfig.ReputationDecay.Value;
             Sim.AdvanceTo(WorldDay + Sim.State.ClockOffset, 6);
             Net.HostUpdate();
             if (_restoredNote != null && MessageHud.instance != null && Player.m_localPlayer != null)
@@ -72,10 +79,31 @@ namespace LivingFactions
                 Texts.Lang = ResolveLanguage();
                 CustomItems.Rename();
             }
+            // The host took the factions back (a rewind): this is a new world to us.
+            else if (state.Epoch != Sim.State.Epoch) ResyncMirror(state);
             // The host took the factions back: what stands near this guest is looked at again.
             else if (state.Day < Sim.State.Day - 0.5) Materializer.ForgetAudit();
             Sim = new Simulation(state, new GameWorld(), ModConfig.ToBalance());
             Sim.PlayerBuyMult = Wares.BuyMultiplier;
+        }
+
+        /// <summary>Throws away what this guest built or saw in a timeline the host has left.</summary>
+        private static void ResyncMirror(WorldState state)
+        {
+            int swept = 0;
+            foreach (Settlement s in Sim.State.Settlements)
+            {
+                Settlement now = state.GetSettlement(s.Id);
+                if (now != null && Math.Abs(now.Pos.X - s.Pos.X) < 1f && Math.Abs(now.Pos.Z - s.Pos.Z) < 1f) continue;
+                swept += Materializer.SweepAway(s);
+            }
+            // What this guest reported about the old timeline must not be sent again, or it would change
+            // the place it was left in; the caches of chests and felled trees are from that timeline too.
+            Net.ResetGuest();
+            Forestry.Reset();
+            Chests.Reset();
+            Materializer.ForgetAudit();
+            Plugin.Log.LogInfo("The host is on a new timeline (epoch " + state.Epoch + "): the guest's copy was reset, " + swept + " objects of places not there any more removed.");
         }
 
         private static bool WorldReady()
@@ -98,21 +126,43 @@ namespace LivingFactions
             _savePath = Path.Combine(DataDir, Sanitize(world.m_name) + "_" + world.m_uid + ".json");
 
             WorldState state = null;
+            bool recovered = false;
+            _saveFileOk = true;
             if (File.Exists(_savePath))
             {
-                try
+                state = ReadStateFile(_savePath, "saved faction state");
+                if (state == null)
                 {
-                    state = JsonConvert.DeserializeObject<WorldState>(File.ReadAllText(_savePath));
-                    Plugin.Log.LogInfo("Loaded faction state: " + state.Factions.Count + " factions, " + state.Settlements.Count + " settlements, day " + state.Day.ToString("0.0"));
-                    state = MatchWorld(state);
-                }
-                catch (Exception e)
-                {
-                    // Never overwrite a save we could not read.
+                    // Never overwrite a save we could not read: keep it aside, and take the copies kept beside it.
+                    // Only then: with no state file at all the world is new to the factions (or the file was
+                    // removed on purpose), and an old copy must not bring old factions back.
+                    _saveFileOk = false;
                     string bad = _savePath + ".unreadable-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
-                    File.Copy(_savePath, bad, true);
-                    Plugin.Log.LogError("Could not read " + _savePath + " (kept as " + bad + "): " + e);
+                    try
+                    {
+                        File.Copy(_savePath, bad, true);
+                        Plugin.Log.LogError("The faction state could not be read; it is kept as " + bad + ". Looking for a kept copy.");
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.Log.LogError("The faction state could not be read and could not be kept aside: " + e.Message);
+                    }
+                    state = ReadBackupState() ?? ReadKeptState();
+                    recovered = state != null;
                 }
+                if (state != null)
+                {
+                    // The state may be older than the world (a restored backup): take the copy kept with the world.
+                    try
+                    {
+                        state = MatchWorld(state);
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.Log.LogError("Could not match the faction state to the world's clock: " + e);
+                    }
+                }
+                else Plugin.Log.LogError("No readable faction state or kept copy was found: the factions start anew on this world.");
             }
             if (state == null)
             {
@@ -135,6 +185,93 @@ namespace LivingFactions
                 }
                 Save();
             }
+            else if (recovered)
+            {
+                // Recovered from a copy: written back at once, so that quitting before the next world save does
+                // not leave the broken file in place.
+                Save();
+            }
+        }
+
+        /// <summary>Reads one state file. Null, with a warning, when it cannot be read.</summary>
+        private static WorldState ReadStateFile(string path, string what)
+        {
+            try
+            {
+                WorldState state = ParseState(File.ReadAllText(path), what + " at " + path);
+                if (state == null) return null;
+                Plugin.Log.LogInfo("Loaded faction state: " + state.Factions.Count + " factions, " + state.Settlements.Count + " settlements, day " + state.Day.ToString("0.0") + " (from " + what + ").");
+                return state;
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.LogWarning("Could not read the " + what + " at " + path + ": " + e.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Parses one state and refuses a format from a newer build (its fields could mean something else to
+        /// this one). Null, with a warning, when it cannot be used. Every state read goes through here.
+        /// </summary>
+        internal static WorldState ParseState(string json, string what)
+        {
+            try
+            {
+                WorldState state = JsonConvert.DeserializeObject<WorldState>(json);
+                if (state == null)
+                {
+                    Plugin.Log.LogWarning("The " + what + " is empty.");
+                    return null;
+                }
+                if (state.Version > WorldState.CurrentVersion)
+                {
+                    Plugin.Log.LogWarning("The " + what + " is from a newer version of the mod (format " + state.Version + ", this one reads " + WorldState.CurrentVersion + "); it is not loaded.");
+                    return null;
+                }
+                return state;
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.LogWarning("Could not read the " + what + ": " + e.Message);
+                return null;
+            }
+        }
+
+        /// <summary>The copy of the state kept from the save before last: the first fallback for an unreadable file.</summary>
+        private static WorldState ReadBackupState()
+        {
+            string backup = _savePath + ".bak";
+            if (!File.Exists(backup)) return null;
+            WorldState state = ReadStateFile(backup, "backup of the faction state");
+            if (state != null) Plugin.Log.LogInfo("The faction state was restored from its backup file.");
+            return state;
+        }
+
+        /// <summary>The latest kept copy that can still be read: the last fallback before starting anew.</summary>
+        private static WorldState ReadKeptState()
+        {
+            List<KeyValuePair<string, double>> kept = KeptDays();
+            for (int i = kept.Count - 1; i >= 0; i--)
+            {
+                try
+                {
+                    using (FileStream fs = File.OpenRead(kept[i].Key))
+                    using (GZipStream gz = new GZipStream(fs, CompressionMode.Decompress))
+                    using (StreamReader reader = new StreamReader(gz))
+                    {
+                        WorldState state = ParseState(reader.ReadToEnd(), "kept copy " + Path.GetFileName(kept[i].Key));
+                        if (state == null) continue;
+                        Plugin.Log.LogInfo("The faction state was restored from a kept copy of day " + kept[i].Value.ToString("0.0") + " (" + Path.GetFileName(kept[i].Key) + ").");
+                        return state;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Plugin.Log.LogWarning("Could not read the kept copy " + kept[i].Key + ": " + e.Message);
+                }
+            }
+            return null;
         }
 
         private static void Install(WorldState state)
@@ -165,8 +302,9 @@ namespace LivingFactions
         private static WorldState MatchWorld(WorldState state)
         {
             double now = ZNet.instance.GetTimeSeconds();
-            if (state.SavedAtTime <= now + 60.0) return state;
-            string best = null;
+            // The world was saved in the same frame as the state: they belong together.
+            if (Math.Abs(state.SavedAtTime - now) < 1.0) return state;
+            string best = null, exact = null;
             long bestTime = -1;
             if (Directory.Exists(HistoryDir))
             {
@@ -174,11 +312,23 @@ namespace LivingFactions
                 {
                     long time;
                     string stamp = Path.GetFileName(file).Split('.')[0];
-                    if (!long.TryParse(stamp, out time) || time > now + 60.0 || time <= bestTime) continue;
+                    if (!long.TryParse(stamp, out time)) continue;
+                    // Every world save keeps a copy stamped with the world's own clock, so a world loaded
+                    // from any save (a backup too) finds the very state it was saved with. This holds
+                    // when "lf advance" moved the factions on without moving the clock, where comparing
+                    // clocks alone cannot tell.
+                    if (time == (long)now) exact = file;
+                    if (time > now + 60.0 || time <= bestTime) continue;
                     bestTime = time;
                     best = file;
                 }
             }
+            if (exact != null && state.SavedAtTime > now)
+            {
+                best = exact;
+                bestTime = (long)now;
+            }
+            else if (state.SavedAtTime <= now + 60.0) return state;
             if (best == null)
             {
                 Plugin.Log.LogWarning("The world's clock (" + now.ToString("0") + " s) is behind the faction state (" + state.SavedAtTime.ToString("0") + " s), as after restoring a backup, but no earlier copy of the state is kept; going on with this one.");
@@ -190,7 +340,10 @@ namespace LivingFactions
                 using (GZipStream gz = new GZipStream(fs, CompressionMode.Decompress))
                 using (StreamReader reader = new StreamReader(gz))
                 {
-                    WorldState older = JsonConvert.DeserializeObject<WorldState>(reader.ReadToEnd());
+                    WorldState older = ParseState(reader.ReadToEnd(), "kept copy " + Path.GetFileName(best));
+                    if (older == null) return state;
+                    // Saved a moment after the world (on quitting): the world's own copy, nothing to tell.
+                    if (Math.Abs(older.Day - state.Day) < 0.05) return older;
                     Plugin.Log.LogInfo("The world was restored from a backup (clock " + now.ToString("0") + " s, state " + state.SavedAtTime.ToString("0") + " s): faction state of " + bestTime + " s taken back, day " + older.Day.ToString("0.0"));
                     // The newer state is not thrown away: it stays beside the save under its own name.
                     File.Copy(_savePath, _savePath + ".before-restore-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"), true);
@@ -282,13 +435,14 @@ namespace LivingFactions
                 using (GZipStream gz = new GZipStream(fs, CompressionMode.Decompress))
                 using (StreamReader reader = new StreamReader(gz))
                 {
-                    older = JsonConvert.DeserializeObject<WorldState>(reader.ReadToEnd());
+                    older = ParseState(reader.ReadToEnd(), "kept copy " + Path.GetFileName(file));
                 }
             }
             catch (Exception e)
             {
                 return "could not read " + file + ": " + e.Message;
             }
+            if (older == null) return "could not use " + file + " (see the log)";
 
             // The present is kept too, so this can be undone with another rewind.
             Save();
@@ -305,6 +459,8 @@ namespace LivingFactions
             }
             // Today is the copy's day: the world's clock has moved on, the factions have not.
             older.ClockOffset = older.Day - WorldDay;
+            // A new timeline: guests must not keep places and pieces from the one that was taken back.
+            older.Epoch = Sim.State.Epoch + 1;
             Install(older);
             Pending.Clear();
             Net.Reset();
@@ -361,9 +517,11 @@ namespace LivingFactions
                 string json = JsonConvert.SerializeObject(Sim.State, Formatting.Indented);
                 File.WriteAllText(tmp, json);
                 KeepCopy(json, Sim.State.SavedAtTime);
-                if (File.Exists(_savePath)) File.Copy(_savePath, _savePath + ".bak", true);
+                // An unreadable state file must not replace the last good backup.
+                if (_saveFileOk && File.Exists(_savePath)) File.Copy(_savePath, _savePath + ".bak", true);
                 File.Copy(tmp, _savePath, true);
                 File.Delete(tmp);
+                _saveFileOk = true;
             }
             catch (Exception e)
             {
@@ -383,7 +541,11 @@ namespace LivingFactions
             Materializer.Reset();
             Discovery.Reset();
             NightWatch.Reset();
+            Grudges.Reset();
+            SquadPresence.Reset();
             Chests.Reset();
+            NightThief.Reset();
+            LootSweep.Reset();
             FactionMember.ResetClaims();
             Duel.Reset();
             Plugin.Log.LogInfo("Faction simulation unloaded");
@@ -407,11 +569,19 @@ namespace LivingFactions
             Announce(e);
         }
 
+        private static string _lastAnnounced;
+        private static float _lastAnnouncedAt;
+
         /// <summary>Writes an event to the log and shows it to the player if it is worth a message.</summary>
         public static void Announce(SimEvent e)
         {
             string text = Texts.Describe(e, Sim.State);
-            bool minor = e.Kind == EventKind.BuildingStarted || e.Kind == EventKind.BuildingCompleted || e.Kind == EventKind.TradeCaravan;
+            // One gift of several goods is several events with the same words: tell it once.
+            if (text == _lastAnnounced && Time.unscaledTime - _lastAnnouncedAt < 5f) return;
+            _lastAnnounced = text;
+            _lastAnnouncedAt = Time.unscaledTime;
+            bool minor = e.Kind == EventKind.BuildingStarted || e.Kind == EventKind.BuildingCompleted || e.Kind == EventKind.TradeCaravan
+                || e.Kind == EventKind.ExpeditionOut || e.Kind == EventKind.ExpeditionBack;
             if (!minor) Plugin.Log.LogInfo("[chronicle d" + e.Day.ToString("0.0") + "] " + text);
             if (!ModConfig.ShowChronicleMessages.Value || MessageHud.instance == null || Player.m_localPlayer == null) return;
 

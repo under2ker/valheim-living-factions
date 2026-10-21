@@ -1,0 +1,14 @@
+# A war camp taken by another faction becomes a plain camp of the new owner: the old ties are cleared.
+# campinfo <settlement>: campaign, parent, outpost goal, road post and mourning of a place.
+god
+env 0.4 Clear
+waitready 200
+war 8 9
+campaign 8 5 camp
+expect campaign 1 :: campinfo 39
+expect Camp :: squads
+expect taken by :: capture 39 9
+expect campaign 0, parent 0 :: campinfo 39
+expect road post False :: campinfo 39
+expect leaderless until -1 :: campinfo 39
+quit

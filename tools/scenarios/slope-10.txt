@@ -1,0 +1,16 @@
+# Slopes inside settlement 10 (see slope.txt). About 5 min: LF_TIMEOUT=600.
+god
+env 0.4 Clear
+goto 10
+waitready 240
+wait 30
+waitready 240
+pathcheck 10
+reject BANK :: pathcheck 10
+expect worst deviation 0.0 :: padcheck 10
+roadcheck 10
+doorcheck 10
+reject BLOCKED :: doorcheck 10
+mat
+seams 200
+quit

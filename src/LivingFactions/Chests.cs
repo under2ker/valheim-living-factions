@@ -32,7 +32,12 @@ namespace LivingFactions
 
         public static void Register(Container container) { All.Add(container); }
 
-        public static void Reset() { All.Clear(); }
+        public static void Reset()
+        {
+            All.Clear();
+            OpenedHere.Clear();
+            RecentGifts.Clear();
+        }
 
         public static void Update()
         {
@@ -155,12 +160,33 @@ namespace LivingFactions
             return prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_name;
         }
 
+        private static readonly Dictionary<ZDOID, float> OpenedHere = new Dictionary<ZDOID, float>();
+
+        /// <summary>The local player opened this chest: what is missing or added when it is next looked at was their doing.</summary>
+        public static void MarkOpened(Container chest)
+        {
+            ZNetView view = chest != null ? chest.GetComponent<ZNetView>() : null;
+            if (view == null || !view.IsValid() || view.GetZDO().GetInt(Materializer.HashSettlement) == 0) return;
+            OpenedHere[view.GetZDO().m_uid] = Time.time;
+        }
+
+        /// <summary>
+        /// True once after the local player has had this chest open. Only then does a change in it count as
+        /// theft or a gift. A chest whose contents differ from the count with nobody here having opened it
+        /// (the chest changed hands between players' games before the new contents arrived, as happens to a
+        /// guest walking into a village) is counted again and nothing else: before, it read as theft.
+        /// </summary>
+        private static bool OpenedByMe(ZDO zdo)
+        {
+            return OpenedHere.Remove(zdo.m_uid);
+        }
+
         private static void SyncStore(Settlement s, Container chest, Res[] goods)
         {
             if (chest.IsInUse()) return;
             ZDO zdo = chest.GetComponent<ZNetView>().GetZDO();
             Inventory inv = chest.GetInventory();
-            bool tracked = zdo.GetBool(HashCountSet);
+            bool tracked = zdo.GetBool(HashCountSet) && OpenedByMe(zdo), stoleAny = false;
             for (int k = 0; k < goods.Length; k++)
             {
                 Res res = goods[k];
@@ -172,16 +198,183 @@ namespace LivingFactions
                 if (tracked)
                 {
                     int last = zdo.GetInt(HashCount[k]);
-                    if (current < last) Taken(s, res, (last - current) * units);
-                    else if (current > last) Given(s, res, (current - last) * units);
+                    if (current < last)
+                    {
+                        float stolen = TakeBackGift(s, zdo, res, (last - current) * units);
+                        Taken(s, res, stolen);
+                        stoleAny |= stolen > 0f;
+                    }
+                    else if (current > last) RecordGift(zdo, res, (current - last) * units, Given(s, res, (current - last) * units));
                 }
-                // An abandoned settlement keeps whatever is left; nobody restocks it.
-                int desired = s.Destroyed ? current : Mathf.Min(StoreCaps[(int)res], Mathf.FloorToInt(s.Stock[(int)res] * 0.25f / units));
+                // An abandoned settlement keeps whatever is left; nobody restocks it. A quarter of the stock is out
+                // in the chest, and what the carriers brought in on top of that (Deliver), up to half of it.
+                int shown = Mathf.FloorToInt(s.Stock[(int)res] * 0.25f / units), most = Mathf.FloorToInt(s.Stock[(int)res] * MostShown / units);
+                // The cap is for the quarter: what the carriers brought lies on top of it, as long as the chest has room.
+                int quarter = Mathf.Min(StoreCaps[(int)res], shown);
+                int extra = Mathf.Clamp(zdo.GetInt(HashExtra[k]), 0, Mathf.Max(0, most - quarter));
+                zdo.Set(HashExtra[k], extra);
+                int desired = s.Destroyed ? current : quarter + extra;
                 if (desired > current) inv.AddItem(prefab, desired - current);
                 else if (desired < current) inv.RemoveItem(name, current - desired);
                 zdo.Set(HashCount[k], inv.CountItems(name));
             }
+            stoleAny |= SyncHauled(s, zdo, inv, tracked);
             zdo.Set(HashCountSet, true);
+            if (tracked) NightThief.Checked(s.Id, stoleAny);
+        }
+
+        private static readonly int[] HashExtra = { "lf_x0".GetStableHashCode(), "lf_x1".GetStableHashCode() };
+        private static readonly int HashHauled = "lf_haul".GetStableHashCode();
+
+        /// <summary>At most this share of a good's stock is out in the storehouse chests, the carriers' loads included.</summary>
+        private const float MostShown = 0.5f;
+
+        /// <summary>
+        /// What the carriers brought into a storehouse chest that is not the chest's own kind of goods (the
+        /// field's carrots, a hunter's meat): part of the stock too, so taking it is theft; and no more of it
+        /// stays than a quarter of that stock (what is eaten is gone from the chest as well).
+        /// </summary>
+        private static bool SyncHauled(Settlement s, ZDO zdo, Inventory inv, bool tracked)
+        {
+            string text = zdo.GetString(HashHauled);
+            if (text.Length == 0) return false;
+            Dictionary<string, int> hauled = Parse(text);
+            float[] room = new float[s.Stock.Length];
+            for (int r = 0; r < room.Length; r++) room[r] = s.Stock[r] * 0.25f;
+            bool stole = false;
+            foreach (string key in new List<string>(hauled.Keys))
+            {
+                ItemDrop drop = DropOf(key);
+                Res res;
+                float units;
+                if (drop == null || !Items.TryValue(drop.m_itemData, out res, out units) || units <= 0f)
+                {
+                    hauled.Remove(key);
+                    continue;
+                }
+                string name = drop.m_itemData.m_shared.m_name;
+                int have = inv.CountItems(name), had = hauled[key];
+                if (have < had && tracked)
+                {
+                    Taken(s, res, (had - have) * units);
+                    stole = true;
+                }
+                int left = Mathf.Min(have, had);
+                int keep = s.Destroyed ? left : Mathf.Min(left, Mathf.FloorToInt(Mathf.Max(0f, room[(int)res]) / units));
+                if (keep < left) inv.RemoveItem(name, left - keep);
+                room[(int)res] -= keep * units;
+                hauled[key] = keep;
+            }
+            zdo.Set(HashHauled, Join(hauled));
+            return stole;
+        }
+
+        private static ItemDrop DropOf(string prefabName)
+        {
+            GameObject prefab = ObjectDB.instance != null ? ObjectDB.instance.GetItemPrefab(prefabName) : null;
+            return prefab != null ? prefab.GetComponent<ItemDrop>() : null;
+        }
+
+        /// <summary>
+        /// The chest a carrier puts a load of that good into: the storehouse chest that holds it when one is
+        /// loaded here, else a chest of the building they worked at (a workshop's), else none.
+        /// </summary>
+        public static Container DeliveryChest(Settlement s, int workedAt, Res res)
+        {
+            List<Container> store = new List<Container>();
+            Container workshop = null;
+            foreach (Container c in All)
+            {
+                if (c == null) continue;
+                ZNetView view = c.GetComponent<ZNetView>();
+                if (view == null || !view.IsValid() || view.GetZDO().GetInt(Materializer.HashSettlement) != s.Id) continue;
+                int bid = view.GetZDO().GetInt(Materializer.HashBuilding);
+                Building b = s.Buildings.Find(x => x.Id == bid);
+                if (b == null || b.State != BuildingState.Complete) continue;
+                if (b.Kind == BuildingKind.Storehouse) store.Add(c);
+                else if (bid == workedAt && workshop == null) workshop = c;
+            }
+            if (store.Count > 0)
+            {
+                store.Sort((x, y) => Order(x).CompareTo(Order(y)));
+                for (int i = 0; i < store.Count && i < StoreRoles.Length; i++)
+                {
+                    if (System.Array.IndexOf(StoreRoles[i], res) >= 0) return store[i];
+                }
+            }
+            return workshop;
+        }
+
+        /// <summary>
+        /// A carrier puts what they brought into a chest: real items, there for whoever opens it. Nothing is
+        /// made out of thin air (the simulation has already counted the work into the stock), so a load only
+        /// shows more of that stock in the storehouse (up to half of it), and taking it out is theft like any
+        /// of the settlement's goods. A workshop's chest keeps a modest pile (20) of each. Returns how many
+        /// went in: none while a player has the chest open, or when the chest shows all it may.
+        /// </summary>
+        public static int Deliver(Settlement s, Container chest, Res res, string prefabName, int count)
+        {
+            if (chest == null || chest.IsInUse() || count <= 0) return 0;
+            ZNetView view = chest.GetComponent<ZNetView>();
+            ItemDrop drop = DropOf(prefabName);
+            if (view == null || !view.IsValid() || drop == null) return 0;
+            ZDO zdo = view.GetZDO();
+            Building b = s.Buildings.Find(x => x.Id == zdo.GetInt(Materializer.HashBuilding));
+            if (b == null) return 0;
+            if (!view.IsOwner()) view.ClaimOwnership();
+            Inventory inv = chest.GetInventory();
+            string name = drop.m_itemData.m_shared.m_name;
+            if (b.Kind != BuildingKind.Storehouse)
+            {
+                count = Mathf.Min(count, 20 - inv.CountItems(name));
+                if (count <= 0 || !inv.CanAddItem(drop.gameObject, count) || !inv.AddItem(drop.gameObject, count)) return 0;
+                // The household's now, as if it had always been there: not the player's to take, not a gift.
+                string snap = zdo.GetString(HashSnap);
+                if (snap.Length > 0)
+                {
+                    Dictionary<string, int> counts = Parse(snap);
+                    counts[name] = Get(counts, name) + count;
+                    zdo.Set(HashSnap, Join(counts));
+                }
+                zdo.Set(HashCount[0], zdo.GetInt(HashCount[0]) + count);
+                return count;
+            }
+            Res[] goods = null;
+            for (int i = 0; i < StoreRoles.Length && goods == null; i++)
+            {
+                if (System.Array.IndexOf(StoreRoles[i], res) >= 0) goods = StoreRoles[i];
+            }
+            if (goods == null) return 0;
+            float units;
+            string sale = Items.SalePrefab(res, s, out units);
+            int k = System.Array.IndexOf(goods, res);
+            if (sale == prefabName)
+            {
+                // The chest's own goods: shown on top of the quarter, never more than half the stock.
+                int most = Mathf.FloorToInt(s.Stock[(int)res] * MostShown / units);
+                count = Mathf.Min(count, most - inv.CountItems(name));
+                if (count <= 0 || !inv.CanAddItem(drop.gameObject, count) || !inv.AddItem(drop.gameObject, count)) return 0;
+                zdo.Set(HashExtra[k], zdo.GetInt(HashExtra[k]) + count);
+                zdo.Set(HashCount[k], zdo.GetInt(HashCount[k]) + count);
+                return count;
+            }
+            Res valued;
+            float each;
+            if (!Items.TryValue(drop.m_itemData, out valued, out each) || each <= 0f) return 0;
+            Dictionary<string, int> hauled = Parse(zdo.GetString(HashHauled));
+            float held = 0f;
+            foreach (KeyValuePair<string, int> item in hauled)
+            {
+                ItemDrop other = DropOf(item.Key);
+                Res r;
+                float u;
+                if (other != null && Items.TryValue(other.m_itemData, out r, out u) && r == valued) held += item.Value * u;
+            }
+            count = Mathf.Min(count, Mathf.FloorToInt((s.Stock[(int)valued] * 0.25f - held) / each));
+            if (count <= 0 || !inv.CanAddItem(drop.gameObject, count) || !inv.AddItem(drop.gameObject, count)) return 0;
+            hauled[prefabName] = Get(hauled, prefabName) + count;
+            zdo.Set(HashHauled, Join(hauled));
+            return count;
         }
 
         private static void SyncPersonal(Settlement s, Building b, Container chest)
@@ -194,12 +387,122 @@ namespace LivingFactions
                 zdo.Set(HashFilled, true);
                 FillPersonal(s, b, inv);
                 zdo.Set(HashCount[0], Total(inv));
+                zdo.Set(HashSnap, Join(Counts(inv)));
                 return;
             }
             int total = Total(inv);
             int last = zdo.GetInt(HashCount[0]);
-            if (total < last) Taken(s, Res.Coins, (last - total) * 2f);
+            bool opened = OpenedByMe(zdo);
+            Dictionary<string, int> now = Counts(inv);
+            string snap = zdo.GetString(HashSnap);
+            if (snap.Length == 0)
+            {
+                // A chest counted by an older version: only its total is known, as before.
+                if (total < last && opened) Taken(s, Res.Coins, (last - total) * 2f);
+                if (opened) NightThief.Checked(s.Id, total < last);
+            }
+            else
+            {
+                // What a player put in stays theirs: taking it out again is no theft. Only what is missing
+                // beyond what players left there was the household's.
+                Dictionary<string, int> before = Parse(snap), left = Parse(zdo.GetString(HashLeft));
+                int stolen = 0;
+                foreach (KeyValuePair<string, int> item in now)
+                {
+                    int had;
+                    before.TryGetValue(item.Key, out had);
+                    if (item.Value > had && opened) left[item.Key] = Get(left, item.Key) + item.Value - had;
+                }
+                foreach (KeyValuePair<string, int> item in before)
+                {
+                    int missing = item.Value - Get(now, item.Key);
+                    if (missing <= 0 || !opened) continue;
+                    int theirs = Mathf.Min(missing, Get(left, item.Key));
+                    if (theirs > 0) left[item.Key] = Get(left, item.Key) - theirs;
+                    stolen += missing - theirs;
+                }
+                if (stolen > 0) Taken(s, Res.Coins, stolen * 2f);
+                if (opened) NightThief.Checked(s.Id, stolen > 0);
+                // Nothing of a player's is kept on record beyond what is still in the chest.
+                foreach (string key in new List<string>(left.Keys)) left[key] = Mathf.Min(left[key], Get(now, key));
+                zdo.Set(HashLeft, Join(left));
+            }
+            zdo.Set(HashSnap, Join(now));
             zdo.Set(HashCount[0], total);
+        }
+
+        private static readonly int HashSnap = "lf_snap".GetStableHashCode();
+        private static readonly int HashLeft = "lf_left".GetStableHashCode();
+
+        private static Dictionary<string, int> Counts(Inventory inv)
+        {
+            Dictionary<string, int> counts = new Dictionary<string, int>();
+            foreach (ItemDrop.ItemData item in inv.GetAllItems()) counts[item.m_shared.m_name] = Get(counts, item.m_shared.m_name) + item.m_stack;
+            return counts;
+        }
+
+        private static int Get(Dictionary<string, int> counts, string key)
+        {
+            int n;
+            return counts.TryGetValue(key, out n) ? n : 0;
+        }
+
+        private static string Join(Dictionary<string, int> counts)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, int> item in counts)
+            {
+                if (item.Value <= 0) continue;
+                if (sb.Length > 0) sb.Append(';');
+                sb.Append(item.Key).Append('=').Append(item.Value);
+            }
+            // Never empty once counted, so an empty chest is told apart from one an older version counted.
+            return sb.Length == 0 ? ";" : sb.ToString();
+        }
+
+        private static Dictionary<string, int> Parse(string text)
+        {
+            Dictionary<string, int> counts = new Dictionary<string, int>();
+            foreach (string part in text.Split(';'))
+            {
+                int eq = part.LastIndexOf('=');
+                int n;
+                if (eq > 0 && int.TryParse(part.Substring(eq + 1), out n)) counts[part.Substring(0, eq)] = n;
+            }
+            return counts;
+        }
+
+        /// <summary>Gifts put into a storehouse chest lately, by chest and good: units given and the standing they earned.</summary>
+        private static readonly Dictionary<string, Vector3> RecentGifts = new Dictionary<string, Vector3>();
+
+        /// <summary>A gift taken back this long after it was put in is the giver changing their mind, not theft.</summary>
+        private const float TakeBackSeconds = 600f;
+
+        private static void RecordGift(ZDO zdo, Res res, float units, float gain)
+        {
+            string key = zdo.m_uid + "/" + (int)res;
+            Vector3 gift;
+            if (!RecentGifts.TryGetValue(key, out gift) || Time.time - gift.z > TakeBackSeconds) gift = Vector3.zero;
+            RecentGifts[key] = new Vector3(gift.x + units, gift.y + gain, Time.time);
+        }
+
+        /// <summary>
+        /// Goods taken out of a storehouse chest the player had lately given to: up to what they gave, the
+        /// gift is undone (the stock and the standing it earned go back) and nothing is stolen. Returns the
+        /// units taken beyond that, which are theft.
+        /// </summary>
+        private static float TakeBackGift(Settlement s, ZDO zdo, Res res, float units)
+        {
+            string key = zdo.m_uid + "/" + (int)res;
+            Vector3 gift;
+            if (!RecentGifts.TryGetValue(key, out gift) || Time.time - gift.z > TakeBackSeconds || gift.x <= 0f) return units;
+            float back = Mathf.Min(units, gift.x), gain = gift.y * back / gift.x;
+            Net.AddStock(s, res, -back);
+            Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
+            Player player = Player.m_localPlayer;
+            if (f != null && player != null && gain > 0f) Net.AddReputation(f, player.GetPlayerID(), -gain);
+            RecentGifts[key] = new Vector3(gift.x - back, gift.y - gain, gift.z);
+            return units - back;
         }
 
         private static int Total(Inventory inv)
@@ -233,7 +536,8 @@ namespace LivingFactions
 
         private static void Taken(Settlement s, Res res, float units)
         {
-            if (res != Res.Coins || units > 0f) Net.AddStock(s, res, -units);
+            if (units <= 0f) return;
+            Net.AddStock(s, res, -units);
             Player player = Player.m_localPlayer;
             Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
             if (player == null || f == null || s.Destroyed) return;
@@ -242,15 +546,15 @@ namespace LivingFactions
             if (noticed && MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, Texts.Get("msg_theft", Texts.Name(s.Name)));
         }
 
-        private static void Given(Settlement s, Res res, float units)
+        private static float Given(Settlement s, Res res, float units)
         {
             Player player = Player.m_localPlayer;
             if (player == null)
             {
                 Net.AddStock(s, res, units);
-                return;
+                return 0f;
             }
-            Net.PlayerGift(s, player.GetPlayerID(), res, units);
+            return Net.PlayerGift(s, player.GetPlayerID(), res, units);
         }
 
         public static string Describe()
@@ -265,7 +569,8 @@ namespace LivingFactions
                 foreach (ItemDrop.ItemData item in c.GetInventory().GetAllItems()) sb.Append(" " + item.m_dropPrefab.name + "x" + item.m_stack);
                 sb.AppendLine();
             }
-            return sb.Length == 0 ? "no settlement chests loaded" : sb.ToString().TrimEnd();
+            sb.Append("carriers put " + FactionMember.Delivered + " loads into chests this session");
+            return sb.ToString();
         }
     }
 

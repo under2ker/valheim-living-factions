@@ -1,0 +1,18 @@
+# A war camp has its own look: tents round a fire, banners, stakes. Set up at once (no scouting).
+god
+env 0.45 Clear
+waitready 200
+hidehud on
+hideme
+war 8 9
+campaign 8 5 camp
+squads
+goto camp
+waitready 240
+wait 20
+view camp 20 12 135
+shot war_camp_a
+view camp 12 3 300
+shot war_camp_b
+war 8 9 peace
+quit

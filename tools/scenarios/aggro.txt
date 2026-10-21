@@ -1,0 +1,15 @@
+# Defending a village from raiders must not turn its own people against the player.
+god
+env 0.4 Clear
+goto 4
+waitready 120
+rep 8 20
+war 8 9
+raid 5 4
+until Raider :: npcs
+wait 3
+hit Raider 3
+wait 3
+expect no grudge :: grudge 8
+war 8 9 peace
+quit

@@ -131,7 +131,7 @@ affix_keen	scharf (+25% Schaden)
 affix_stout	robust (+20% Rüstung und Block)
 affix_light	leicht (halbes Gewicht)
 affix_lasting	langlebig (doppelte Haltbarkeit)
-affix_merchant	Händlerstück (Einkauf bei Händlern -10%, solange du es trägst; Ausdauer -20% beim Schlag)
+affix_merchant	Händlerstück (Preise -10%, Ausdauer -20%)
 ui_wares	Besondere Waren
 ui_ware_sell	{0} x{1} - {2} Münzen
 ui_ware_relic	Relikt: {0}, {1} - {2} Münzen
@@ -174,7 +174,7 @@ fc_f_quiet0	bleiben unter sich
 fc_f_quiet1	handeln und bestellen die Felder
 fc_f_quiet2	vorerst ruhig
 ui_hire	Zwei Kämpfer anheuern ({0} Münzen)
-r_hired	Sie gehören dir, bis der Tag um ist. Bring sie lebend zurück.
+r_hired	Sie gehören dir für {0} Minuten. Bring sie lebend zurück.
 r_hire_full	Du hast schon genug Schwerter im Rücken.
 r_hire_none	Wir können keine Kämpfer entbehren.
 r_hire_poor	Stahl kostet Münzen, und du hast zu wenige.
@@ -288,6 +288,12 @@ item_LF_StagHornAxe	Hirschhorn
 itemd_LF_StagHornAxe	Eine Händleraxt des Hirschklans. Stiel aus Geweih, Beschläge aus Bronze, Münzen an einer Kette.
 opt_map_zones	Gebiete der Fraktionen auf der Karte
 opt_map_all	Alle Siedlungen auf der Karte
+opt_map_npcs	Leute der Fraktionen auf der Minikarte
+map_warcamp	Kriegslager
+map_outpost	Vorposten
+map_roadpost	Straßenposten
+map_threat	angegriffen von: {0}
+map_wars	im Krieg mit: {0}
 ui_alliance_need	Ein Bündnis braucht ihr Vertrauen: Ansehen {0} von {1}. Geschenke, Handel und Hilfe im Kampf bringen es.
 ui_alliance_ready	Sie vertrauen dir genug für ein Bündnis.
 ui_gift_hint	Die Zahl ist, was ein Geschenk jetzt bringt. Was ihnen fehlt, zählt doppelt; viele Geschenke an einem Tag zählen weniger.
@@ -330,6 +336,7 @@ itemd_LF_RootAxe	Behauener Feuerstein auf einer lebenden Wurzel, mit Ranken umwu
 item_LF_BarrowMoonAxe	Hügelmond
 itemd_LF_BarrowMoonAxe	Eine Mondsichelaxt voller Rost und Patina, mit einem Schädel an der Tülle und Grablumpen. Sie liegt beim Häuptling des Draugr-Hofs.
 opt_felling	Holzfäller fällen Bäume und pflanzen neue
+opt_loot_sweep	Siedlungen räumen herumliegende Gegenstände weg
 ui_hunt	Nach einer Jagd fragen
 ui_hunt_offer	{0} hat diese Lande lange genug geplagt. Bring uns Kunde von seinem Tod, und {1} Münzen gehören dir.
 ui_hunt_take	Die Jagd annehmen
@@ -356,3 +363,81 @@ itemd_LF_RootClub	Eine knorrige Wurzel, am Kopf um zehn Feuersteinsplitter gespa
 item_LF_RustedBlade	Rostklinge
 itemd_LF_RustedBlade	Eine lange, zerfressene Klinge des Draugr-Hofs: ein Schädel an der Parierstange, einer am Knauf, Grabtuch um den Griff.
 msg_trophy_club	Die Wache ist gefallen. Ihre Wurzelkeule gehört dir ({0}).
+item_LF_WolfHideShield	Wolfsfellschild
+itemd_LF_WolfHideShield	Ein runder Schild unter einem ganzen grauen Wolfsfell, der Schwanz hängt unter dem Rand, Eisenreif und Buckel. Der Schild des Wolfsclans.
+item_LF_StagTrailShield	Hirschpfadschild
+itemd_LF_StagTrailShield	Hirschleder auf einem runden Schild, Bronzebeschlag und Buckel, zwei Geweihenden und Bronzemünzen am Rand. Der Schild des Hirschclans.
+item_LF_RavenShield	Rabenschild
+itemd_LF_RavenShield	Ein hoher Drachenschild aus geschwärztem Holz mit schwarzem Leder, dunklem Stahlbuckel und Rabenfedern oben. Der Schild des Rabenclans.
+item_LF_BoneShield	Knochenschild
+itemd_LF_BoneShield	Ein einziges großes Knochenstück mit Wulstrand, Knochenbuckel und zwei gekreuzten Hauern darüber. Der Schild der Fuling-Horde.
+item_LF_CopperShield	Kupferschild
+itemd_LF_CopperShield	Getriebenes Kupfer mit Wulstrand, Runenbändern über dem Feld und einem Edelstein im Buckel. Der Schild der Zwergenfeste.
+item_LF_BarkShield	Rindenschild
+itemd_LF_BarkShield	Fünf Rindenplatten, mit Ranken gebunden, Bernsteinharz in der Mitte und Wurzeln über den Rand. Die Wachen einer Grauzwerg-Brut tragen ihn.
+item_LF_BonePlateShield	Knochenplattenschild
+itemd_LF_BonePlateShield	Blasse Knochenschuppen auf dunklem Grund, Eisenreif, ein Sichelbuckel und Knochenamulette an Schnüren. Der Schild des Draugr-Hofs.
+msg_trophy_shield	Die Wache ist gefallen. Ihr Rindenschild gehört dir ({0}).
+ev_ChiefFell	{s} hat seinen Häuptling verloren und ist ohne Anführer.
+ev_NewChief	{s} hat einen neuen Häuptling gewählt.
+ev_PlayerCrimeFound	{f} haben herausgefunden, wer einen der Ihren in {s} getötet hat: {p}.
+warn_alliance	{0} warnen dich: Noch ein Schlag gegen ihre Leute, und das Bündnis ist vorbei.
+warn_war	{0} warnen dich: Mach so weiter, und es gibt Krieg.
+warn_trust	{0} trauen dir nicht mehr.
+msg_unseen_kill	Niemand hat es gesehen. Noch nicht.
+bark_hit	He! Pass auf, wohin du schlägst!
+bark_hit1	Vorsicht, Freund!
+bark_hit2	Mach das noch einmal, und du wirst es bereuen.
+bark_to_arms	Zu den Waffen!
+bark_to_arms1	Packt ihn!
+ev_ExpeditionOut	{s} schickt einen Trupp los: {r}.
+ev_ExpeditionBack	Ein Trupp ist zurück in {s}: {r}, {n}.
+ev_SquadLost	Ein Trupp aus {s} ist nicht zurückgekehrt.
+ev_RaidMarch	{f} ziehen von {s2} gegen {s}.
+ev_CampaignBegun	{f} rüsten sich, {s} zu nehmen: ihre Späher sind unterwegs.
+ev_CampaignScouted	Die Späher von {f} sind von {s} zurück.
+ev_CampaignCamp	{f} schlagen ein Kriegslager {s} auf dem Weg nach {s2} auf.
+ev_CampaignAssault	{f} ziehen aus ihrem Lager {s2} gegen {s}.
+ev_CampaignWon	{f} haben {s} eingenommen.
+ev_CampaignOver	{f} geben ihren Feldzug gegen {s} auf.
+ev_CampaignOver_strong	{f} brechen ihren Feldzug gegen {s} ab: zu stark verteidigt.
+ev_CampaignOver_repelled	{f} wurden von {s} zurückgeschlagen und geben den Feldzug auf.
+ev_CampaignOver_camp	{f} haben ihr Kriegslager verloren und geben den Feldzug gegen {s} auf.
+ev_CampaignOver_peace	Der Frieden beendet den Feldzug von {f} gegen {s}.
+title_squad_Expedition	Sammler
+title_squad_Raid	Krieger
+title_squad_Scouts	Späher
+msg_not_yours	Das gehört: {0}.
+r_thief	„Unsere eigenen Waren aus deiner Hand? Heute nicht, Dieb.“
+ev_BuildingWrecked	{s}: {b} liegt in Trümmern.
+ev_BuildingWrecked_p	{p} hat in {s} ein Gebäude zerstört ({b}).
+ev_CampaignOver_lost	{f} haben {s} wieder verloren und damit ihren Feldzug.
+ev_CampaignCounter	{f} ziehen von {s2} aus, um {s} zurückzuerobern.
+ev_AllyAid	{f} schicken Krieger nach {s}, um {o} beizustehen.
+ev_Migration	{n} Leute verlassen {s2}, um in {s} zu leben.
+ev_OutpostFounded	{f} haben bei {s} einen Außenposten errichtet, der {r} nach {s2} schickt.
+ev_OutpostFounded_road	{f} haben bei {s} einen Wachposten an der langen Straße von {s2} errichtet.
+msg_thief_count	Jemand regt sich im Schlaf... {0}
+msg_thief_away	Du verschwindest in der Dunkelheit.
+msg_thief_alarm	Dieb! {0} wird alarmiert!
+night_thief_shout	Ein Dieb! Wacht auf, alle, ein Dieb!
+opt_rep_decay	Wie schnell das Ansehen verblasst
+msg_chronicle_hidden	Chronik ausgeblendet ({0} zeigt sie wieder).
+msg_chronicle_shown	Chronik eingeblendet ({0} blendet sie aus).
+title_Envoy	Gesandter
+envoy_greet	Sprich frei: Hier erhebt niemand die Hand gegen dich.
+envoy_between	Was zwischen uns steht:
+envoy_r_war	Wir sind im Krieg. Frieden kostet dich {0} Münzen.
+envoy_r_theft	Du wurdest beim Stehlen erwischt. Einen Tag lang nehmen wir nichts aus deinen Händen.
+envoy_r_blood	Zwischen uns ist Blut geflossen: unser Wohlwollen kehrt nur langsam zurück.
+envoy_r_suspect	Einer der Unseren ist gestorben, und die Blicke richten sich auf dich. Bewiesen ist noch nichts.
+envoy_r_damage	Du hast unsere Gebäude beschädigt.
+envoy_r_hostile	Du hast neulich die Hand gegen unsere Leute erhoben.
+envoy_r_side	Du stehst auf der Seite unserer Feinde: {0}.
+envoy_r_gifts	Du hast uns in letzter Zeit viel geschenkt; jedes neue Geschenk zählt weniger.
+envoy_r_none	Nichts. Wir tragen dir nichts nach.
+envoy_r_drift_up	Wenn nichts geschieht, kehrt unser Wohlwollen mit den Tagen gegen {0} zurück.
+envoy_r_drift_down	Ohne neue Taten sinkt unser Wohlwollen mit den Tagen gegen {0}.
+envoy_r_old	Nichts Neues; aber was du früher getan hast, ist noch nicht vergessen.
+ev_CampaignOver_ours	{f} brechen ihren Feldzug ab: {s} gehört ihnen schon.
+ev_CampaignOver_other	{f} geben ihren Feldzug auf: {s} ist in andere Hände übergegangen.

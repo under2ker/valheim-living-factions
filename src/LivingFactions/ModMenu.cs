@@ -35,7 +35,8 @@ namespace LivingFactions
         }
 
         private const float Width = 700f, Height = 690f;
-        private const int MaxRows = 12;
+        // Thirteen rows fit between the page tabs and the close button (the world page has that many).
+        private const int MaxRows = 13;
 
         private static readonly List<Page> Pages = new List<Page>();
         private static GameObject _panel, _icon;
@@ -93,6 +94,7 @@ namespace LivingFactions
             Toggle(life, "opt_sleep", ModConfig.NightSleep);
             Toggle(life, "opt_watch", ModConfig.NightWatchOn);
             Choice(life, "opt_night_attack", ModConfig.NightAttackChance, new[] { 0f, 0.25f, 0.57f, 0.8f, 1f }, v => Mathf.RoundToInt(v * 100f) + "%");
+            Choice(life, "opt_rep_decay", ModConfig.ReputationDecay, new[] { 0f, 0.25f, 0.5f, 1f, 2f }, v => Mathf.RoundToInt(v * 100f) + "%");
             Toggle(life, "opt_tower", ModConfig.TowerGuards);
             Toggle(life, "opt_archers", ModConfig.Archers);
             Choice(life, "opt_npcs", ModConfig.MaxVisibleNpcs, new[] { 6, 10, 14, 20, 30 });
@@ -100,12 +102,14 @@ namespace LivingFactions
             Page world = AddPage("menu_page_world");
             Toggle(world, "opt_map_zones", ModConfig.MapZones);
             Toggle(world, "opt_map_all", ModConfig.MapShowAll);
+            Toggle(world, "opt_map_npcs", ModConfig.MapNpcs);
             Toggle(world, "opt_roads", ModConfig.Roads);
             Toggle(world, "opt_lamps", ModConfig.RoadLamps);
             Choice(world, "opt_road_reach", ModConfig.RoadReach, new[] { 0f, 800f, 1500f, 2500f, 5000f }, v => v.ToString("0") + " m");
             Toggle(world, "opt_caravans", ModConfig.Caravans);
             Toggle(world, "opt_raids", ModConfig.StagedRaids);
             Toggle(world, "opt_chests", ModConfig.ChestsOn);
+            Toggle(world, "opt_loot_sweep", ModConfig.LootSweep);
             Toggle(world, "opt_trade", ModConfig.TradeOn);
             Toggle(world, "opt_relics", ModConfig.Relics);
             Toggle(world, "opt_hire", ModConfig.Mercenaries);
@@ -278,7 +282,8 @@ namespace LivingFactions
                 Refresh();
             }
             if (!IsOpen) return "menu closed, icon " + (_icon != null ? "present" : "absent");
-            StringBuilder sb = new StringBuilder("[" + Texts.Get(Pages[_page].TitleKey) + "] of " + Pages.Count + " pages, icon " + (_icon != null ? "present" : "absent") + "\n");
+            StringBuilder sb = new StringBuilder("[" + Texts.Get(Pages[_page].TitleKey) + "] of " + Pages.Count + " pages, icon " + (_icon != null ? "present" : "absent")
+                + ", rows " + Mathf.Min(Pages[_page].Rows.Count, MaxRows) + " of " + Pages[_page].Rows.Count + " shown\n");
             for (int i = 0; i < Pages[_page].Rows.Count; i++) sb.AppendLine("  " + i + ": " + System.Text.RegularExpressions.Regex.Replace(Pages[_page].Rows[i].Label(), "<.*?>", ""));
             return sb.ToString().TrimEnd();
         }

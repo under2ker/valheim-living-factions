@@ -1,0 +1,45 @@
+# Faction banners hang flat against their supports (0.7.0): the square's pole, the gable ends of a
+# longhouse and the great hall, the watchtower's front corner post, the market pole, the stone towers of
+# a city gate (Steinvik, 4) and the tall log posts of a town gate (Ketilthorp, 10), seen from outside
+# along the street through each gate (roadview ... gate n), and the Fuling
+# headman's totem and banner beside the way in (Mokrok, 3). In each shot the cloth should hang on the
+# face of its post or wall with a finger's gap: not through it, not floating, its foot off the ground,
+# clear of the eaves and of the wall beside a gate post. Buildings laid out before layout revision 10
+# are put up again on arrival, so every stop waits for the pieces to settle.
+god
+env 0.4 Clear
+goto 4
+waitready 400
+hidehud on
+hideme
+outside 4 Campfire 0 8 2.5 315
+shot banner_square
+outside 4 Longhouse 0 9 3.5 90
+shot banner_longhouse_gable
+outside 4 GreatHall 0 12 4 270
+shot banner_hall_gable
+outside 4 Watchtower 0 8 4 20
+shot banner_watchtower
+outside 4 Market 0 8 2.5 10
+shot banner_market
+roadview 4 gate 0 8
+wait 2
+shot banner_city_gate
+roadview 4 gate 1 8
+wait 2
+shot banner_city_gate_b
+reject BLOCKED :: doorcheck 4
+goto 10
+waitready 400
+roadview 10 gate 0 9
+wait 2
+shot banner_town_gate
+roadview 10 gate 1 9
+wait 2
+shot banner_town_gate_b
+goto 3
+waitready 400
+outside 3 Longhouse 0 9 2.5 0
+shot banner_fuling_headman
+cam
+quit

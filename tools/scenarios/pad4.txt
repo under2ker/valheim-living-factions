@@ -1,0 +1,7 @@
+god
+goto 4
+waitready 240
+wait 20
+waitready 120
+padcheck 4
+quit

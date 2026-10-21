@@ -1,0 +1,12 @@
+# A campaign whose target is still the enemy's does not end early: it keeps its camp and goes on.
+god
+env 0.4 Clear
+waitready 200
+war 8 9
+campaign 8 5 camp
+expect Camp :: squads
+advance 1
+expect Camp :: squads
+reject why :: squads
+reject (gone) :: squads
+quit

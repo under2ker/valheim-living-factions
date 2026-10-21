@@ -12,8 +12,24 @@ namespace LivingFactions
     internal static class Company
     {
         private const double CaravanSeconds = 260;
-        private const double HireSeconds = 900;
-        public const int MaxHired = 4;
+        /// <summary>
+        /// How many fighters may follow the player at once, by how the faction stands with them: an ally
+        /// lends the most (HiredLimit), a friend two thirds of it, anyone else two.
+        /// </summary>
+        public static int MaxHired(Standing standing)
+        {
+            int limit = ModConfig.HiredLimit.Value;
+            if (standing >= Standing.Allied) return limit;
+            if (standing >= Standing.Friendly) return Mathf.Max(2, Mathf.RoundToInt(limit * 2f / 3f / 2f) * 2);
+            return 2;
+        }
+
+        /// <summary>How long they stay: longer the better the faction thinks of the player.</summary>
+        public static double HireSeconds(Standing standing)
+        {
+            float minutes = ModConfig.HireMinutes.Value * (standing >= Standing.Allied ? 1.6f : standing >= Standing.Friendly ? 1f : 0.66f);
+            return minutes * 60.0;
+        }
 
         private static readonly Dictionary<int, float> NextCaravan = new Dictionary<int, float>();
         private static float _next;
@@ -58,10 +74,22 @@ namespace LivingFactions
 
         // ------------------------------------------------------------------ hired fighters
 
+        /// <summary>Hires two fighters and gives the settlement's answer, with how long they stay.</summary>
+        public static string HireReply(Settlement s, Player player, bool free)
+        {
+            string key = Hire(s, player, free);
+            if (key != "r_hired") return Texts.Get(key);
+            Faction faction = SimHost.Sim.State.GetFaction(s.FactionId);
+            Standing standing = faction != null ? SimHost.Sim.GetStanding(faction, player.GetPlayerID()) : Standing.Neutral;
+            return Texts.Get("r_hired", Mathf.RoundToInt((float)(HireSeconds(standing) / 60.0)));
+        }
+
         /// <summary>Two fighters of the settlement join the player for a while. Returns the key of the reply.</summary>
         public static string Hire(Settlement s, Player player, bool free)
         {
-            if (HiredCount() + 2 > MaxHired) return "r_hire_full";
+            Faction faction = SimHost.Sim.State.GetFaction(s.FactionId);
+            Standing standing = faction != null ? SimHost.Sim.GetStanding(faction, player.GetPlayerID()) : Standing.Neutral;
+            if (HiredCount() + 2 > MaxHired(standing)) return "r_hire_full";
             if (s.Soldiers < 2f) return "r_hire_none";
             int price = HirePrice(s);
             Inventory inv = player.GetInventory();
@@ -75,7 +103,7 @@ namespace LivingFactions
             for (int i = 0; i < 2; i++)
             {
                 Vector3 pos = player.transform.position - player.transform.forward * 2.5f + player.transform.right * (i == 0 ? -1.5f : 1.5f);
-                if (Spawn(s, pos, NpcRole.Mercenary, HireSeconds) != null) joined++;
+                if (Spawn(s, pos, NpcRole.Mercenary, HireSeconds(standing)) != null) joined++;
             }
             return joined > 0 ? "r_hired" : "r_hire_none";
         }

@@ -1,0 +1,9 @@
+# Every row of the settings page is shown, including the last one added in 0.7.0 (the hiring switch).
+god
+waitready 120
+modmenu open
+modmenu page 2
+expect rows 13 of 13 shown :: modmenu state
+expect Наём бойцов :: modmenu state
+modmenu close
+quit

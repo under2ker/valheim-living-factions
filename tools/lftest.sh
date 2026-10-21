@@ -10,8 +10,12 @@ CFG="$GAME/BepInEx/config"
 DATA="$CFG/LivingFactions"
 START=$(date +%s)
 
+# A scenario may switch the mod's language (`lang mod en`); the setting is put back as it was before the run.
+LANGUAGE_LINE="$(grep -m1 '^Language = ' "$CFG/alexandr.livingfactions.cfg" 2>/dev/null)"
+
 cleanup() {
   sed -i 's/^DevTools = true/DevTools = false/' "$CFG/alexandr.livingfactions.cfg"
+  [ -n "$LANGUAGE_LINE" ] && sed -i "s/^Language = .*/$LANGUAGE_LINE/" "$CFG/alexandr.livingfactions.cfg"
   rm -f "$DATA/autostart.txt" "$DATA/scenario.txt" "$DATA/cmd.txt"
 }
 trap cleanup EXIT
@@ -28,8 +32,8 @@ cp "$SCENARIO" "$DATA/scenario.txt"
 
 ( cd "$GAME" && ./valheim.exe -console -screen-fullscreen 0 -screen-width "${LF_WIDTH:-1280}" -screen-height "${LF_HEIGHT:-720}" >/dev/null 2>&1 & )
 
-# Wait for the report to finish; give up after 10 minutes.
-for i in $(seq 1 480); do
+# Wait for the report to finish; give up after LF_TIMEOUT seconds (default 480; long tours of several settlements need more).
+for i in $(seq 1 "${LF_TIMEOUT:-480}"); do
   sleep 1
   if [ -f "$DATA/report.txt" ] && grep -q "^=== DONE" "$DATA/report.txt"; then break; fi
 done

@@ -1,0 +1,20 @@
+# A pad set far below the land must not be dug; a pit dug by mistake is filled back and the building put up again on the land.
+god
+env 0.4 Clear
+goto 4
+waitready 120
+wait 25
+expect set to :: dig 4 2 6
+wait 15
+expect off the land :: audit 4
+audit 4 fix
+expect set to :: dig 4 3 6 force
+wait 20
+padcheck 4
+expect off the land :: audit 4
+audit 4 fix
+wait 40
+waitready 120
+expect agree :: audit 4
+padcheck 4
+quit

@@ -1,0 +1,56 @@
+# The faction shields: bought from five traders, the Greydwarf one taken from their guards.
+god
+resetgifts
+env 0.4 Clear
+emptybag
+goto 4
+rep 8 70
+coins 600
+ui open chief
+ui click 2
+expect Вороний Щит :: ui state
+ui press Вороний Щит
+ui close
+expect LF_RavenShield :: items
+goto 1
+rep 2 70
+coins 600
+ui open chief
+ui click 2
+expect Щит Волчьей Шкуры :: ui state
+ui press Щит Волчьей Шкуры
+ui close
+expect LF_WolfHideShield :: items
+goto 2
+rep 3 70
+coins 600
+ui open chief
+ui click 2
+expect Щит Оленьей Тропы :: ui state
+shot trader_nine_offers
+ui press Щит Оленьей Тропы
+ui close
+expect LF_StagTrailShield :: items
+goto 3
+rep 4 70
+coins 600
+ui open chief
+ui click 2
+expect Костяной Щит :: ui state
+ui press Костяной Щит
+ui close
+expect LF_BoneShield :: items
+goto 6
+rep 10 70
+coins 600
+ui open chief
+ui click 2
+expect Медный Щит :: ui state
+ui press Медный Щит
+ui close
+expect LF_CopperShield :: items
+goto 5
+slay Guard 12
+wait 3
+items
+quit

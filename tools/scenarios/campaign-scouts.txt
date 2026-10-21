@@ -1,0 +1,20 @@
+# Scouts lost after their report must end the campaign, not leave it waiting for peace.
+# scoutloss <faction#> [reported]: the scouts fall after seeing the place, or before it.
+god
+env 0.4 Clear
+waitready 200
+war 8 9
+campaign 8 5
+expect Scouting :: squads
+scoutloss 8 reported
+advance 1
+expect Over :: squads
+expect why scouts :: squads
+# The same before the report: the campaign ends too.
+campaign 8 5
+expect Scouting :: squads
+scoutloss 8
+advance 1
+expect Over :: squads
+expect why scouts :: squads
+quit

@@ -1,0 +1,34 @@
+# Film: a Stag Clan village rises on an empty spot near Steinvik, 60 days in a minute, with the day on screen.
+god
+hideme
+lang mod en
+env 0.35 Clear
+goto 4
+waitready 120
+here 3 at 1000 -460
+here 3 at 850 -430
+goto 39
+waitready 120
+wait 20
+hidehud on
+orbit 39 65 38 0.1 200 0
+wait 3
+daycard on
+mark rec
+mark s20-empty-meadow
+wait 4
+mark s21-timelapse
+orbit 39 65 38 60 200 220
+timelapse 60 60 sun
+wait 62
+mark s22-finished-orbit
+env 0.4 Clear
+orbit 39 40 16 16 60 100
+wait 17
+daycard off
+mark s23-finished-low
+orbit 39 24 7 14 180 80
+wait 15
+mark end
+lang mod auto
+quit

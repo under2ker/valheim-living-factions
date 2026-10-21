@@ -1,0 +1,19 @@
+# Which vanilla pieces the clans' own houses could be built with: names, then sizes and snap points (dump).
+waitready 200
+find darkwood
+find roof
+find wall_log
+find log_
+find raven
+find wolf
+find stake
+find thatch
+find woodiron
+find wood_wall
+find hip
+find dragon
+dump darkwood_raven darkwood_wolf darkwood_roof darkwood_roof_45 darkwood_roof_top darkwood_roof_top_45 darkwood_beam darkwood_pole darkwood_arch darkwood_gate
+dump wood_roof_ocorner wood_roof_icorner wood_roof_ocorner_45 wood_roof_icorner_45 darkwood_roof_ocorner darkwood_roof_icorner darkwood_roof_ocorner_45 darkwood_roof_icorner_45
+dump wood_wall_log wood_wall_log_4x0.5 wood_log_26 wood_log_45 wood_beam_26 wood_beam_45 wood_pole_log wood_wall_half wood_wall_quarter woodiron_beam woodiron_pole
+dump wood_dragon1 piece_dragonheadbase wood_window piece_cloth_hanging_door wood_stair wood_stepladder
+quit

@@ -1,0 +1,13 @@
+# A campaign ends when the place it is aimed at is already ours, before any assault.
+god
+env 0.4 Clear
+waitready 200
+war 8 9
+campaign 8 5 camp
+expect Camp :: squads
+owner 5 8
+advance 1
+expect Over :: squads
+expect why ours :: squads
+expect (gone) :: squads
+quit

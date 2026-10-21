@@ -38,6 +38,11 @@ namespace LivingFactions.Core
             return lo.Relations.TryGetValue(a.Id < b.Id ? b.Id : a.Id, out r) ? r.Treaty : Treaty.Peace;
         }
 
+        public bool AreAllied(int factionA, int factionB)
+        {
+            return factionA != factionB && TreatyBetween(factionA, factionB) == Treaty.Alliance;
+        }
+
         public bool AreAtWar(int factionA, int factionB)
         {
             return factionA != factionB && TreatyBetween(factionA, factionB) == Treaty.War;
@@ -226,7 +231,7 @@ namespace LivingFactions.Core
             Settlement from = null;
             foreach (Settlement s in State.Settlements)
             {
-                if (s.Destroyed || s.FactionId != attacker.Id) continue;
+                if (s.Destroyed || s.FactionId != attacker.Id || s.CampaignId != 0 || IsOutpost(s)) continue;
                 if (s.Soldiers < 3f || State.Day - s.LastRaidDay < Balance.RaidCooldownDays) continue;
                 if (from == null || s.Soldiers > from.Soldiers) from = s;
             }
@@ -249,22 +254,31 @@ namespace LivingFactions.Core
             if (target == null) return;
 
             from.LastRaidDay = State.Day;
-            target.LastAttackedDay = State.Day;
             float committed = from.Soldiers * _rng.Range(0.6f, 0.9f);
-            if (RaidInterceptor != null && RaidInterceptor(from, target, committed)) return;
-            ResolveRaid(attacker, defender, from, target, committed, r);
+            // The war band marches: it fights when it gets there (Squads.RaidArrives), not now.
+            Squad band = Muster(from, SquadKind.Raid, committed, committed, target.Pos, 2f * Vec2.Distance(from.Pos, target.Pos) / Balance.SquadSpeed);
+            band.TargetSettlementId = target.Id;
+            Raise(new SimEvent { Kind = EventKind.RaidMarch, FactionId = attacker.Id, OtherFactionId = defender.Id, SettlementId = target.Id, OtherSettlementId = from.Id, Args = new[] { attacker.Name, target.Name, from.Name } });
         }
 
-        private void ResolveRaid(Faction attacker, Faction defender, Settlement from, Settlement target, float committed, Relation r)
+        /// <summary>
+        /// A fight at the target. Without a band (old saves, tests) the attackers come from and go back to
+        /// their settlement at once; with one, its men take the losses and carry the loot home.
+        /// </summary>
+        private void ResolveRaid(Faction attacker, Faction defender, Settlement from, Settlement target, float committed, Relation r, Squad band = null)
         {
-            float atk = committed * Gear(from) * _rng.Range(0.75f, 1.25f);
-            float def = (target.Soldiers * Gear(target) + target.Population * 0.12f) * (1f + DefenseBonus(target)) * _rng.Range(0.75f, 1.25f);
+            float atk = committed * (band != null && band.Gear > 0f ? band.Gear : Gear(from)) * _rng.Range(0.75f, 1.25f);
+            // Allies staying in the place fight for it too.
+            float guests = GuestSoldiers(target);
+            float def = ((target.Soldiers + guests) * Gear(target) + target.Population * 0.12f) * (1f + DefenseBonus(target)) * _rng.Range(0.75f, 1.25f);
             float atkLoss, defLoss;
             if (atk > def)
             {
                 float ratio = atk / Math.Max(0.5f, def);
                 atkLoss = committed * _rng.Range(0.10f, 0.25f);
-                defLoss = target.Soldiers * _rng.Range(0.4f, 0.7f);
+                float share = _rng.Range(0.4f, 0.7f);
+                defLoss = target.Soldiers * share;
+                GuestLosses(target, share);
                 float civilians = Math.Max(0f, target.Population - target.Soldiers) * _rng.Range(0.05f, 0.2f);
                 target.Soldiers = Math.Max(0f, target.Soldiers - defLoss);
                 target.Population = Math.Max(0f, target.Population - defLoss - civilians);
@@ -274,7 +288,8 @@ namespace LivingFactions.Core
                 {
                     float loot = target.Stock[i] * 0.35f;
                     target.Stock[i] -= loot;
-                    from.Stock[i] = Math.Min(i == (int)Res.Coins ? cap * 4f : cap, from.Stock[i] + loot);
+                    if (band != null) band.Cargo[i] += loot;
+                    else from.Stock[i] = Math.Min(i == (int)Res.Coins ? cap * 4f : cap, from.Stock[i] + loot);
                 }
 
                 Raise(new SimEvent { Kind = EventKind.RaidWon, FactionId = attacker.Id, OtherFactionId = defender.Id, SettlementId = target.Id, OtherSettlementId = from.Id, Args = new[] { attacker.Name, target.Name, from.Name } });
@@ -282,20 +297,37 @@ namespace LivingFactions.Core
                 int burn = 1 + (ratio > 2f ? 1 : 0);
                 for (int n = 0; n < burn; n++) BurnRandomBuilding(target, attacker.Id);
 
-                bool weak = target.Population < 2.5f;
+                bool weak = target.Population + GuestSoldiers(target) < 2.5f;
                 bool overrun = ratio >= 2.5f && target.Tier <= Tier.Hamlet && _rng.Chance(0.5f);
-                if (weak || overrun) CaptureSettlement(target, attacker, defender, committed * 0.3f);
+                if (weak || overrun)
+                {
+                    // Part of the band stays to hold the place.
+                    float garrison = committed * 0.3f;
+                    if (band != null) band.Men = Math.Max(0f, band.Men - garrison);
+                    CaptureSettlement(target, attacker, defender, garrison);
+                }
             }
             else
             {
                 atkLoss = committed * _rng.Range(0.30f, 0.55f);
-                defLoss = target.Soldiers * _rng.Range(0.10f, 0.25f);
+                float share = _rng.Range(0.10f, 0.25f);
+                defLoss = target.Soldiers * share;
+                GuestLosses(target, share);
                 target.Soldiers = Math.Max(0f, target.Soldiers - defLoss);
                 target.Population = Math.Max(0f, target.Population - defLoss);
                 Raise(new SimEvent { Kind = EventKind.RaidRepelled, FactionId = attacker.Id, OtherFactionId = defender.Id, SettlementId = target.Id, OtherSettlementId = from.Id, Args = new[] { attacker.Name, target.Name, from.Name } });
             }
-            from.Soldiers = Math.Max(0f, from.Soldiers - atkLoss);
-            from.Population = Math.Max(1f, from.Population - atkLoss);
+            if (band != null)
+            {
+                band.Men = Math.Max(0f, band.Men - atkLoss);
+                band.Soldiers = Math.Min(band.Soldiers, band.Men);
+                band.Supplies *= 0.7f;
+            }
+            else
+            {
+                from.Soldiers = Math.Max(0f, from.Soldiers - atkLoss);
+                from.Population = Math.Max(1f, from.Population - atkLoss);
+            }
             r.Weariness += (atkLoss + defLoss) * 0.8f;
         }
 
@@ -315,11 +347,25 @@ namespace LivingFactions.Core
 
         private void CaptureSettlement(Settlement target, Faction attacker, Faction defender, float garrison)
         {
+            SendGuestsHome(target);
             target.FactionId = attacker.Id;
             target.Population = Math.Max(3f, target.Population * 0.6f + garrison);
             target.Soldiers = Math.Min(target.Population, garrison);
             target.HungerDays = 0f;
             target.LastAttackedDay = State.Day + 4.0;
+            // A war camp or an outpost of the old owner is a plain place of the new one: a camp that kept
+            // its old ties would never grow, never build, and stay a camp of a campaign that is over.
+            // A war camp's tents and stakes are its fire's layout: only the fire is built again, as a plain one.
+            if (target.CampaignId != 0)
+            {
+                foreach (Building b in target.Buildings) if (b.Kind == BuildingKind.Campfire) b.LayoutRev = 0;
+            }
+            target.CampaignId = 0;
+            target.ParentId = 0;
+            target.OutpostGoal = Res.Wood;
+            target.RoadPost = false;
+            // Its old chief's days of mourning are not the new owner's to keep.
+            target.LeaderlessUntil = -1;
             Raise(new SimEvent { Kind = EventKind.SettlementCaptured, FactionId = attacker.Id, OtherFactionId = defender.Id, SettlementId = target.Id, Args = new[] { attacker.Name, target.Name, defender.Name } });
             if (CountSettlements(defender.Id) == 0) defender.Eliminated = true;
             else EnsureCapital(defender);

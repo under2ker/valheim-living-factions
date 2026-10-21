@@ -1,0 +1,26 @@
+# A war camp taken by another faction is built again as a plain fire: its tents and stakes go.
+# Compare the Campfire pieces in campinfo before and after, and the two pairs of shots.
+god
+env 0.45 Clear
+waitready 200
+hidehud on
+hideme
+war 8 9
+campaign 8 5 camp
+goto camp
+waitready 240
+wait 20
+campinfo 39
+view 39 20 12 135
+shot capture_before_a
+view 39 12 3 300
+shot capture_before_b
+expect taken by :: capture 39 9
+wait 30
+expect campaign 0 :: campinfo 39
+campinfo 39
+view 39 20 12 135
+shot capture_after_a
+view 39 12 3 300
+shot capture_after_b
+quit

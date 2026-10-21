@@ -44,8 +44,10 @@ namespace LivingFactions
             float h0 = gen.GetHeight(pos.X, pos.Z);
             if (h0 < minHeight) return "low";
 
-            // Sample two rings: the site must be dry, in one biome and not too steep.
-            float maxDelta = 2f + radius * 0.25f;
+            // Sample two rings: the site must be dry, in one biome and not too steep. A whole settlement
+            // is held to somewhat gentler ground than a single plot: its pads are levelled one by one, and
+            // every metre of fall between them is a bank to cut a ramp through.
+            float maxDelta = 2f + radius * (radius >= 20f ? 0.2f : 0.25f);
             for (int ring = 1; ring <= 2; ring++)
             {
                 float r = radius * ring * 0.5f;
@@ -62,6 +64,8 @@ namespace LivingFactions
             }
             // A single building plot must also stay off the grounds of vanilla locations.
             if (radius < 10f && NearLocation(new Vector3(pos.X, 0f, pos.Z), 5f, 1)) return "location";
+            // Nor on a road: a street through the settlement, or a road from elsewhere passing by.
+            if (radius < 10f && Roads.OnRoad(new Vector3(pos.X, 0f, pos.Z), radius + 2.5f)) return "road";
             return "ok";
         }
 
@@ -82,6 +86,32 @@ namespace LivingFactions
                 }
             }
             return false;
+        }
+
+        public bool GentleWay(Vec2 from, Vec2 to, bool lenient)
+        {
+            WorldGenerator gen = WorldGenerator.instance;
+            if (gen == null) return true;
+            float dx = to.X - from.X, dz = to.Z - from.Z;
+            float length = Mathf.Sqrt(dx * dx + dz * dz);
+            if (length < 1f) return true;
+            // All the way: a building sits on a pad levelled out of the slope, so the climb counts from
+            // where people stand by the fire to where they stand at the door.
+            float climb = Mathf.Abs(gen.GetHeight(to.X, to.Z) - gen.GetHeight(from.X, from.Z));
+            if (climb > length * (lenient ? 0.5f : 0.3f) + 2f) return false;
+            // And bit by bit: no stretch of 6 m steeper than about 30 degrees (40 lenient).
+            float limit = (lenient ? 0.85f : 0.6f) * 6f;
+            int steps = Mathf.Max(1, Mathf.CeilToInt(length / 3f));
+            float previous = gen.GetHeight(from.X, from.Z), before = previous;
+            for (int i = 1; i <= steps; i++)
+            {
+                float t = i / (float)steps;
+                float h = gen.GetHeight(from.X + dx * t, from.Z + dz * t);
+                if (i >= 2 && Mathf.Abs(h - before) > limit) return false;
+                before = previous;
+                previous = h;
+            }
+            return true;
         }
 
         public bool IsReserved(Vec2 pos, float radius)

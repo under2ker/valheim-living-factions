@@ -15,6 +15,11 @@ namespace LivingFactions
             FactionMember ma = FactionMember.Of(a);
             FactionMember mb = FactionMember.Of(b);
             if (ma == null && mb == null) return true;
+            if ((ma != null && ma.Role == NpcRole.Envoy) || (mb != null && mb.Role == NpcRole.Envoy))
+            {
+                __result = false;
+                return false;
+            }
 
             if (ma != null && mb != null)
             {
@@ -25,7 +30,8 @@ namespace LivingFactions
                     __result = true;
                     return false;
                 }
-                __result = ma.FactionId != mb.FactionId && SimHost.Sim.AreAtWar(ma.FactionId, mb.FactionId);
+                __result = (ma.FactionId != mb.FactionId && SimHost.Sim.AreAtWar(ma.FactionId, mb.FactionId))
+                    || Grudges.AngryAt(ma, b) || Grudges.AngryAt(mb, a) || Grudges.DefendsAgainst(ma, b) || Grudges.DefendsAgainst(mb, a);
                 return false;
             }
 
@@ -43,7 +49,20 @@ namespace LivingFactions
                 __result = Player.m_localPlayer != null && member.IsHostileTo(Player.m_localPlayer);
                 return false;
             }
-            // Wild creatures: the game's own rules, using the member's creature faction.
+            // A creature out in the water is nobody's business: no one wades in after a Neck, nor stands
+            // on the shore glaring at it.
+            if (other.IsSwimming() || other.transform.position.y < ZoneSystem.c_WaterLevel - 0.5f)
+            {
+                __result = false;
+                return false;
+            }
+            // Wild creatures: the game's own rules, using the member's creature faction, and anything
+            // that has struck one of them or set on the player near friends.
+            if (Grudges.AngryAt(member, other) || Grudges.DefendsAgainst(member, other))
+            {
+                __result = true;
+                return false;
+            }
             return true;
         }
     }
@@ -88,7 +107,10 @@ namespace LivingFactions
         {
             if (!SimHost.Active) return;
             FactionMember member = FactionMember.Of(__instance);
-            Player killer = ___m_lastHit != null ? ___m_lastHit.GetAttacker() as Player : null;
+            Character slayer = ___m_lastHit != null ? ___m_lastHit.GetAttacker() : null;
+            Player killer = slayer as Player;
+            // Whoever or whatever killed one of them, the people round about take it up at once.
+            if (member != null && slayer != null) Grudges.OnKilled(member, slayer, member.Role == NpcRole.Chief);
             if (member == null)
             {
                 if (__instance.IsBoss()) BossHunt.BossKilled(__instance);
@@ -105,8 +127,10 @@ namespace LivingFactions
             if (settlement == null) return;
             if (Npcs.IsTemporary(member.Role))
             {
+                // A band on the move is one man short.
+                if (member.SquadId != 0) Net.SquadLoss(member.SquadId);
                 // Caravans and hired fighters are not counted among the inhabitants; only a murder is remembered.
-                if (killer != null) Net.PlayerKilledMember(settlement, killer.GetPlayerID(), member.Role != NpcRole.Trader);
+                if (killer != null) Net.PlayerKilledMember(settlement, killer.GetPlayerID(), member.Role != NpcRole.Trader, Grudges.Witnessed(member, __instance.transform.position), false, false);
                 return;
             }
             Materializer.NoteDeath(settlement.Id);
@@ -116,14 +140,20 @@ namespace LivingFactions
                 Rewards.GuardKilled(member, killer);
             }
             bool soldier = member.Role != NpcRole.Villager;
+            bool chief = member.Role == NpcRole.Chief;
             if (killer != null)
             {
+                // Seen by one of theirs, it is known at once; unseen, it may come out days later.
+                bool seen = Grudges.Witnessed(member, __instance.transform.position);
                 Net.NamePlayer(SimHost.Sim.State.GetFaction(settlement.FactionId), killer.GetPlayerID(), killer.GetPlayerName());
-                Net.PlayerKilledMember(settlement, killer.GetPlayerID(), soldier);
+                Net.PlayerKilledMember(settlement, killer.GetPlayerID(), soldier, seen, chief);
+                if (!seen && MessageHud.instance != null && killer == Player.m_localPlayer)
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, Texts.Get("msg_unseen_kill"));
             }
             else
             {
                 Net.MemberDied(settlement, soldier);
+                if (chief) Net.ChiefFell(settlement);
             }
         }
     }
@@ -169,6 +199,18 @@ namespace LivingFactions
         }
     }
 
+    /// <summary>An envoy is never hurt: they come to talk, and no weapon reaches them (the blow still costs standing, HurtPatch).</summary>
+    [HarmonyPatch(typeof(Character), nameof(Character.Damage))]
+    internal static class EnvoyUnharmedPatch
+    {
+        [HarmonyPriority(Priority.Low)]
+        private static bool Prefix(Character __instance)
+        {
+            FactionMember member = SimHost.Active ? FactionMember.Of(__instance) : null;
+            return member == null || member.Role != NpcRole.Envoy;
+        }
+    }
+
     /// <summary>Striking an inhabitant or their property costs reputation.</summary>
     [HarmonyPatch(typeof(Character), nameof(Character.Damage))]
     internal static class HurtPatch
@@ -181,15 +223,37 @@ namespace LivingFactions
             FactionMember member = FactionMember.Of(__instance);
             if (member == null) return;
             Player attacker = hit.GetAttacker() as Player;
-            if (attacker == null) return;
+            if (attacker == null || attacker != Player.m_localPlayer) return;
             member.LastHurt = Time.time;
+            // One swing that hits several of them counts once.
             float last;
-            if (LastPenalty.TryGetValue(member.FactionId, out last) && Time.time - last < 3f) return;
+            if (LastPenalty.TryGetValue(member.FactionId, out last) && Time.time - last < 0.4f) return;
             LastPenalty[member.FactionId] = Time.time;
             Faction faction = SimHost.Sim.State.GetFaction(member.FactionId);
             if (faction == null) return;
-            Net.NamePlayer(faction, attacker.GetPlayerID(), attacker.GetPlayerName());
-            Net.PlayerAttackedMember(faction, attacker.GetPlayerID());
+            long pid = attacker.GetPlayerID();
+            PlayerRelation rel = SimHost.Sim.PlayerRel(faction, pid);
+            float before = rel.Reputation;
+            bool allied = rel.Allied;
+            Net.NamePlayer(faction, pid, attacker.GetPlayerName());
+            Net.PlayerAttackedMember(faction, pid, ModConfig.ReputationPerHit.Value);
+            Warnings.AfterOffence(faction, rel, before, allied);
+        }
+    }
+
+    /// <summary>
+    /// A player's hoe, pickaxe or cultivator changed the ground (TerrainOp, sent to the tile's owner): the mod
+    /// leaves the seams there alone. The mod's own work goes to TerrainComp.DoOperation directly, not this way.
+    /// </summary>
+    [HarmonyPatch(typeof(TerrainComp), "RPC_ApplyOperation")]
+    internal static class PlayerGroundWorkPatch
+    {
+        private static void Prefix(ZPackage pkg)
+        {
+            if (pkg == null) return;
+            // Read from a copy: the game reads the same package after this.
+            ZPackage copy = new ZPackage(pkg.GetArray());
+            Materializer.NotePlayerGroundWork(copy.ReadVector3(), 10f);
         }
     }
 
@@ -203,8 +267,10 @@ namespace LivingFactions
             if (!SimHost.Active || hit == null || ___m_nview == null || !___m_nview.IsValid()) return;
             int settlementId = ___m_nview.GetZDO().GetInt(Materializer.HashSettlement);
             if (settlementId == 0) return;
+            // Only the striker's own game counts the blow: with several players, another's game running the same
+            // damage would have charged it twice.
             Player attacker = hit.GetAttacker() as Player;
-            if (attacker == null || Time.time - _lastPenalty < 5f) return;
+            if (attacker == null || attacker != Player.m_localPlayer || Time.time - _lastPenalty < 5f) return;
             _lastPenalty = Time.time;
             Settlement settlement = SimHost.Sim.State.GetSettlement(settlementId);
             Faction faction = settlement != null ? SimHost.Sim.State.GetFaction(settlement.FactionId) : null;

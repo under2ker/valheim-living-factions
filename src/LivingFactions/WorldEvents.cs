@@ -12,8 +12,11 @@ namespace LivingFactions
 
         public static void Reset()
         {
+            // The map can outlive the factions (a world taken back in place): their marks go with them.
+            if (Minimap.instance != null) foreach (Minimap.PinData pin in Pins) Minimap.instance.RemovePin(pin);
             Pins.Clear();
             MapZones.Clear();
+            MinimapNpcs.Reset();
             _nextPins = 0f;
             _look = "";
         }
@@ -69,16 +72,18 @@ namespace LivingFactions
             Pins.Clear();
             MapZones.Clear();
             WorldState state = SimHost.Sim.State;
+            long pid = Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerID() : 0L;
             foreach (int id in known)
             {
                 Settlement s = state.GetSettlement(id);
                 if (s == null || s.Destroyed) continue;
                 Faction f = state.GetFaction(s.FactionId);
-                string label = Texts.Name(s.Name) + " (" + Texts.Get("tier_" + s.Tier) + ") — " + Texts.FactionName(f);
+                string brief, full;
+                MapZones.Names(s, f, pid, out brief, out full);
                 MapZones.AddZone(s, f, Pins);
-                Minimap.PinData mark = Minimap.instance.AddPin(new Vector3(s.Pos.X, 0f, s.Pos.Z), Minimap.PinType.Icon1, label, false, false);
+                Minimap.PinData mark = Minimap.instance.AddPin(new Vector3(s.Pos.X, 0f, s.Pos.Z), Minimap.PinType.Icon1, brief, false, false);
                 Pins.Add(mark);
-                MapZones.Mark(mark, f);
+                MapZones.Mark(mark, f, full);
             }
             MapZones.UpdateLegend(known);
         }

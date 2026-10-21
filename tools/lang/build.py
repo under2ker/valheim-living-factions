@@ -11,7 +11,8 @@ CODES = ['pl', 'de', 'fr', 'es', 'pt']
 EXTRA = ['f_clan_raven', 'f_clan_wolf', 'f_clan_stag', 'f_fuling_horde', 'f_dvergr_hold', 'f_greydwarf_brood', 'f_draugr_court',
          'item_LF_WolfFangAxe', 'itemd_LF_WolfFangAxe', 'item_LF_StagHornAxe', 'itemd_LF_StagHornAxe'] + \
         ['%s_LF_%s' % (k, a) for a in ('RavenWingAxe', 'BlackgnawAxe', 'RuneAxe', 'RootAxe', 'BarrowMoonAxe',
-                                                 'GreyBlade', 'AntlerBlade', 'BlackBeak', 'ObsidianSaber', 'RuneSword', 'RootClub', 'RustedBlade') for k in ('item', 'itemd')]
+                                                 'GreyBlade', 'AntlerBlade', 'BlackBeak', 'ObsidianSaber', 'RuneSword', 'RootClub', 'RustedBlade',
+                                                 'WolfHideShield', 'StagTrailShield', 'RavenShield', 'BoneShield', 'CopperShield', 'BarkShield', 'BonePlateShield') for k in ('item', 'itemd')]
 
 main = io.open(os.path.join(CORE, 'Texts.cs'), encoding='utf-8').read()
 english = {}

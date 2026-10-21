@@ -79,7 +79,11 @@ namespace LivingFactions
                 case "lang": return DevProbes.Language(a);
                 case "perf": return DevProbes.Perf();
                 case "track": return DevProbes.Track(a);
+                case "shieldfit": return DevProbes.ShieldFit(a);
+                case "shieldbox": return DevProbes.ShieldBox();
                 case "seams": return DevProbes.Seams(a.Length > 1 ? float.Parse(a[1], Inv) : 150f);
+                case "hoe": return DevProbes.Hoe(a);
+                case "hoecheck": return DevProbes.HoeCheck();
                 case "emptybag":
                     // A test character fills up over many runs; a full bag makes every purchase fail.
                     if (Player.m_localPlayer == null) return "no player";
@@ -128,25 +132,173 @@ namespace LivingFactions
                     }
                     return "struck down " + done + " " + a[1];
                 }
+                case "mapinfo": return MapZones.Info() + "\n" + MinimapNpcs.Info();
                 case "map":
                     // map large [zoom] [all]: opens the big map around the player; `all` shows every settlement.
                     if (Minimap.instance == null) return "no map";
-                    if (a.Length > 1 && a[1] == "off") { Minimap.instance.SetMapMode(Minimap.MapMode.Small); return "map closed"; }
+                    if (a.Length > 1 && a[1] == "off") { PinnedZoom = 0f; Minimap.instance.SetMapMode(Minimap.MapMode.Small); return "map closed"; }
                     ModConfig.MapShowAll.Value = System.Array.IndexOf(a, "all") > 0;
                     Minimap.instance.SetMapMode(Minimap.MapMode.Large);
-                    if (a.Length > 2 && a[2] != "all") HarmonyLib.Traverse.Create(Minimap.instance).Field("m_largeZoom").SetValue(float.Parse(a[2], Inv));
+                    // Held where it is set (DevZoomPin): a connected gamepad can zoom the map on its own.
+                    if (a.Length > 2 && a[2] != "all") Minimap.instance.LargeZoom = PinnedZoom = float.Parse(a[2], Inv);
                     return "map open, show all " + ModConfig.MapShowAll.Value + "; " + MapZones.Describe();
                 case "stamina": return DevProbes.Stamina();
                 case "damage": return DevProbes.Damage(a);
                 case "duel": return Duel.Command(a);
+                case "orbit":
+                case "fly":
+                case "dolly":
+                case "follow":
+                case "timelapse":
+                case "daycard":
+                case "still": return Cinema.Command(a);
+                // The wall clock, to find this moment in a recording of the window.
+                case "mark": return "mark " + (a.Length > 1 ? a[1] : "") + " at " + DateTime.Now.ToString("HH:mm:ss.fff", Inv);
                 case "swing": return Duel.Swing(a);
                 case "shots": return DevProbes.Shots(a);
                 case "tradechest":
                     Settlement tradeTown = a.Length > 1 ? FindSettlement(a[1]) : null;
                     return tradeTown == null ? "usage: tradechest <settlement>" : DevProbes.PlaceTradeChest(tradeTown);
                 case "chestinfo": return DevProbes.ChestInfo();
+                case "sweep":
+                {
+                    // lf sweep [settlement] [now]: clears loose items at once; "now" also takes those dropped in the last minute.
+                    Settlement swept = a.Length > 1 && a[1] != "now" ? FindSettlement(a[1]) : null;
+                    if (a.Length > 1 && a[1] != "now" && swept == null) return "usage: sweep [settlement] [now]";
+                    return LootSweep.Command(swept, Array.IndexOf(a, "now") > 0);
+                }
                 case "watch": return Watch(a);
+                case "watchgear":
+                {
+                    // watchgear <text from npcs> <front|left|right|back> [metres] [height]: the camera close on one
+                    // inhabitant from that side, at chest height, to see what they hold and how (a shield on the left arm).
+                    if (a.Length < 3) return "watchgear <text> <front|left|right|back> [metres] [height]";
+                    FactionMember m = FactionMember.All.FirstOrDefault(x => x.Describe().IndexOf(a[1], StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (m == null) return "nobody matches " + a[1];
+                    float dist = a.Length > 3 ? float.Parse(a[3], Inv) : 2f, high = a.Length > 4 ? float.Parse(a[4], Inv) : 1.3f;
+                    Transform t = m.transform;
+                    Vector3 side = a[2] == "left" ? -t.right : a[2] == "right" ? t.right : a[2] == "back" ? -t.forward : t.forward;
+                    GearView.Off();
+                    CamTarget = t.position + Vector3.up * 1.15f;
+                    CamPos = t.position + side * dist + Vector3.up * high;
+                    ItemDrop.ItemData shield = m.Humanoid != null ? m.Humanoid.GetInventory().GetAllItems().FirstOrDefault(i => i.m_equipped && i.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Shield) : null;
+                    return "watching " + m.Describe() + " from the " + a[2] + "; shield " + (shield != null && shield.m_dropPrefab != null ? shield.m_dropPrefab.name : "-");
+                }
+                case "resetgifts":
+                {
+                    // The character forgets every relic it was given and every hunt, so the tests can earn them again.
+                    if (Player.m_localPlayer == null) return "no player";
+                    List<string> keys = Player.m_localPlayer.m_customData.Keys.Where(k => k.StartsWith("lf_given_") || k.StartsWith("lf_hunt")).ToList();
+                    foreach (string k in keys) Player.m_localPlayer.m_customData.Remove(k);
+                    return "forgot " + keys.Count + " gifts and hunts";
+                }
+                case "grudge":
+                {
+                    // grudge [faction#]: the heat of the moment, and this player's tally with one faction.
+                    if (!SimHost.Active || Player.m_localPlayer == null) return "no world";
+                    string all = Grudges.Describe();
+                    if (a.Length < 2) return all;
+                    Faction f = SimHost.Sim.State.GetFaction(int.Parse(a[1]));
+                    if (f == null) return "no such faction";
+                    PlayerRelation rel = SimHost.Sim.PlayerRel(f, Player.m_localPlayer.GetPlayerID());
+                    return all + "; " + f.Name + ": " + Grudges.DescribeFor(f.Id, Player.m_localPlayer) + ", patience " + Grudges.Patience(f, Player.m_localPlayer)
+                        + ", standing " + rel.Reputation.ToString("0.0", Inv) + (rel.Allied ? " allied" : "") + (rel.AtWar ? " at war" : "")
+                        + ", grievance " + rel.Grievance.ToString("0.0", Inv) + ", suspicion " + rel.Suspicion.ToString("0.0", Inv);
+                }
+                case "hit":
+                {
+                    // hit <Role> [n]: the player lands n light blows on the nearest member of that role (testing anger).
+                    Player me = Player.m_localPlayer;
+                    if (me == null || a.Length < 2) return "usage: hit <Chief|Guard|Villager> [n]";
+                    FactionMember m = FactionMember.All.Where(x => x.Role.ToString() == a[1] && x.Humanoid != null && !x.Humanoid.IsDead()).OrderBy(x => Vector3.Distance(x.transform.position, me.transform.position)).FirstOrDefault();
+                    if (m == null) return "no " + a[1] + " nearby";
+                    int n = a.Length > 2 ? int.Parse(a[2]) : 1;
+                    for (int i = 0; i < n; i++)
+                    {
+                        HitData hit = new HitData();
+                        hit.m_damage.m_blunt = 1f;
+                        hit.m_point = m.transform.position + Vector3.up;
+                        hit.SetAttacker(me);
+                        m.Humanoid.Damage(hit);
+                    }
+                    return "hit " + m.DisplayName + " " + n + " times";
+                }
+                case "squads":
+                    return SimHost.Active && Player.m_localPlayer != null ? SimHost.Sim.DescribeSquads(new Vec2(Player.m_localPlayer.transform.position.x, Player.m_localPlayer.transform.position.z)) : "no world";
+                case "expedition":
+                {
+                    Settlement s = SimHost.Active && a.Length > 1 ? FindSettlement(a[1]) : null;
+                    Res res = Res.Wood;
+                    bool named = a.Length > 2 && System.Enum.TryParse(a[2], true, out res);
+                    return s == null ? "expedition <settlement> [wood|stone|food|metal]" : SimHost.Sim.DebugExpedition(s.Id, named ? (Res?)res : null);
+                }
+                case "campaign":
+                    return SimHost.Active && a.Length > 2 ? SimHost.Sim.DebugCampaign(int.Parse(a[1]), int.Parse(a[2]), a.Length > 3 && a[3] == "camp") : "campaign <faction#> <settlement id> [camp]";
+                case "steal":
+                {
+                    // steal <faction#>: as if the player had just been caught taking from its chests.
+                    Faction f = SimHost.Active && a.Length > 1 ? SimHost.Sim.State.GetFaction(int.Parse(a[1])) : null;
+                    if (f == null || Player.m_localPlayer == null) return "steal <faction#> [off]";
+                    if (a.Length > 2 && a[2] == "off")
+                    {
+                        SimHost.Sim.PlayerRel(f, Player.m_localPlayer.GetPlayerID()).LastStoleDay = -100;
+                        return "theft forgotten";
+                    }
+                    return "noticed " + Net.PlayerStole(f, Player.m_localPlayer.GetPlayerID(), 10f);
+                }
+                case "pickfield":
+                {
+                    // pickfield: the player tries to harvest the nearest crop of a settlement field.
+                    Player me = Player.m_localPlayer;
+                    if (me == null) return "no player";
+                    Pickable crop = UnityEngine.Object.FindObjectsByType<Pickable>(FindObjectsSortMode.None)
+                        .Where(x => Property.OwnerOf(x) != null).OrderBy(x => Vector3.Distance(x.transform.position, me.transform.position)).FirstOrDefault();
+                    if (crop == null) return "no settlement crop loaded";
+                    int before = me.GetInventory().NrOfItems();
+                    bool took = crop.Interact(me, false, false);
+                    return (took ? "picked" : "refused") + ", items " + before + " -> " + me.GetInventory().NrOfItems();
+                }
+                case "dig":
+                {
+                    // dig <settlement> <building id> <metres> [force]: sets a building's pad that much lower,
+                    // as the bug that dug pits did; with force the ground really is dug, to see it mended.
+                    Settlement s = SimHost.Active && a.Length > 3 ? FindSettlement(a[1]) : null;
+                    Building b = s != null ? s.Buildings.FirstOrDefault(x => x.Id == int.Parse(a[2])) : null;
+                    if (b == null || float.IsNaN(b.GroundY)) return "dig <settlement> <building id> <metres> [force]";
+                    b.GroundY -= float.Parse(a[3], Inv);
+                    b.TerrainRev = 0;
+                    Materializer.AllowDeepDig = a.Length > 4 && a[4] == "force";
+                    return "pad of " + b.Kind + " #" + b.Id + " set to " + b.GroundY.ToString("0.0", Inv) + (Materializer.AllowDeepDig ? ", digging" : "");
+                }
+                case "npcgear":
+                {
+                    // npcgear <text from npcs>: what that inhabitant carries and holds.
+                    FactionMember m = FactionMember.All.FirstOrDefault(x => a.Length > 1 && x.Describe().IndexOf(a[1], StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (m == null || m.Humanoid == null) return "nobody matches";
+                    ItemDrop.ItemData held = m.Humanoid.GetCurrentWeapon();
+                    return m.Describe() + ": holds " + (held != null && held.m_dropPrefab != null ? held.m_dropPrefab.name : "-") + "; carries " + string.Join(", ", m.Humanoid.GetInventory().GetAllItems().Select(i => (i.m_dropPrefab != null ? i.m_dropPrefab.name : i.m_shared.m_name) + (i.m_equipped ? "*" : "")));
+                }
                 case "roads": return Roads.Describe();
+                case "roadcheck":
+                {
+                    // roadcheck <settlement>: its roads walked from 100 m out to the square; gates, lamps, fences.
+                    Settlement checkedTown = a.Length > 1 ? FindSettlement(a[1]) : null;
+                    return checkedTown == null ? "usage: roadcheck <settlement>" : Roads.Check(checkedTown);
+                }
+                case "roadslope":
+                {
+                    // roadslope <settlement> [metres out | steep]: the ground of its road now, against the bed it should have.
+                    Settlement slopeTown = a.Length > 1 ? FindSettlement(a[1]) : null;
+                    if (slopeTown == null) return "usage: roadslope <settlement> [metres|steep]";
+                    float around = a.Length > 2 && a[2] != "steep" ? float.Parse(a[2], Inv) : Roads.SteepestOut(slopeTown);
+                    return Roads.Slope(slopeTown, around);
+                }
+                case "pathcheck":
+                {
+                    // pathcheck <settlement>: the steepest step along each building's path, as the ground is now.
+                    Settlement pathTown = a.Length > 1 ? FindSettlement(a[1]) : null;
+                    return pathTown == null ? "usage: pathcheck <settlement>" : Materializer.PathCheck(pathTown);
+                }
                 case "roadtp":
                 case "roadview":
                 {
@@ -154,7 +306,16 @@ namespace LivingFactions
                     Settlement town = a.Length > 1 ? FindSettlement(a[1]) : null;
                     if (town == null || Player.m_localPlayer == null) return "usage: " + a[0] + " <settlement> <metres>";
                     if (!Roads.HasRoad(town)) return town.Name + " has no road (no way over land to a neighbour)";
+                    if (a[0] == "roadview" && a.Length > 2 && a[2] == "gate")
+                    {
+                        // roadview 4 gate [n] [height]: from outside the wall, along its n-th street, at the gate and the square behind it.
+                        float street = Roads.StreetBearing(town, a.Length > 3 ? int.Parse(a[3]) : 0);
+                        float wallOut = (town.Tier >= Tier.City ? Defs.CityWallRadius : Defs.PalisadeRadius) + 22f;
+                        return View(new[] { "view", town.Id.ToString(Inv), wallOut.ToString("0", Inv), a.Length > 4 ? a[4] : "7", street.ToString("0.0", Inv) }) + ", along the street at " + street.ToString("0.0", Inv) + " deg";
+                    }
                     // `roadview 4 dry` looks along the road from where the last `roadtp 4 dry` put the player.
+                    // `roadtp 4 steep`: where the land along its road is steepest.
+                    if (a.Length > 2 && a[2] == "steep") a[2] = Roads.SteepestOut(town).ToString("0", Inv);
                     float out1 = a.Length > 2 && a[2] != "dry" ? float.Parse(a[2], Inv) : 120f;
                     if (a[0] == "roadview" && a.Length > 2 && a[2] == "dry")
                     {
@@ -233,20 +394,217 @@ namespace LivingFactions
                     return archerTown == null || Player.m_localPlayer == null ? "usage: archer <settlement>" : Company.DevArcher(archerTown, Player.m_localPlayer);
                 case "hire":
                     Settlement hireTown = a.Length > 1 ? FindSettlement(a[1]) : null;
-                    return hireTown == null || Player.m_localPlayer == null ? "usage: hire <settlement>" : Texts.Get(Company.Hire(hireTown, Player.m_localPlayer, true)) + " - hired now " + Company.HiredCount();
+                    return hireTown == null || Player.m_localPlayer == null ? "usage: hire <settlement>" : Company.HireReply(hireTown, Player.m_localPlayer, true) + " - hired now " + Company.HiredCount();
                 case "marks": return AttachPoints.Marks(a.Length < 2 || a[1] != "off");
                 case "hidehud":
                     if (Hud.instance == null) return "no hud";
                     Hud.instance.m_userHidden = a.Length < 2 || a[1] != "off";
                     return Hud.instance.m_userHidden ? "hud hidden" : "hud shown";
+                case "hideme":
+                    // The player out of the picture while the camera films (the body stays, so the world keeps loading around it).
+                    if (Player.m_localPlayer == null) return "no player";
+                    GameObject visual = Traverse.Create(Player.m_localPlayer).Field("m_visual").GetValue<GameObject>();
+                    visual.SetActive(a.Length > 1 && a[1] == "off");
+                    return visual.activeSelf ? "player shown" : "player hidden";
                 case "env": return Env(a);
                 case "god": return God(a);
                 case "dump": return Dump(a);
                 case "spawn": return Spawn(a);
+                case "specimen":
+                {
+                    // specimen <prefab> <yaw> [prefab2 dx dy dz yaw2 [lift]]: puts a piece up in the air 5 m ahead (and a
+                    // second beside it), lift metres up (3; higher, for the sky behind it), to see how a prefab sits.
+                    Player me = Player.m_localPlayer;
+                    if (me == null || a.Length < 3) return "specimen <prefab> <yaw> [prefab2 dx dy dz yaw2 [lift]]";
+                    Vector3 at = me.transform.position + Vector3.forward * 5f + Vector3.up * (a.Length > 8 ? float.Parse(a[8], Inv) : 3f);
+                    GameObject first = ZNetScene.instance.GetPrefab(a[1]);
+                    if (first == null) return "no prefab " + a[1];
+                    UnityEngine.Object.Instantiate(first, at, Quaternion.Euler(0f, float.Parse(a[2], Inv), 0f));
+                    if (a.Length > 7 && ZNetScene.instance.GetPrefab(a[3]) != null)
+                        UnityEngine.Object.Instantiate(ZNetScene.instance.GetPrefab(a[3]), at + new Vector3(float.Parse(a[4], Inv), float.Parse(a[5], Inv), float.Parse(a[6], Inv)), Quaternion.Euler(0f, float.Parse(a[7], Inv), 0f));
+                    Specimen = at;
+                    return "specimen at " + at;
+                }
+                case "campsite":
+                {
+                    // campsite <home> <target>: why the ground on the way does or does not take a war camp.
+                    Settlement h = a.Length > 2 ? FindSettlement(a[1]) : null, t = a.Length > 2 ? FindSettlement(a[2]) : null;
+                    if (h == null || t == null) return "campsite <home> <target>";
+                    GameWorld world = new GameWorld();
+                    Vec2 way = t.Pos - h.Pos;
+                    Vec2 back = way * (-1f / Mathf.Max(1f, way.Length()));
+                    Dictionary<string, int> tally = new Dictionary<string, int>();
+                    for (int k = 0; k < 60; k++)
+                    {
+                        float off = Mathf.Max(200f, way.Length() * UnityEngine.Random.Range(0.3f, 0.45f));
+                        Vec2 p = t.Pos + back * off + Vec2.FromAngle(UnityEngine.Random.Range(0f, 6.28f), UnityEngine.Random.Range(0f, 100f));
+                        Biome biome;
+                        string why = world.ProbeReason(p, k % 2 == 0 ? 14f : 9f, out biome) + (k % 2 == 0 ? "/14" : "/9");
+                        int n0;
+                        tally.TryGetValue(why, out n0);
+                        tally[why] = n0 + 1;
+                    }
+                    return string.Join(", ", tally.Select(x => x.Key + "=" + x.Value).ToArray());
+                }
+                case "wreck":
+                {
+                    // wreck <settlement> <building id> [share|state]: breaks that share of a building's pieces in the
+                    // world (as an axe would), or tells the building's state on record.
+                    Settlement s = SimHost.Active && a.Length > 2 ? FindSettlement(a[1]) : null;
+                    Building b = s != null ? s.Buildings.FirstOrDefault(x => x.Id == int.Parse(a[2])) : null;
+                    if (b == null) return "wreck <settlement> <building id> [share|state]";
+                    if (a.Length > 3 && a[3] == "state") return b.Kind + " #" + b.Id + " " + b.State + ", pieces on record " + b.SpawnedPieces;
+                    float share = a.Length > 3 ? float.Parse(a[3], Inv) : 0.6f;
+                    List<ZDO> found = new List<ZDO>();
+                    ZDOMan.instance.FindSectorObjects(ZoneSystem.GetZone(new Vector3(s.Pos.X, 0f, s.Pos.Z)), SimulationDistance.OriginalDistance, found);
+                    List<ZDO> mine = found.Where(z => z.GetInt(Materializer.HashSettlement) == s.Id && z.GetInt(Materializer.HashBuilding) == b.Id).ToList();
+                    int broken = 0;
+                    foreach (ZDO z in mine.Take(Mathf.CeilToInt(mine.Count * share)))
+                    {
+                        ZNetView v = ZNetScene.instance.FindInstance(z);
+                        if (v == null) continue;
+                        v.ClaimOwnership();
+                        ZNetScene.instance.Destroy(v.gameObject);
+                        broken++;
+                    }
+                    return "broke " + broken + " of " + mine.Count + " pieces of " + b.Kind + " #" + b.Id;
+                }
+                case "openchest":
+                {
+                    // openchest <settlement> <building id>: the player steps up to that building's chest and opens it.
+                    Settlement s = SimHost.Active && a.Length > 2 ? FindSettlement(a[1]) : null;
+                    Player me = Player.m_localPlayer;
+                    if (s == null || me == null) return "openchest <settlement> <building id|kind>";
+                    int bid;
+                    if (!int.TryParse(a[2], out bid))
+                    {
+                        Building byKind = s.Buildings.FirstOrDefault(x => x.Kind.ToString() == a[2] && x.State == BuildingState.Complete);
+                        if (byKind == null) return "no " + a[2] + " in " + s.Name;
+                        bid = byKind.Id;
+                    }
+                    // [nth]: a storehouse has three, in the order Chests gives them their goods (wood and stone, food, metal and coins).
+                    int nth = a.Length > 3 ? int.Parse(a[3]) : 0;
+                    Container chest = UnityEngine.Object.FindObjectsByType<Container>(FindObjectsSortMode.None).Where(c =>
+                    {
+                        ZNetView v = c.GetComponent<ZNetView>();
+                        return v != null && v.IsValid() && v.GetZDO().GetInt(Materializer.HashSettlement) == s.Id && v.GetZDO().GetInt(Materializer.HashBuilding) == bid;
+                    }).OrderBy(c => c.transform.position.x * 1.37f + c.transform.position.z).Skip(nth).FirstOrDefault();
+                    if (chest == null) return "no chest of building " + bid + " loaded";
+                    Vector3 toward = new Vector3(s.Pos.X, chest.transform.position.y, s.Pos.Z) - chest.transform.position;
+                    me.transform.position = chest.transform.position + Vector3.ClampMagnitude(toward, 0.9f) + Vector3.up * 0.2f;
+                    bool opened = chest.Interact(me, false, false);
+                    _openedChest = chest;
+                    return (opened ? "opened" : "could not open") + " the chest of building " + bid + "; " + (NightThief.Counting ? "the count is on" : "no count");
+                }
+                case "chestmove":
+                {
+                    // chestmove <put|take> <prefab> <n>: items into or out of the chest open on screen, as the player would move them.
+                    // The chest on screen, or the one `openchest` just opened (the screen opens a frame or more after the request).
+                    Container open = InventoryGui.instance != null ? Traverse.Create(InventoryGui.instance).Field("m_currentContainer").GetValue<Container>() : null;
+                    if (open == null) open = _openedChest;
+                    Player me = Player.m_localPlayer;
+                    GameObject prefab = a.Length > 3 && ObjectDB.instance != null ? ObjectDB.instance.GetItemPrefab(a[2]) : null;
+                    if (open == null || me == null || prefab == null) return "chestmove <put|take> <prefab> <n>, with a chest open";
+                    int n = int.Parse(a[3]);
+                    string name = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_name;
+                    Inventory chestInv = open.GetInventory();
+                    if (a[1] == "put") chestInv.AddItem(prefab, n);
+                    else
+                    {
+                        n = Mathf.Min(n, chestInv.CountItems(name));
+                        chestInv.RemoveItem(name, n);
+                        me.GetInventory().AddItem(prefab, n);
+                    }
+                    return a[1] + " " + n + " " + a[2] + ", the chest has " + chestInv.CountItems(name);
+                }
+                case "envoy":
+                {
+                    // envoy <settlement> [go|view]: its envoy's tent and envoy; go: the player stands at the tent's mouth;
+                    // view: the camera on the tent from in front and to one side.
+                    Settlement s = SimHost.Active && a.Length > 1 ? FindSettlement(a[1]) : null;
+                    if (s == null) return "envoy <settlement> [go|view]";
+                    Vector3 post;
+                    float yaw;
+                    if (a.Length > 2 && a[2] == "view" && EnvoyPost.PostOf(s, out post, out yaw))
+                    {
+                        Quaternion facing = Quaternion.Euler(0f, yaw, 0f);
+                        CamTarget = post + Vector3.up * 1.2f - facing * Vector3.forward * 2.8f;
+                        CamPos = post + facing * new Vector3(4f, 2.5f, 6f);
+                    }
+                    if (a.Length > 2 && a[2] == "go" && Player.m_localPlayer != null && EnvoyPost.PostOf(s, out post, out yaw))
+                    {
+                        Vector3 stand = post + Quaternion.Euler(0f, yaw, 0f) * new Vector3(0f, 0f, 2.5f);
+                        float ground;
+                        if (ZoneSystem.instance.GetGroundHeight(stand, out ground)) stand.y = ground + 0.3f;
+                        Player.m_localPlayer.TeleportTo(stand, Player.m_localPlayer.transform.rotation, false);
+                    }
+                    return EnvoyPost.Describe(s);
+                }
+                case "thief":
+                {
+                    // thief <settlement>: whether a night thief's count is on and whether the settlement was raised.
+                    Settlement s = SimHost.Active && a.Length > 1 ? FindSettlement(a[1]) : null;
+                    if (s == null) return "thief <settlement>";
+                    return (NightThief.Counting ? "count on" : "no count") + ", " + (NightWatch.Angry(s.Id) ? "the settlement is raised" : "the settlement sleeps on");
+                }
+                case "closechest":
+                    if (InventoryGui.instance != null) InventoryGui.instance.Hide();
+                    if (_openedChest != null && _openedChest.IsInUse() && _openedChest.GetComponent<ZNetView>().IsOwner()) _openedChest.SetInUse(false);
+                    _openedChest = null;
+                    return "chest closed";
+                case "specam":
+                    // specam <dx> <dy> <dz>: the camera that far from the last specimen, looking at it.
+                    CamPos = Specimen + new Vector3(float.Parse(a[1], Inv), float.Parse(a[2], Inv), float.Parse(a[3], Inv));
+                    CamTarget = Specimen;
+                    return "camera on the specimen";
                 case "find": return Find(a);
                 case "mat": return Materializer.Describe();
+                case "settle":
+                    // settle <seconds>: ground work waits that long after each change, as before 0.7.0 (1.5); 0 = until the heightmap is rebuilt.
+                    if (a.Length > 1) Materializer.FixedSettle = float.Parse(a[1], Inv);
+                    return Materializer.FixedSettle > 0f ? "ground work waits " + Materializer.FixedSettle.ToString("0.0", Inv) + " s after each change" : "ground work waits for the heightmap's rebuild";
                 case "destroy":
                     return SimHost.Active && a.Length > 1 && SimHost.Sim.DebugDestroy(int.Parse(a[1])) ? "destroyed" : "no such live settlement";
+                case "owner":
+                {
+                    // owner <settlement id> <faction#>: puts a place in another faction's hands, as a won
+                    // assault would (testing). Only the owner changes: no battle and no losses.
+                    if (!SimHost.Active || a.Length < 3) return "owner <settlement id> <faction#>";
+                    Settlement taken = SimHost.Sim.State.GetSettlement(int.Parse(a[1]));
+                    Faction owner = SimHost.Sim.State.GetFaction(int.Parse(a[2]));
+                    if (taken == null || taken.Destroyed || owner == null) return "no such settlement or faction";
+                    taken.FactionId = owner.Id;
+                    return taken.Name + " is now held by " + Texts.FactionName(owner);
+                }
+                case "scoutloss":
+                {
+                    // scoutloss <faction#> [reported]: the scouts of that faction's campaign fall, after
+                    // seeing the place (reported) or before it. Testing.
+                    if (!SimHost.Active || a.Length < 2) return "scoutloss <faction#> [reported]";
+                    Campaign running = SimHost.Sim.CampaignOf(int.Parse(a[1]));
+                    if (running == null || running.Stage != CampaignStage.Scouting) return "no campaign is scouting for that faction";
+                    if (a.Length > 2 && a[2] == "reported") running.EnemyEstimate = 10f;
+                    Squad band = SimHost.Sim.State.Squads.FirstOrDefault(q => q.Id == running.SquadId);
+                    if (band == null) return "no scout band for campaign " + running.Id;
+                    band.Men = 0f;
+                    band.Soldiers = 0f;
+                    return "the scouts of campaign " + running.Id + (running.EnemyEstimate >= 0f ? " are lost after their report" : " are lost before their report");
+                }
+                case "capture":
+                    // capture <settlement id> <faction#>: a place changes hands as after a won assault (testing).
+                    return SimHost.Active && a.Length > 2 ? SimHost.Sim.DebugCapture(int.Parse(a[1]), int.Parse(a[2])) : "capture <settlement id> <faction#>";
+                case "campinfo":
+                {
+                    // campinfo <settlement>: the ties a place has to a campaign, an outpost or a road post.
+                    Settlement info = SimHost.Active && a.Length > 1 ? FindSettlement(a[1]) : null;
+                    if (info == null) return "campinfo <settlement>";
+                    Faction holder = SimHost.Sim.State.GetFaction(info.FactionId);
+                    return info.Name + " #" + info.Id + ": owner " + (holder != null ? Texts.FactionName(holder) : "?")
+                        + ", campaign " + info.CampaignId + ", parent " + info.ParentId + ", goal " + info.OutpostGoal
+                        + ", road post " + info.RoadPost + ", leaderless until " + info.LeaderlessUntil.ToString("0.0", Inv)
+                        + ", destroyed " + info.Destroyed
+                        + ", buildings: " + string.Join("; ", info.Buildings.Select(b => b.Kind + " rev " + b.LayoutRev + " pieces " + b.SpawnedPieces));
+                }
                 case "speed":
                     // The game writes its own time scale every frame, so that is the value to change.
                     float scale = Mathf.Clamp(a.Length > 1 ? float.Parse(a[1], Inv) : 1f, 0.1f, 5f);
@@ -271,8 +629,10 @@ namespace LivingFactions
                 case "hudinfo": return HudWidget.Describe();
                 case "hud": return SimHost.Active && Player.m_localPlayer != null ? HudWidget.Compose() : "no world";
                 case "npcs": return NpcReport();
+                case "beds": return Beds(a);
                 case "chests": return Chests.Describe();
                 case "inside": return Inside(a);
+                case "outside": return Outside(a);
                 case "night":
                     NightWatch.Reset();
                     if (a.Length > 1) ModConfig.NightAttackChance.Value = float.Parse(a[1], Inv);
@@ -289,6 +649,7 @@ namespace LivingFactions
         }
 
         private static float _lastDryRoad = 150f;
+        private static Container _openedChest;
 
         private static string Help()
         {
@@ -361,9 +722,11 @@ namespace LivingFactions
             return "advanced " + days.ToString("0.##", Inv) + " days, now day " + SimHost.Sim.State.Day.ToString("0.0", Inv) + " (lf advance moves the factions ahead by that many days; lf rewind takes them back)";
         }
 
-        private static Settlement FindSettlement(string key)
+        internal static Settlement FindSettlement(string key)
         {
             if (!SimHost.Active) return null;
+            // "camp": the first war camp standing (testing campaigns, whose camps get new ids).
+            if (key == "camp") return SimHost.Sim.State.Settlements.FirstOrDefault(s => s.CampaignId != 0 && !s.Destroyed);
             int id;
             foreach (Settlement s in SimHost.Sim.State.Settlements)
             {
@@ -411,10 +774,23 @@ namespace LivingFactions
             if (!SimHost.Active) return NoSim;
             if (Player.m_localPlayer == null) return "no player";
             int factionId = a.Length > 1 ? int.Parse(a[1]) : SimHost.Sim.State.Factions[0].Id;
-            float ahead = a.Length > 2 ? float.Parse(a[2], Inv) : 40f;
-            Vector3 p = Player.m_localPlayer.transform.position + Player.m_localPlayer.transform.forward * ahead;
+            Vector3 p;
+            if (a.Length > 4 && a[2] == "at")
+            {
+                // here <faction> at <x> <z>: a spot on the map, wherever the player is.
+                p = new Vector3(float.Parse(a[3], Inv), 0f, float.Parse(a[4], Inv));
+            }
+            else
+            {
+                float ahead = a.Length > 2 ? float.Parse(a[2], Inv) : 40f;
+                p = Player.m_localPlayer.transform.position + Player.m_localPlayer.transform.forward * ahead;
+            }
             Biome biome = GameWorld.Map(WorldGenerator.instance.GetBiome(p.x, p.z));
             if (WorldGenerator.instance.GetHeight(p.x, p.z) < ZoneSystem.c_WaterLevel + 1.5f) return "that spot is under water";
+            // The same test a faction puts a new site to, so a settlement founded by hand has room to grow.
+            Biome probed;
+            string reason = new GameWorld().ProbeReason(new Vec2(p.x, p.z), 22f, out probed);
+            if (reason != "ok" && Array.IndexOf(a, "force") < 0) return "no room to build there (" + reason + "); add 'force' to found it anyway";
             foreach (Settlement other in SimHost.Sim.State.Settlements)
             {
                 if (!other.Destroyed && Utils.DistanceXZ(p, new Vector3(other.Pos.X, 0f, other.Pos.Z)) < 160f) return "too close to " + other.Name;
@@ -533,6 +909,35 @@ namespace LivingFactions
         }
 
         /// <summary>Puts the camera at the front of a building looking in: inside &lt;settlement&gt; [kind] [back] [height].</summary>
+        /// <summary>
+        /// outside &lt;settlement&gt; &lt;Kind&gt; [nth] [dist] [height] [bearing]: the camera on a building from outside,
+        /// bearing in degrees round it from its front (0 = in front, 90 = its right side, its local +X).
+        /// </summary>
+        private static string Outside(string[] a)
+        {
+            Settlement s = a.Length > 1 ? FindSettlement(a[1]) : null;
+            if (s == null) return "no such settlement";
+            string kind = a.Length > 2 ? a[2] : "Hut";
+            int nth = a.Length > 3 ? int.Parse(a[3], Inv) : 0;
+            float dist = a.Length > 4 ? float.Parse(a[4], Inv) : 12f, height = a.Length > 5 ? float.Parse(a[5], Inv) : 4f;
+            float bearing = (a.Length > 6 ? float.Parse(a[6], Inv) : 0f) * Mathf.Deg2Rad;
+            foreach (Building b in s.Buildings)
+            {
+                if (!b.Kind.ToString().Equals(kind, StringComparison.OrdinalIgnoreCase) || b.State != BuildingState.Complete || float.IsNaN(b.GroundY)) continue;
+                if (nth-- > 0) continue;
+                Vec2 offset = new Vec2(0f, 0f);
+                float yaw = 0f;
+                if (b.Plot >= 0) Defs.PlotTransform(s, b.Plot, out offset, out yaw);
+                Vector3 origin = new Vector3(s.Pos.X + offset.X, b.GroundY, s.Pos.Z + offset.Z);
+                Quaternion rot = Quaternion.Euler(0f, yaw, 0f);
+                GearView.Off();
+                CamPos = origin + rot * new Vector3(Mathf.Sin(bearing) * dist, height, Mathf.Cos(bearing) * dist);
+                CamTarget = origin + Vector3.up * 2.5f;
+                return "looking at " + b.Kind + " #" + b.Id + " at " + origin;
+            }
+            return "no complete " + kind;
+        }
+
         private static string Inside(string[] a)
         {
             Settlement s = a.Length > 1 ? FindSettlement(a[1]) : null;
@@ -544,7 +949,7 @@ namespace LivingFactions
                 if (!b.Kind.ToString().Equals(kind, StringComparison.OrdinalIgnoreCase) || b.State != BuildingState.Complete || float.IsNaN(b.GroundY)) continue;
                 Vec2 offset = new Vec2(0f, 0f);
                 float yaw = 0f;
-                if (b.Plot >= 0) Defs.PlotTransform(b.Plot, s.Seed, out offset, out yaw);
+                if (b.Plot >= 0) Defs.PlotTransform(s, b.Plot, out offset, out yaw);
                 Vector3 origin = new Vector3(s.Pos.X + offset.X, b.GroundY, s.Pos.Z + offset.Z);
                 Quaternion rot = Quaternion.Euler(0f, yaw, 0f);
                 GearView.Off();
@@ -574,15 +979,20 @@ namespace LivingFactions
                 Vector3 dir = inside - door;
                 dir.y = 0f;
                 HashSet<string> blockers = new HashSet<string>();
+                List<string> loose = new List<string>();
                 foreach (RaycastHit hit in Physics.CapsuleCastAll(feet, head, r, dir.normalized, dir.magnitude))
                 {
                     if (hit.collider.isTrigger) continue;
                     ZNetView view = hit.collider.GetComponentInParent<ZNetView>();
                     string name = view != null ? Utils.GetPrefabName(view.gameObject) : hit.collider.name;
                     if (name.Contains("door") || hit.collider.GetComponentInParent<Character>() != null || hit.collider.GetComponentInParent<Heightmap>() != null) continue;
-                    blockers.Add(name);
+                    // Something dropped on the threshold is pushed aside by whoever walks in (and swept away
+                    // in time, LootSweep): told apart from what the house or its yard puts in the way.
+                    if (hit.collider.GetComponentInParent<ItemDrop>() != null) loose.Add(name + " " + Utils.DistanceXZ(hit.point, door).ToString("0.0", Inv) + " m in");
+                    else blockers.Add(name);
                 }
-                sb.AppendLine(b.Kind + " #" + b.Id + " (capsule r " + r.ToString("0.00", Inv) + " h " + h.ToString("0.00", Inv) + "): " + (blockers.Count == 0 ? "clear" : "BLOCKED by " + string.Join(",", blockers)));
+                sb.AppendLine(b.Kind + " #" + b.Id + " (capsule r " + r.ToString("0.00", Inv) + " h " + h.ToString("0.00", Inv) + "): " + (blockers.Count == 0 ? "clear" : "BLOCKED by " + string.Join(",", blockers))
+                    + (loose.Count > 0 ? ", LOOSE ITEMS " + string.Join(",", loose) : ""));
             }
             return sb.Length == 0 ? "no finished houses" : sb.ToString().TrimEnd();
         }
@@ -600,7 +1010,7 @@ namespace LivingFactions
                 if (float.IsNaN(b.GroundY) || radius <= 0f) continue;
                 Vec2 offset = new Vec2(0f, 0f);
                 float yaw;
-                if (b.Plot >= 0) Defs.PlotTransform(b.Plot, s.Seed, out offset, out yaw);
+                if (b.Plot >= 0) Defs.PlotTransform(s, b.Plot, out offset, out yaw);
                 Vector3 origin = new Vector3(s.Pos.X + offset.X, 0f, s.Pos.Z + offset.Z);
                 float min = 0f, max = 0f;
                 for (int i = 0; i < 9; i++)
@@ -619,19 +1029,20 @@ namespace LivingFactions
         /// <summary>Puts the camera beside the first inhabitant whose `npcs` line contains the text: watch carrying.</summary>
         private static string Watch(string[] a)
         {
-            if (a.Length < 2) return "usage: lf watch <text from the npcs list>";
-            string wanted = string.Join(" ", a.Skip(1));
+            if (a.Length < 2) return "usage: lf watch <text from the npcs list>[+more text]";
+            // Several pieces joined by + must all be on the line: `watch Farmer]+carrying`.
+            string[] wanted = string.Join(" ", a.Skip(1)).Split('+');
             foreach (FactionMember m in FactionMember.All)
             {
                 string line = m.Describe();
-                if (line.IndexOf(wanted, StringComparison.OrdinalIgnoreCase) < 0) continue;
+                if (!wanted.All(w => line.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0)) continue;
                 GearView.Off();
                 Transform t = m.transform;
                 CamTarget = t.position + Vector3.up * 1.2f;
                 CamPos = t.position - t.forward * 3.2f + t.right * 2.2f + Vector3.up * 2f;
                 return "watching " + line;
             }
-            return "nobody matches " + wanted;
+            return "nobody matches " + string.Join("+", wanted);
         }
 
         /// <summary>Gives the player an item if they lack it and puts it in their hands.</summary>
@@ -662,6 +1073,24 @@ namespace LivingFactions
             return sb.ToString().TrimEnd();
         }
 
+        /// <summary>beds &lt;settlement&gt;: where each of its people sleeps; "on the floor" for anyone without a bed.</summary>
+        private static string Beds(string[] a)
+        {
+            Settlement s = a.Length > 1 ? FindSettlement(a[1]) : null;
+            if (s == null) return "no such settlement";
+            StringBuilder sb = new StringBuilder();
+            int floor = 0, sleepers = 0;
+            foreach (FactionMember m in FactionMember.All)
+            {
+                if (m.SettlementId != s.Id || (m.Role != NpcRole.Villager && m.Role != NpcRole.Chief)) continue;
+                string place = m.SleepPlace(s);
+                sleepers++;
+                if (!place.Contains(" bed ")) floor++;
+                sb.AppendLine("  " + m.DisplayName + " [" + m.Role + "] " + place);
+            }
+            return sleepers + " sleepers, " + (floor == 0 ? "everyone in a bed" : floor + " on the floor") + "\n" + sb.ToString().TrimEnd();
+        }
+
         private static string Pos()
         {
             if (Player.m_localPlayer == null) return "no player";
@@ -679,6 +1108,11 @@ namespace LivingFactions
             ScreenCapture.CaptureScreenshot(path);
             return path;
         }
+
+        private static Vector3 Specimen;
+
+        /// <summary>The big map's zoom held by `lf map large <zoom>` (testing); 0 when not held.</summary>
+        public static float PinnedZoom;
 
         private static string Cam(string[] a)
         {
@@ -770,6 +1204,15 @@ namespace LivingFactions
                 }
                 sb.Append(a[i] + ":");
                 if (bounds.HasValue) sb.Append(" mesh min" + V(bounds.Value.min) + " max" + V(bounds.Value.max));
+                // Solid boxes in the prefab's own space: the mesh bounds also take in drapes and overhangs.
+                List<string> boxes = new List<string>();
+                foreach (BoxCollider box in prefab.GetComponentsInChildren<BoxCollider>(true))
+                {
+                    if (box.isTrigger) continue;
+                    Matrix4x4 m = toRoot * box.transform.localToWorldMatrix;
+                    boxes.Add(V(m.MultiplyPoint3x4(box.center - box.size * 0.5f)) + ".." + V(m.MultiplyPoint3x4(box.center + box.size * 0.5f)));
+                }
+                if (boxes.Count > 0) sb.Append(" boxes[" + string.Join(" ", boxes) + "]");
                 List<string> snaps = new List<string>();
                 foreach (Transform child in prefab.GetComponentsInChildren<Transform>(true))
                 {
@@ -841,6 +1284,15 @@ namespace LivingFactions
             __instance.transform.position = Commands.CamPos.Value;
             __instance.transform.rotation = Quaternion.LookRotation(Commands.CamTarget - Commands.CamPos.Value);
             return false;
+        }
+    }
+
+    [HarmonyLib.HarmonyPatch(typeof(Minimap), "Update")]
+    internal static class DevZoomPin
+    {
+        private static void Postfix(Minimap __instance)
+        {
+            if (Commands.PinnedZoom > 0f && __instance.m_mode == Minimap.MapMode.Large) __instance.LargeZoom = Commands.PinnedZoom;
         }
     }
 }

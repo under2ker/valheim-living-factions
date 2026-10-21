@@ -1,0 +1,36 @@
+# Walls and roads, Steinvik (4): every road goes in between the buildings and through a gate
+# square-on, nothing stands on it from 100 m out to the square (houses, yards, stakes, posts, fences,
+# trees, rocks), no road lamp is left inside a wall and no field fence on a road. The same for
+# settlement 10 in walls-10.txt and for Vindfell (1) in road.txt. About 5 min: LF_TIMEOUT=600.
+god
+env 0.4 Clear
+roads
+goto 4
+waitready 240
+wait 30
+waitready 240
+roads
+mat
+roadcheck 4
+reject BLOCKED :: roadcheck 4
+reject MISALIGNED :: roadcheck 4
+reject LAMP INSIDE :: roadcheck 4
+reject FENCE ON ROAD :: roadcheck 4
+hidehud on
+hideme
+roadview 4 gate 0
+wait 2
+shot gate_a
+roadview 4 gate 0 14
+wait 2
+shot gate_b
+roadview 4 gate 1
+wait 2
+shot gate_a2
+view 4 40 45 0
+wait 2
+shot streets_above
+cam
+hidehud off
+seams 200
+quit

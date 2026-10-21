@@ -1,0 +1,22 @@
+god
+env 0.4 Clear
+goto 4
+wait 15
+hidehud on
+watch Chief
+wait 2
+shot clan_raven_chief
+watch Guard
+wait 2
+shot clan_raven_guard
+goto 1
+wait 15
+watch Chief
+wait 2
+shot clan_wolf_chief
+goto 2
+wait 15
+watch Guard
+wait 2
+shot clan_stag_guard
+quit

@@ -1,0 +1,30 @@
+# A player levels a square with the hoe across the border of two terrain tiles, away from the roads, and
+# the mod leaves the seams under it alone. A/B: with `seamsall on` (the old behaviour, seams mended
+# everywhere round the player) the mod mends them, which dug ditches and raised humps along the border;
+# with the mod as it is, it mends none. About 8 min: LF_TIMEOUT=900.
+god
+env 0.4 Clear
+goto 4
+waitready 300
+roadtp 4 120
+waitready 300
+# A: the old behaviour
+seamsall on
+hoe 8 0.8 border
+until worst off :: hoecheck
+waitready 120
+wait 25
+hoecheck
+reject mended since 0 :: hoecheck
+seamsall off
+# B: as it is now
+roadtp 4 220
+waitready 300
+hoe 8 0.8 border
+until worst off :: hoecheck
+waitready 120
+wait 25
+hoecheck
+expect mended since 0 :: hoecheck
+seams 40
+quit

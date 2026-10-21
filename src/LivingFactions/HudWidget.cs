@@ -15,6 +15,13 @@ namespace LivingFactions
 
         public static void Update()
         {
+            if (Player.m_localPlayer != null && !Typing() && ModConfig.ChronicleKey.Value.IsDown())
+            {
+                // Off or on for good (the setting is saved), said on screen with the key to turn it back.
+                ModConfig.HudWidget.Value = !ModConfig.HudWidget.Value;
+                if (MessageHud.instance != null)
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, Texts.Get(ModConfig.HudWidget.Value ? "msg_chronicle_shown" : "msg_chronicle_hidden", ModConfig.ChronicleKey.Value.ToString()));
+            }
             // Hiding follows the game's HUD at once; only the text is refreshed on a timer.
             bool show = ModConfig.HudWidget.Value && SimHost.Active && Player.m_localPlayer != null && Hud.instance != null && !Hud.IsUserHidden() && !DiplomacyUI.IsOpen;
             if (!show)
@@ -47,6 +54,12 @@ namespace LivingFactions
         }
 
         private static bool _reported, _mapUsed;
+
+        /// <summary>A key pressed while typing (chat, console, a sign) is a letter, not a command.</summary>
+        private static bool Typing()
+        {
+            return (Chat.instance != null && Chat.instance.HasFocus()) || Console.IsVisible() || TextInput.IsVisible() || Menu.IsVisible();
+        }
 
         public static string Describe()
         {

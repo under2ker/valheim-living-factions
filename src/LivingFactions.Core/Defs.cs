@@ -47,6 +47,38 @@ namespace LivingFactions.Core
     {
         /// <summary>Global multiplier on how fast factions develop.</summary>
         public float Pace = 1f;
+        /// <summary>Settlements send bands out for what they lack.</summary>
+        public bool Expeditions = true;
+        /// <summary>Wars are fought by campaigns: scouting, a war camp, an assault, holding what was taken.</summary>
+        public bool Campaigns = true;
+        /// <summary>Metres a band covers in a day (a person walks about 2.5 km in a 30-minute game day).</summary>
+        public float SquadSpeed = 2400f;
+        public float MusterDays = 0.15f;
+        public float GatherDays = 1f;
+        public float ExpeditionRange = 1400f;
+        public float ExpeditionCooldownDays = 4f;
+        public float CampaignMinSoldiers = 6f;
+        public float CampaignRange = 2200f;
+        public float CampDays = 1.5f;
+        public int CampaignAttempts = 2;
+        /// <summary>Allies send part of their soldiers to stand by a friend at war (to its camp, or to the place attacked).</summary>
+        public bool AllyAid = true;
+        public float AllyShare = 0.3f;
+        public float AllyStayDays = 4f;
+        /// <summary>Metal a soldier's arms take before a fight; without it a band fights worse armed.</summary>
+        public float MetalPerSoldier = 0.5f;
+        /// <summary>People move from a starving or threatened place to one of their own that can take them.</summary>
+        public bool Migration = true;
+        /// <summary>Factions put a few people out where the land gives what they lack, and watch posts on long roads.</summary>
+        public bool Outposts = true;
+        /// <summary>Chance per day that a faction finds out who killed one of its people unseen.</summary>
+        public float CrimeFoundPerDay = 0.3f;
+        /// <summary>How fast a player's standing drifts back toward a faction's usual temper (1 as made, 0 never).</summary>
+        public float ReputationDecay = 1f;
+        /// <summary>Days a settlement goes without a chief after one is killed.</summary>
+        public float LeaderlessDays = 3f;
+        /// <summary>Share of the usual work a settlement without a chief gets done.</summary>
+        public float LeaderlessWork = 0.75f;
         public int MaxSettlementsPerFaction = 6;
         public int MaxSettlementsTotal = 40;
         public bool EnableRaceFactions = true;
@@ -90,14 +122,19 @@ namespace LivingFactions.Core
         public static readonly int[] RingsByTier = { 1, 2, 3, 4, 5 };
         /// <summary>The wall encloses the first four rings; a city's fifth ring grows outside it.</summary>
         public const float PalisadeRadius = 60.5f;
+        /// <summary>A city's wall: outside its last ring of plots (69 m) and the buildings on it.</summary>
+        public const float CityWallRadius = 78f;
+        /// <summary>A home's Housing is two for each bed its blueprint puts in it: the beds are wide enough for two.</summary>
+        public const int SleepersPerBed = 2;
 
         static Defs()
         {
             int[] any = { -1, -1, -1, -1, -1 };
             Add(new BuildingDef { Kind = BuildingKind.Campfire, Work = 0, Housing = 4, MinTier = Tier.Camp, MaxByTier = new[] { 1, 1, 1, 1, 1 }, UsesPlot = false });
-            Add(new BuildingDef { Kind = BuildingKind.Hut, Wood = 20, Work = 14, Housing = 3, MinTier = Tier.Camp, MaxByTier = new[] { 3, 4, 4, 4, 4 } });
-            Add(new BuildingDef { Kind = BuildingKind.House, Wood = 45, Stone = 10, Work = 34, Housing = 5, MinTier = Tier.Hamlet, MaxByTier = any });
-            Add(new BuildingDef { Kind = BuildingKind.Longhouse, Wood = 110, Stone = 40, Work = 90, Housing = 10, MinTier = Tier.Village, MaxByTier = any });
+            // A home houses two for each bed its blueprint has (SleepersPerBed): hut 1, house 2, longhouse 4, great hall 3.
+            Add(new BuildingDef { Kind = BuildingKind.Hut, Wood = 20, Work = 14, Housing = 2, MinTier = Tier.Camp, MaxByTier = new[] { 3, 4, 4, 4, 4 } });
+            Add(new BuildingDef { Kind = BuildingKind.House, Wood = 45, Stone = 10, Work = 34, Housing = 4, MinTier = Tier.Hamlet, MaxByTier = any });
+            Add(new BuildingDef { Kind = BuildingKind.Longhouse, Wood = 110, Stone = 40, Work = 90, Housing = 8, MinTier = Tier.Village, MaxByTier = any });
             Add(new BuildingDef { Kind = BuildingKind.Storehouse, Wood = 45, Stone = 8, Work = 30, Storage = 320, MinTier = Tier.Camp, MaxByTier = new[] { 1, 1, 2, 3, 4 } });
             Add(new BuildingDef { Kind = BuildingKind.Woodcutter, Wood = 25, Work = 20, Boosts = Res.Wood, Boost = 0.35f, MinTier = Tier.Camp, MaxByTier = new[] { 1, 1, 2, 3, 3 } });
             Add(new BuildingDef { Kind = BuildingKind.Stonecutter, Wood = 30, Stone = 10, Work = 26, Boosts = Res.Stone, Boost = 0.35f, MinTier = Tier.Camp, MaxByTier = new[] { 1, 1, 2, 3, 3 } });
@@ -244,7 +281,35 @@ namespace LivingFactions.Core
             return n;
         }
 
-        /// <summary>Offset of a plot from the settlement centre and the yaw (degrees, 0 = +Z) that faces the centre.</summary>
+        /// <summary>
+        /// Offset of a plot from the settlement centre and its yaw (degrees, 0 = +Z): facing the centre,
+        /// give or take some degrees, so that no two houses stand quite alike. Settlements founded from
+        /// 0.7.0 on also have their plots shifted a little along and across the ring; older ones keep
+        /// their places (their ground was levelled there), only turned.
+        /// </summary>
+        public static void PlotTransform(Settlement s, int plot, out Vec2 offset, out float yawDeg)
+        {
+            PlotTransform(plot, s.Seed, out offset, out yawDeg);
+            uint h = (uint)(s.Seed * 73856093) ^ (uint)((plot + 1) * 19349663);
+            float u1 = Unit(ref h), u2 = Unit(ref h), u3 = Unit(ref h);
+            yawDeg += (u1 - 0.5f) * 36f;
+            if (s.Layout < 1) return;
+            float len = offset.Length();
+            if (len < 1f) return;
+            Vec2 radial = offset * (1f / len);
+            Vec2 along = new Vec2(-radial.Z, radial.X);
+            offset = offset + radial * ((u2 - 0.5f) * 2.4f) + along * ((u3 - 0.5f) * 1.6f);
+        }
+
+        private static float Unit(ref uint h)
+        {
+            h ^= h << 13;
+            h ^= h >> 17;
+            h ^= h << 5;
+            return (h & 0xFFFF) / 65535f;
+        }
+
+        /// <summary>The exact ring position and the yaw straight at the centre (the layout before 0.7.0).</summary>
         public static void PlotTransform(int plot, int seed, out Vec2 offset, out float yawDeg)
         {
             int ring = 0;

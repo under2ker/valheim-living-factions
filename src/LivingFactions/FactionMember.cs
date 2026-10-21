@@ -9,6 +9,9 @@ namespace LivingFactions
     {
         public static readonly int HashFaction = "lf_fid".GetStableHashCode();
         public static readonly int HashRole = "lf_role".GetStableHashCode();
+        private static readonly int HashSquad = "lf_squad".GetStableHashCode();
+        /// <summary>The band on the move this one walks with (SquadPresence), 0 for none.</summary>
+        public int SquadId;
         private static readonly int HashSeed = "lf_seed".GetStableHashCode();
         private static readonly int HashInit = "lf_init".GetStableHashCode();
         private static readonly int HashUntil = "lf_until".GetStableHashCode();
@@ -39,6 +42,15 @@ namespace LivingFactions
 
         public static IEnumerable<FactionMember> All { get { return ByCharacter.Values; } }
 
+        private static readonly Dictionary<BaseAI, FactionMember> Minds = new Dictionary<BaseAI, FactionMember>();
+
+        /// <summary>The member an AI belongs to, or null (cheap: asked every frame for every creature).</summary>
+        public static FactionMember MemberOf(BaseAI ai)
+        {
+            FactionMember m;
+            return ai != null && Minds.TryGetValue(ai, out m) ? m : null;
+        }
+
         public Humanoid Humanoid { get { return _humanoid; } }
 
         private void Awake()
@@ -52,8 +64,10 @@ namespace LivingFactions
             SettlementId = zdo.GetInt(Materializer.HashSettlement);
             Role = (NpcRole)zdo.GetInt(HashRole);
             Seed = zdo.GetInt(HashSeed);
+            SquadId = zdo.GetInt(HashSquad);
             DisplayName = zdo.GetString(ZDOVars.s_overrideHoverName);
             if (_humanoid != null) ByCharacter[_humanoid] = this;
+            if (_ai != null) Minds[_ai] = this;
         }
 
         private void Start()
@@ -64,6 +78,7 @@ namespace LivingFactions
         private void OnDestroy()
         {
             if (_humanoid != null) ByCharacter.Remove(_humanoid);
+            if (_ai != null) Minds.Remove(_ai);
             ReleaseClaim();
         }
 
@@ -86,6 +101,12 @@ namespace LivingFactions
         }
 
         /// <summary>Called once by the materializer right after the character is created.</summary>
+        public void JoinSquad(int squadId)
+        {
+            SquadId = squadId;
+            _view.GetZDO().Set(HashSquad, squadId);
+        }
+
         public void Setup(int factionId, int settlementId, NpcRole role, int seed)
         {
             FactionId = factionId;
@@ -106,7 +127,10 @@ namespace LivingFactions
         public void Rename()
         {
             if (_latinName.Length == 0 || _view == null || !_view.IsValid() || !_view.IsOwner()) return;
-            string title = Texts.Has("title_" + Role) ? Texts.Get("title_" + Role) : "";
+            string key = "title_" + Role;
+            Squad band = SquadId != 0 && SimHost.Active ? SquadPresence.Find(SquadId) : null;
+            if (band != null) key = "title_squad_" + band.Kind;
+            string title = Texts.Has(key) ? Texts.Get(key) : "";
             string personal = Texts.Name(_latinName);
             DisplayName = title.Length > 0 ? personal + ", " + title : personal;
             _view.GetZDO().Set(ZDOVars.s_overrideHoverName, DisplayName);
@@ -148,10 +172,10 @@ namespace LivingFactions
                 vis.SetHairColor(Utils.ColorToVec3(hairColors[rnd.Next(hairColors.Length)]));
                 float tone = 0.8f + (float)rnd.NextDouble() * 0.2f;
                 vis.SetSkinColor(new Vector3(tone, tone, tone));
-                GiveGear(rnd, tier);
+                GiveGear(rnd, tier, faction.CultureId);
             }
 
-            bool fighter = Role == NpcRole.Guard || Role == NpcRole.Mercenary || Role == NpcRole.Escort;
+            bool fighter = Role == NpcRole.Guard || Role == NpcRole.Mercenary || Role == NpcRole.Escort || Role == NpcRole.Squad;
             float health = Role == NpcRole.Chief ? 250f + 50f * tier : fighter ? 150f + 40f * tier : 80f + 10f * tier;
             if (human && !zdo.GetBool(HashInit))
             {
@@ -194,10 +218,25 @@ namespace LivingFactions
             }
         }
 
-        private void GiveGear(System.Random rnd, int tier)
+        /// <summary>Each clan's own sword and shield (CustomItems), carried by its chiefs and better fighters.</summary>
+        private static readonly Dictionary<string, string[]> ClanGear = new Dictionary<string, string[]>
+        {
+            { "clan_wolf", new[] { "LF_GreyBlade", "LF_WolfHideShield" } },
+            { "clan_stag", new[] { "LF_AntlerBlade", "LF_StagTrailShield" } },
+            { "clan_raven", new[] { "LF_BlackBeak", "LF_RavenShield" } },
+        };
+
+        private void GiveGear(System.Random rnd, int tier, string cultureId)
         {
             List<string> gear = new List<string>();
-            if (Role == NpcRole.Villager || Role == NpcRole.Trader)
+            if (Role == NpcRole.Envoy)
+            {
+                gear.Add(tier >= 2 ? "ArmorLeatherChest" : "ArmorRagsChest");
+                gear.Add(tier >= 2 ? "ArmorLeatherLegs" : "ArmorRagsLegs");
+                gear.Add(ObjectDB.instance.GetItemPrefab("CapeLinen") != null ? "CapeLinen" : "CapeDeerHide");
+                gear.Add("HelmetHat5");
+            }
+            else if (Role == NpcRole.Villager || Role == NpcRole.Trader)
             {
                 gear.Add(Pick(rnd, tier >= 2 ? new[] { "AxeFlint", "AxeBronze", "KnifeFlint", "Club" } : new[] { "AxeStone", "Club", "AxeFlint" }));
                 gear.Add(tier >= 2 ? "ArmorLeatherChest" : "ArmorRagsChest");
@@ -242,6 +281,17 @@ namespace LivingFactions
                     gear.Add("HelmetIron");
                 }
                 gear.Add(Role == NpcRole.Chief ? (level >= 2 ? "CapeWolf" : "CapeTrollHide") : (level >= 3 ? "CapeTrollHide" : "CapeDeerHide"));
+
+                // From a village up the clan shows its colours: its shield on every shield arm, its sword in
+                // the chief's hand and in one fighter's hand in three (the seed, not rnd: looks stay as they were).
+                string[] own;
+                if (level >= 2 && ClanGear.TryGetValue(cultureId, out own))
+                {
+                    int shield = gear.FindIndex(g => g.StartsWith("Shield"));
+                    if (shield >= 0) gear[shield] = own[1];
+                    int sword = gear.FindIndex(g => g.StartsWith("Sword") || g.StartsWith("Axe") || g.StartsWith("Mace") || g.StartsWith("Spear"));
+                    if (sword >= 0 && (Role == NpcRole.Chief || Mathf.Abs(Seed / 7) % 3 == 0)) gear[sword] = own[0];
+                }
             }
 
             Inventory inventory = _humanoid.GetInventory();
@@ -263,11 +313,25 @@ namespace LivingFactions
             return options[rnd.Next(options.Length)];
         }
 
+        /// <summary>True when a player is near enough to see this one vanish.</summary>
+        public bool Watched(float range)
+        {
+            foreach (Player p in Player.GetAllPlayers())
+            {
+                if (p != null && Utils.DistanceXZ(p.transform.position, transform.position) < range) return true;
+            }
+            return false;
+        }
+
         public bool IsHostileTo(Player player)
         {
             if (!SimHost.Active || player == null) return false;
+            if (Role == NpcRole.Envoy) return false;
+            // Under the envoy's shelter the faction does not set on anyone, at war or not, unless they strike first.
+            if (EnvoyPost.Shelters(FactionId, player.transform.position) && !Grudges.AngryAt(this, player)) return false;
             if (SimHost.Sim.IsHostileToPlayer(FactionId, player.GetPlayerID())) return true;
-            return _ai != null && _ai.IsAggravated();
+            if (Role != NpcRole.Villager && NightWatch.Angry(SettlementId)) return true;
+            return Grudges.AngryAt(this, player);
         }
 
         private void Update()
@@ -281,9 +345,12 @@ namespace LivingFactions
                 return;
             }
             if (_view == null || !_view.IsValid() || !_view.IsOwner() || !SimHost.Active) return;
-            if (Npcs.IsTemporary(Role) && ZNet.instance.GetTimeSeconds() > _view.GetZDO().GetLong(HashUntil))
+            long until = _view.GetZDO().GetLong(HashUntil);
+            double now = ZNet.instance.GetTimeSeconds();
+            // The raid, the journey or the contract is over: they are gone, though not before the eyes of
+            // someone walking with them. A while later they go whoever looks.
+            if (Npcs.IsTemporary(Role) && now > until && (now > until + 150.0 || !Watched(55f)))
             {
-                // The raid, the journey or the contract is over: they are gone.
                 ZNetScene.instance.Destroy(gameObject);
                 return;
             }
@@ -291,12 +358,8 @@ namespace LivingFactions
             Player player = Player.m_localPlayer;
             if (player == null) return;
 
-            bool hostile = SimHost.Sim.IsHostileToPlayer(FactionId, player.GetPlayerID());
-            // A brawl is forgiven once tempers cool, unless the whole faction is hostile.
-            if (_ai != null && _ai.IsAggravated() && !hostile && Time.time - LastHurt > 40f && !NightWatch.Angry(SettlementId))
-            {
-                _ai.SetAggravated(false, BaseAI.AggravatedReason.Damage);
-            }
+            // Anger is Grudges' business now; a flag the game set before (an older save) is cleared.
+            if (_ai != null && _ai.IsAggravated()) _ai.SetAggravated(false, BaseAI.AggravatedReason.Damage);
 
             if (Time.time >= _nextGreet && Chat.instance != null && Vector3.Distance(player.transform.position, transform.position) < 6f)
             {
@@ -308,7 +371,10 @@ namespace LivingFactions
                     // People on good terms talk about what they are doing as often as they greet; the rest only greet.
                     int salt = Mathf.Abs(Seed) + (int)(Time.time / 45f);
                     bool chat = standing >= Standing.Neutral && (salt & 1) == 0;
-                    Chat.instance.SetNpcText(gameObject, Vector3.up * 2.2f, 15f, 6f, "", chat ? Texts.Vary(BarkKey(), salt / 2) : Texts.Vary("greet_" + standing, salt / 2), false);
+                    string line = chat ? Texts.Vary(BarkKey(), salt / 2) : Texts.Vary("greet_" + standing, salt / 2);
+                    // The chief does not send the player to the chief.
+                    if (Role == NpcRole.Chief && line == Texts.Get("greet_Neutral2")) line = Texts.Get("greet_Neutral");
+                    Chat.instance.SetNpcText(gameObject, Vector3.up * 2.2f, 15f, 6f, "", line, false);
                 }
             }
         }
@@ -322,7 +388,7 @@ namespace LivingFactions
 
         public string HoverText()
         {
-            if (Player.m_localPlayer != null && IsHostileTo(Player.m_localPlayer)) return "";
+            if (Role != NpcRole.Envoy && Player.m_localPlayer != null && IsHostileTo(Player.m_localPlayer)) return "";
             return Localization.instance.Localize("[<color=yellow><b>$KEY_Use</b></color>] " + Texts.Get("ui_talk"));
         }
 
@@ -331,7 +397,7 @@ namespace LivingFactions
             if (hold || !SimHost.Active) return false;
             Player player = user as Player;
             if (player == null) return false;
-            if (IsHostileTo(player))
+            if (Role != NpcRole.Envoy && IsHostileTo(player))
             {
                 if (Chat.instance != null) Chat.instance.SetNpcText(gameObject, Vector3.up * 2.2f, 15f, 5f, "", Texts.Get("greet_War"), false);
                 return true;

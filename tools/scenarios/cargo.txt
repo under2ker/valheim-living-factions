@@ -1,0 +1,27 @@
+# What workers carry home (0.7.0): a farmer a small crate on the back (it was the whole Turnip plant
+# with its leaves, which looked like a bush in the air behind the head), a woodcutter a log across the
+# shoulder blades, a stonecutter a stone, each flat against the back and moving with it, not floating.
+# Settlement 4 (Steinvik); the game runs at speed 3 so that loads come by sooner. The dump lines give
+# the parts of the item models the loads are copied from.
+god
+env 0.4 Clear
+dump CargoCrate
+dump RoundLog
+dump Stone
+goto 4
+waitready 400
+hidehud on
+hideme
+speed 3
+until watching :: watch Farmer]+carrying
+wait 0.3
+shot cargo_farmer
+until watching :: watch Woodcutter]+carrying
+wait 0.3
+shot cargo_woodcutter
+until watching :: watch Stonecutter]+carrying
+wait 0.3
+shot cargo_stonecutter
+speed 1
+cam
+quit

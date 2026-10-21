@@ -1,0 +1,62 @@
+# A player's own goods stay theirs: put into a household chest and taken out again is no theft, a gift
+# put into the storehouse and taken back is undone, and at night neither wakes anyone. What was the
+# household's is still theft, and at night it still raises the alarm. Carriers put their loads into the chests.
+god
+env 0.4 Clear
+goto 4
+waitready 300
+rep 8 50
+# household chest, by day
+openchest 4 4
+wait 1
+chestmove put Stone 5
+closechest
+wait 6
+openchest 4 4
+wait 1
+chestmove take Stone 5
+closechest
+wait 6
+expect standing 50.0 :: grudge 8
+# storehouse, its wood and stone chest: a gift, and the gift taken back
+openchest 4 Storehouse 0
+wait 1
+chestmove put Stone 20
+closechest
+wait 6
+reject standing 50.0 :: grudge 8
+openchest 4 Storehouse 0
+wait 1
+chestmove take Stone 20
+closechest
+wait 6
+expect standing 50.0 :: grudge 8
+# carriers put what they bring into the chests, for real
+wait 150
+expect carriers put :: chests
+reject put 0 loads :: chests
+# night: own goods back out, no alarm
+env 0.95 Clear
+wait 60
+openchest 4 4
+wait 1
+chestmove put Stone 3
+closechest
+wait 6
+openchest 4 4
+wait 1
+chestmove take Stone 3
+closechest
+wait 16
+expect standing 50.0 :: grudge 8
+expect no count, the settlement sleeps on :: thief 4
+# the household's coins: theft, and the alarm
+openchest 4 4
+wait 1
+chestmove take Coins 3
+closechest
+wait 16
+reject standing 50.0 :: grudge 8
+expect the settlement is raised :: thief 4
+expect ALERT :: npcs
+quit

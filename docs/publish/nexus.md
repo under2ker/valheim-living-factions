@@ -1,6 +1,6 @@
 # Nexus Mods
 
-Загрузка: https://www.nexusmods.com/valheim → Upload a mod. Ниже: что вписывать в каждое поле.
+Загрузка: https://www.nexusmods.com/valheim → Upload a mod (или Manage → Add file к уже выложенному моду). Ниже: что вписывать в каждое поле.
 
 ## Mod details
 
@@ -11,14 +11,14 @@ Living Factions
 
 **Version**
 ```
-0.6.5
+0.7.0
 ```
 
 **Category:** Gameplay (если есть «Overhauls» или «NPC»: тоже подходит).
 
 **Brief overview** (до 350 знаков)
 ```
-Seven NPC factions that live on their own: they build settlements piece by piece, fell and replant the forest, trade, lay roads, send caravans and go to war. Trade with them, hire their fighters, take on boss hunts, earn relic axes and swords or make enemies. Single-player, hosted and dedicated servers. English, Russian, Polish, German, French, Spanish, Portuguese.
+Seven NPC factions live on their own: they build settlements piece by piece, send bands out for wood and ore, march to war, set up war camps and lay siege. Trade with them, talk to their envoys, hire their fighters, take on boss hunts, earn relic axes, swords and shields. Single-player, hosted and dedicated servers. Seven languages.
 ```
 
 **Language:** English (в описании указать, что мод переведён на семь языков).
@@ -34,11 +34,11 @@ Seven NPC factions that live on their own: they build settlements piece by piece
 ## Description (вставлять в редактор в режиме BBCode)
 
 ```
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.6.5[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.7.0[/img][/center]
 
 [size=5][b]Living Factions[/b][/size]
 
-Seven NPC factions move into your world and live their own lives. They set up camps, gather wood, stone and food, put up buildings one piece at a time and grow into villages, towns and cities. They trade, fall out, go to war and take each other's settlements, whether you are around or not. And you can take part.
+Seven NPC factions move into your world and live their own lives. They set up camps, gather wood, stone and food, put up buildings one piece at a time and grow into villages, towns and cities. They trade, fall out, march to war and take each other's settlements, whether you are around or not. And you can take part.
 
 [size=4][b]The factions[/b][/size]
 [list]
@@ -54,30 +54,35 @@ Seven NPC factions move into your world and live their own lives. They set up ca
 [size=4][b]A world that keeps going[/b][/size]
 [list]
 [*]Real buildings made of the game's own pieces, put up in order. A half-built house is a floor and a few walls.
-[*]People have a day: woodcutters, stonecutters, farmers, carriers, visits to the neighbours, sleep by night, guards on the round and on the watchtower.
+[*]Every people builds its own way: the Raven Clan under dark shingles with carved ravens, the Wolf Clan in logs under hipped thatch, the Stag Clan with porches, Fulings in round huts under hides, Greydwarfs among roots, the Draugr in stone.
+[*]People have a day: woodcutters, stonecutters, farmers and carriers who put their loads into the storehouse chests, visits to the neighbours, guards on the round and on the watchtower. At night everyone sleeps in the beds of their own house.
+[*]Open their chest after dark and a count starts: take something of theirs and stay too long, and the village wakes.
 [*]Woodcutters fell real trees away from the houses and plant saplings in their place.
-[*]Roads with lamp posts between settlements, caravans with guards travelling them.
-[*]Politics: borders, trade, incidents, wars, raids and captured settlements. If you are in a village when it is raided, the raiders really come.
-[*]Faction lands on the map in each faction's colour, with a legend.
-[*]A chronicle on screen tells what the nearest settlement and the other factions are up to.
+[*]Bands go out for wood, stone, food and ore, up to 1.4 km, and come home with their loads. Near you they are real people walking the land.
+[*]War on foot: raids march to their target, and a faction at war sends scouts, sets up a war camp of tents and stakes halfway there and lays siege, with a supply line, allies joining and counterattacks.
+[*]Outposts where the land gives what home lacks, and watch posts along long roads.
+[*]Roads with lamp posts between settlements, streets to the square and gates in the walls, caravans with guards travelling them. Cities raise stone walls with towers.
+[*]Politics: borders, trade, incidents, wars, raids and captured settlements.
+[*]Faction lands on the map in each faction's colour; settlement names that open up into their state; villagers as dots on the minimap; a chronicle on screen.
 [/list]
 
 [size=4][b]What you can do[/b][/size]
 [list]
 [*]Talk to anyone. See how they feel about you, what they have and what they need.
-[*]Give gifts, trade, buy special wares, hire two fighters for a while.
-[*]Make an alliance at standing 70. The window shows how far you are and what each gift would earn.
-[*]Declare war or pay for peace.
+[*]Talk to the envoy in the tent by every settlement's road, even at war: gifts, tribute, a plea for peace, and plain words about what stands between you.
+[*]Give gifts, trade, buy special wares, hire fighters: two from anyone who deals with you, four from friends, six from allies, and they follow you through portals.
+[*]Make an alliance at standing 70, declare war or pay for peace.
+[*]Mind your blows: they forgive a few, more the better they like you, and warn you before a friendship breaks.
 [*]Take on boss hunts: a chief names the beast and the bounty, you bring word of its death.
-[*]Earn seven relic axes, one per faction, each its own way: bought, given by a jarl or a thane, or taken from a chieftain.
-[*]Buy the sword of each faction from its traders. The Greydwarfs do not trade: their root club is taken from their guards.
+[*]Earn seven relic axes, seven swords and seven shields, one of each per faction.
 [/list]
 
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.6.5[/img][/center]
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.6.5[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.7.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.7.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.7.0[/img][/center]
 
 [size=4][b]Playing together[/b][/size]
-Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.6.x with any 0.6.x). Tested with a dedicated server and one guest. Back up the server world before the first run.
+Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.7.x with any 0.7.x; 0.6.x and 0.7.x do not play together). Back up the server world before the first run.
 
 [size=4][b]Backups[/b][/size]
 Restoring a backup of the world takes the factions back to the same point. Buildings on record but missing from the world are put up again. [b]lf rewind[/b] in the console takes the factions back without touching the world.
@@ -91,14 +96,13 @@ English, Russian, Polish, German, French, Spanish and Portuguese. The mod follow
 [*]Put [b]LivingFactions.dll[/b] into [b]Valheim/BepInEx/plugins/LivingFactions/[/b].
 [*]Start a world. The factions arrive on the first day. An existing world works too.
 [/list]
-[b]Back up your world first.[/b] Settlements level the ground and place pieces.
-Settings: the "LF" tile on the inventory screen (Tab), or BepInEx/config/alexandr.livingfactions.cfg.
+[b]Back up your world first.[/b] Settlements level the ground and place pieces. Updating from 0.6.x: on the first visit each settlement puts up its houses, square, camps, walls and lamps again once.
+Settings: the "LF" tile on the inventory screen (Tab), or BepInEx/config/alexandr.livingfactions.cfg. Alt+H hides the chronicle.
 
 [size=4][b]Known limits[/b][/size]
 [list]
-[*]The wood a settlement gets is counted by the simulation; the felled trees are what you see of it.
-[*]The non-human factions build in the same style as the clans.
-[*]Two players in the same village at once and crossplay servers are not tested yet.
+[*]What a settlement gathers is counted by the simulation; the felled trees and the loads in the chests are what you see of it.
+[*]On steep ground a bank between two buildings can stay steeper than a walk.
 [*]If you remove the mod, the buildings stay in the world as normal pieces.
 [/list]
 
@@ -113,21 +117,21 @@ Made with the help of AI (Claude Code). No game files, decompiled code or extrac
 
 **File name**
 ```
-Living Factions 0.6.5
+Living Factions 0.7.0
 ```
 
-**File version:** `0.6.5`, категория файла: Main Files.
+**File version:** `0.7.0`, категория файла: Main Files (файл 0.6.5 перевести в Old Versions).
 
 **File description**
 ```
-The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager.
+The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager. Everyone in a game needs 0.7.x.
 ```
 
-Файл: `dist/LivingFactions-0.6.5.zip`.
+Файл: `dist/LivingFactions-0.7.0.zip`.
 
 ## Images tab
 
-Главная картинка: `docs/store/cover.jpg`. Галерея: `docs/store/axes.jpg`, `docs/store/swords.jpg`, все снимки из
+Главная картинка: `docs/store/cover.jpg`. Галерея: `docs/store/axes.jpg`, `docs/store/swords.jpg`, `docs/store/shields.jpg`, все снимки из
 `docs/screenshots/press/`, `docs/screenshots/map_zones_0.4.2.jpg`, `docs/screenshots/village_paths_0.3.4.jpg`.
 
 ## Permissions (рекомендация)
@@ -138,13 +142,28 @@ The mod: LivingFactions.dll in a plugins folder, with manifest, README and chang
 - Use assets in other mods: ask first.
 - Use in mod packs / collections: yes.
 
-## Changelog (поле Changelogs, версия 0.6.5)
+## Changelog (поле Changelogs, версия 0.7.0)
 
 ```
-- Seven faction swords: six sold by the traders of their faction, the Greydwarf root club taken from their guards.
-- lf rewind: takes the factions back to an earlier day while the world stays as it is; lf advance keeps a copy first, so a jump too far can be undone.
-- Settlements check themselves: buildings missing after a restored backup are put up again, ground under them levelled.
-- Fixed: a guest with other HUD mods saw no chronicle under the minimap.
-- Fixed: the mod's items were named in English in games in other languages until a restart.
-- Fixed: a trader with more than seven offers hid the last ones.
+- Bands on the move: settlements send two to six people out for wood, stone, food or ore, up to 1.4 km; raids march to their target and carry the loot home.
+- War campaigns: scouts, a war camp halfway there, the assault, a supply line, allies joining, counterattacks.
+- Outposts and road watch posts; people leave places that starve or are threatened.
+- Envoy's tents: talk to a faction even at war, give gifts or tribute, ask for peace, hear what stands between you.
+- Night: everyone sleeps in their own beds; open their chest after dark and you may wake the village.
+- Carriers put their loads into the storehouse chests for real.
+- Blows answered by standing instead of "hit one, anger all"; warnings before a friendship breaks.
+- Hired fighters by standing (2, 4 or 6), and they go through portals with you.
+- Seven faction shields; clan fighters carry their shield and sword.
+- Every clan builds its own way (Raven shingles and carvings, Wolf logs and hipped thatch, Stag porches); Fuling and Greydwarf homes of their own, Fuling hide roofs, city stone walls with towers, houses and yards that differ.
+- Map: settlement names open up into their state; villagers as dots on the minimap. Alt+H hides the chronicle.
+- Settings: ReputationDecay, HiredLimit, HireMinutes, the Conflict section, LootSweep.
+- Fixed: ditches and humps along terrain tile borders when levelling with the hoe.
+- Fixed: roads into walls, steps on road beds, rocks on roads, caravans stuck on the road.
+- Villages on slopes: buildings' level ground fitted to their neighbours, ramps along the paths (older settlements are fitted once).
+- Fixed: shields turned on the arm and the arm through them; sleepers twitching in bed.
+- Fixed: own goods taken back from a chest counted as theft; false theft for guests in multiplayer.
+- Fixed: a war campaign went on after its target changed hands; a war camp taken by the enemy kept its tents and its old ties.
+- A faction state file that cannot be read no longer starts the factions over: the backup or the latest dated copy is used. A state from a newer version is not loaded.
+- The dialogue's way out is always on screen; the mod menu shows all its rows.
+- Multiplayer: lf rewind on the server resets what guests had built in the timeline taken back.
 ```

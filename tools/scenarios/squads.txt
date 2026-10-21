@@ -1,0 +1,22 @@
+# Bands on the move: an expedition walks out of Steinvik and is seen on the way; a campaign is begun and goes through its stages.
+god
+env 0.4 Clear
+goto 4
+waitready 120
+expect expedition out :: expedition 4 metal
+squads
+advance 0.17
+expect Outbound :: squads
+wait 10
+expect добытчик :: npcs
+shot squad_forager
+war 8 9
+expect campaign :: campaign 8 5
+squads
+advance 1.5
+squads
+advance 3
+expect campaign :: squads
+chronicle 12
+war 8 9 peace
+quit

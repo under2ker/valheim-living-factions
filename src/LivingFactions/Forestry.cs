@@ -56,7 +56,7 @@ namespace LivingFactions
                 if (b.Plot < 0 || b.State == BuildingState.Destroyed) continue;
                 Vec2 offset;
                 float yaw;
-                Defs.PlotTransform(b.Plot, s.Seed, out offset, out yaw);
+                Defs.PlotTransform(s, b.Plot, out offset, out yaw);
                 if (Utils.DistanceXZ(p, new Vector3(s.Pos.X + offset.X, 0f, s.Pos.Z + offset.Z)) < Blueprints.Radius(b.Kind) + KeepClear) return false;
             }
             return Utils.DistanceXZ(p, new Vector3(s.Pos.X, 0f, s.Pos.Z)) > 12f + KeepClear;

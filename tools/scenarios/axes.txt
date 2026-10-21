@@ -1,5 +1,6 @@
 # The five relic axes that are not sold, each the way it is come by.
 god
+resetgifts
 env 0.4 Clear
 emptybag
 # Blackgnaw: from a Fuling chieftain
@@ -15,7 +16,7 @@ expect LF_RootAxe :: items
 # Rune Cleaver: the thane's gift to an ally of long standing
 goto 6
 rep 10 85
-expect alliance_made :: ally 10
+ally 10
 ui open chief
 expect Принять дар тана :: ui state
 expect Носи с честью :: ui press Принять дар тана

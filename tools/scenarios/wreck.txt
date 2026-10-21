@@ -1,0 +1,14 @@
+# A building broken more than half in the world is a ruin on record too.
+god
+env 0.4 Clear
+goto 4
+waitready 300
+wait 30
+expect Complete :: wreck 4 2 state
+wreck 4 2 0.6
+wait 12
+expect Destroyed :: wreck 4 2 state
+expect разрушена :: chronicle 3
+npcs
+track 15
+quit

@@ -1,0 +1,21 @@
+# Loose items on settlement ground are cleared away (Steinvik, id 4, in the lab world).
+# Fresh drops stay for a minute, a drop at a player's feet stays; "now" skips the minute.
+god
+env 0.4 Clear
+goto 4
+waitready 300
+# Whatever the lab world had lying about goes first, so the counts below are exact.
+sweep 4 now
+wait 1
+# Three items 12-16 m away, one at the player's feet (3 m).
+spawn Wood 12 0
+spawn Stone 0 14
+spawn Resin -12 8
+spawn Flint 0 3
+wait 2
+# All four just fell: none is taken by an ordinary sweep.
+expect removed 0, kept young 4, :: sweep 4
+# Taken regardless of age: the three far ones; the one near the player stays.
+expect removed 3, kept young 0, :: sweep 4 now
+expect removed 0, kept young 0, :: sweep 4 now
+quit

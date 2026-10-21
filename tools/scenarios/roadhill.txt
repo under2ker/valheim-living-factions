@@ -1,0 +1,24 @@
+# About 4 min: LF_TIMEOUT=480.
+# A road over a hill: where the land along the road of Vindfell (1) is steepest, the road bed is cut
+# to a gentle grade (no 10 m over 40 %; the bed is cut or filled up to 3 m), the seams between
+# terrain tiles stay closed and the lamps stand on the finished ground.
+god
+env 0.4 Clear
+roads
+goto 1
+waitready 240
+roadtp 1 steep
+wait 20
+waitready 180
+roadslope 1 steep
+expect stretches of 10 m :: roadslope 1 steep
+reject TOO STEEP :: roadslope 1 steep
+seams 200
+hidehud on
+roadview 1 steep 10
+shot road_hill
+lampview
+shot road_hill_lamp
+cam
+hidehud off
+quit

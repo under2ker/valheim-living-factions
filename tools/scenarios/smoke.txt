@@ -8,7 +8,8 @@ expect worst deviation 0.0 :: padcheck 4
 reject BLOCKED :: doorcheck 4
 expect inhabitants :: count
 expect maxPerTarget :: npcs
-reject ALERT :: npcs
+# Guards on their rounds may be after a deer or a Greyling: only anger at the player is a fault.
+reject ANGRY :: npcs
 expect Woodx :: chests
 expect Coinsx :: chests
 

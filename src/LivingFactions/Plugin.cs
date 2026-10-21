@@ -13,7 +13,7 @@ namespace LivingFactions
     {
         public const string Guid = "alexandr.livingfactions";
         public const string ModName = "Living Factions";
-        public const string Version = "0.6.5";
+        public const string Version = "0.7.0";
 
         internal static Plugin Instance;
         internal static ManualLogSource Log;
@@ -38,14 +38,23 @@ namespace LivingFactions
 
         private void Update()
         {
-            if (ModConfig.DevTools.Value) DevTools.Update();
+            if (ModConfig.DevTools.Value)
+            {
+                DevTools.Update();
+                Cinema.Update();
+            }
             SimHost.Update();
             if (Net.IsDedicated) return;
             Materializer.Update();
             Discovery.Update();
+            MinimapNpcs.Update();
             Chests.Update();
+            LootSweep.Update();
+            NightThief.Update();
             Rewards.Update();
             if (SimHost.Active && ZoneSystem.instance != null) Forestry.Update();
+            SquadPresence.Update();
+            EnvoyPost.Update();
             HudWidget.Update();
             DiplomacyUI.Update();
         }

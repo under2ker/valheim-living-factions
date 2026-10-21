@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using LivingFactions.Core;
@@ -25,7 +26,7 @@ namespace LivingFactions
     /// </summary>
     internal static class Net
     {
-        private static CustomRPC _state, _duty, _call, _report, _raid, _dev;
+        private static CustomRPC _state, _duty, _call, _report, _raid, _dev, _alarm;
 
         /// <summary>Settlement -> the player (peer id) who puts it up in the world.</summary>
         private static readonly Dictionary<int, long> Builders = new Dictionary<int, long>();
@@ -40,10 +41,12 @@ namespace LivingFactions
         {
             public int Pieces, TerrainRev, LayoutRev;
             public float GroundY;
+            /// <summary>A wall's kind and gates as put up: without it a guest's wall was taken for out of date with every copy from the host.</summary>
+            public string Wall;
 
             public bool Same(Progress o)
             {
-                return Pieces == o.Pieces && TerrainRev == o.TerrainRev && LayoutRev == o.LayoutRev && (GroundY == o.GroundY || (float.IsNaN(GroundY) && float.IsNaN(o.GroundY)));
+                return Pieces == o.Pieces && TerrainRev == o.TerrainRev && LayoutRev == o.LayoutRev && Wall == o.Wall && (GroundY == o.GroundY || (float.IsNaN(GroundY) && float.IsNaN(o.GroundY)));
             }
         }
 
@@ -63,6 +66,7 @@ namespace LivingFactions
             _call = NetworkManager.Instance.AddRPC("LF_Call", OnCall, null);
             _report = NetworkManager.Instance.AddRPC("LF_Report", OnReport, null);
             _dev = NetworkManager.Instance.AddRPC("LF_Dev", OnDev, null);
+            _alarm = NetworkManager.Instance.AddRPC("LF_Alarm", OnAlarm, OnAlarm);
         }
 
         public static void Reset()
@@ -75,6 +79,17 @@ namespace LivingFactions
             _dirty = false;
             _peersSeen = 0;
             _lastEventDay = double.NaN;
+        }
+
+        /// <summary>
+        /// A guest's copy of the host's state has been replaced by another timeline: forget what this
+        /// player reported from the old one, so old building progress cannot be sent into the new world.
+        /// </summary>
+        public static void ResetGuest()
+        {
+            Known.Clear();
+            Unconfirmed.Clear();
+            _nextReport = 0f;
         }
 
         // ------------------------------------------------------------------ who builds what
@@ -213,7 +228,7 @@ namespace LivingFactions
 
         private static Progress Of(Building b)
         {
-            return new Progress { Pieces = b.SpawnedPieces, GroundY = b.GroundY, TerrainRev = b.TerrainRev, LayoutRev = b.LayoutRev };
+            return new Progress { Pieces = b.SpawnedPieces, GroundY = b.GroundY, TerrainRev = b.TerrainRev, LayoutRev = b.LayoutRev, Wall = b.Wall ?? "" };
         }
 
         private static IEnumerator OnState(long sender, ZPackage pkg)
@@ -221,7 +236,8 @@ namespace LivingFactions
             WorldState state;
             try
             {
-                state = JsonConvert.DeserializeObject<WorldState>(pkg.ReadString());
+                // A host on a newer save format is refused: this guest keeps its own copy (update the mod).
+                state = SimHost.ParseState(pkg.ReadString(), "faction state sent by the host");
             }
             catch (Exception e)
             {
@@ -232,7 +248,10 @@ namespace LivingFactions
 
             // Whatever was put up in the last moment goes on record first: the copy that has just arrived is
             // older than that, and taking it as it is would have the same pieces placed a second time.
-            if (SimHost.Active) ReportProgress();
+            // A copy from another timeline (the host took the factions back) gets no old report and no old
+            // building progress: the mirror's resync forgets both.
+            bool newTimeline = SimHost.Active && state.Epoch != SimHost.Sim.State.Epoch;
+            if (SimHost.Active && !newTimeline) ReportProgress();
 
             // What we have built since the host last heard from us stays ours until the host says the same.
             Known.Clear();
@@ -242,7 +261,7 @@ namespace LivingFactions
                 {
                     long key = Key(s.Id, b.Id);
                     Progress ours;
-                    if (Unconfirmed.TryGetValue(key, out ours))
+                    if (!newTimeline && Unconfirmed.TryGetValue(key, out ours))
                     {
                         if (ours.Same(Of(b))) Unconfirmed.Remove(key);
                         else
@@ -251,6 +270,7 @@ namespace LivingFactions
                             b.GroundY = ours.GroundY;
                             b.TerrainRev = ours.TerrainRev;
                             b.LayoutRev = ours.LayoutRev;
+                            b.Wall = ours.Wall;
                         }
                     }
                     Known[key] = Of(b);
@@ -258,6 +278,14 @@ namespace LivingFactions
             }
             bool first = !SimHost.Active;
             SimHost.SetMirror(state);
+            // The resync of a new timeline forgot what was known: the copy just taken is the baseline again.
+            if (newTimeline)
+            {
+                foreach (Settlement s in state.Settlements)
+                {
+                    foreach (Building b in s.Buildings) Known[Key(s.Id, b.Id)] = Of(b);
+                }
+            }
             if (first) Plugin.Log.LogInfo("Faction state received from the host: " + state.Factions.Count + " factions, " + state.Settlements.Count + " settlements, day " + state.Day.ToString("0.0"));
 
             // News the host has written into the chronicle since the last copy.
@@ -298,6 +326,7 @@ namespace LivingFactions
                     pkg.Write(now.GroundY);
                     pkg.Write(now.TerrainRev);
                     pkg.Write(now.LayoutRev);
+                    pkg.Write(now.Wall);
                     count++;
                 }
             }
@@ -318,6 +347,7 @@ namespace LivingFactions
                 int sid = pkg.ReadInt(), bid = pkg.ReadInt(), pieces = pkg.ReadInt();
                 float ground = pkg.ReadSingle();
                 int terrain = pkg.ReadInt(), layout = pkg.ReadInt();
+                string wall = pkg.ReadString();
                 Settlement s = SimHost.Sim.State.GetSettlement(sid);
                 if (s == null) continue;
                 foreach (Building b in s.Buildings)
@@ -327,6 +357,7 @@ namespace LivingFactions
                     b.GroundY = ground;
                     b.TerrainRev = terrain;
                     b.LayoutRev = layout;
+                    b.Wall = wall;
                 }
             }
             _dirty = true;
@@ -354,6 +385,36 @@ namespace LivingFactions
             if (!SimHost.Active) yield break;
             Settlement from = SimHost.Sim.State.GetSettlement(fromId), target = SimHost.Sim.State.GetSettlement(targetId);
             if (from != null && target != null) Raids.Stage(from, target, committed);
+        }
+
+        /// <summary>
+        /// A thief is caught in the night: raised here and on every other game, since each runs the minds
+        /// of the people near it. The faction counts it against the thief.
+        /// </summary>
+        public static void RaiseAlarm(Settlement s, Player thief, Vector3 where)
+        {
+            NightThief.Alarm(s, thief, where);
+            Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
+            if (f != null) PlayerAttackedMember(f, thief.GetPlayerID(), 3f);
+            if (_alarm == null || ZRoutedRpc.instance == null || Alone) return;
+            ZNetView view = thief.GetComponent<ZNetView>();
+            if (view == null || !view.IsValid()) return;
+            ZPackage pkg = new ZPackage();
+            pkg.Write(s.Id);
+            pkg.Write(view.GetZDO().m_uid);
+            pkg.Write(where);
+            _alarm.SendPackage(ZRoutedRpc.Everybody, pkg);
+        }
+
+        private static IEnumerator OnAlarm(long sender, ZPackage pkg)
+        {
+            int id = pkg.ReadInt();
+            ZDOID thief = pkg.ReadZDOID();
+            Vector3 where = pkg.ReadVector3();
+            if (!SimHost.Active || sender == Me) yield break;
+            GameObject go = ZNetScene.instance != null ? ZNetScene.instance.FindInstance(thief) : null;
+            Character who = go != null ? go.GetComponent<Character>() : null;
+            if (who != null) NightThief.Alarm(SimHost.Sim.State.GetSettlement(id), who, where);
         }
 
         // ------------------------------------------------------------------ testing
@@ -389,9 +450,18 @@ namespace LivingFactions
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append(IsDedicated ? "dedicated server" : IsHost ? (Alone ? "host, alone" : "host with " + ZNet.instance.GetPeers().Count + " guests") : "guest");
-            sb.Append(", builds settlements [");
-            foreach (KeyValuePair<int, long> b in Builders) if (b.Value == Me) sb.Append(b.Key).Append(' ');
-            sb.Append("], keeps roads ").Append(KeepsRoads).Append(", unconfirmed building reports ").Append(Unconfirmed.Count);
+            sb.Append(", epoch ").Append(SimHost.Sim != null ? SimHost.Sim.State.Epoch : -1);
+            // Each one in its own brackets, "[4][9][26]", so a test can look for "[26]" wherever it stands.
+            sb.Append(", builds settlements ");
+            int mine = 0;
+            foreach (KeyValuePair<int, long> b in Builders.OrderBy(k => k.Key))
+            {
+                if (b.Value != Me) continue;
+                sb.Append('[').Append(b.Key).Append(']');
+                mine++;
+            }
+            if (mine == 0) sb.Append("none");
+            sb.Append(", keeps roads ").Append(KeepsRoads).Append(", unconfirmed building reports ").Append(Unconfirmed.Count);
             return sb.ToString();
         }
 
@@ -475,9 +545,18 @@ namespace LivingFactions
                 case "gift": sim.PlayerGift(st.GetSettlement((int)a[0]), (long)a[1], (Res)(int)a[2], (float)a[3]); break;
                 case "buy": sim.PlayerBuy(st.GetSettlement((int)a[0]), (Res)(int)a[1], (int)a[2], (long)a[3], (int)a[4]); break;
                 case "sell": sim.PlayerSell(st.GetSettlement((int)a[0]), (Res)(int)a[1], (int)a[2], (long)a[3]); break;
-                case "killed": sim.PlayerKilledMember(st.GetSettlement((int)a[0]), (long)a[1], (bool)a[2]); break;
+                case "killed": sim.PlayerKilledMember(st.GetSettlement((int)a[0]), (long)a[1], (bool)a[2], (bool)a[3], (bool)a[4], (bool)a[5]); break;
+                case "squadloss": sim.SquadLoss((int)a[0]); break;
+                case "wrecked": sim.BuildingWrecked(st.GetSettlement((int)a[0]), (int)a[1]); break;
+                case "chief":
+                {
+                    Settlement fallen = st.GetSettlement((int)a[0]);
+                    Faction ff = fallen != null ? st.GetFaction(fallen.FactionId) : null;
+                    if (ff != null) sim.ChiefFell(fallen, ff);
+                    break;
+                }
                 case "died": sim.MemberDied(st.GetSettlement((int)a[0]), (bool)a[1]); break;
-                case "attacked": sim.PlayerAttackedMember(st.GetFaction((int)a[0]), (long)a[1]); break;
+                case "attacked": sim.PlayerAttackedMember(st.GetFaction((int)a[0]), (long)a[1], a.Length > 2 ? (float)a[2] : 2f); break;
                 case "damaged": sim.PlayerDamagedProperty(st.GetFaction((int)a[0]), (long)a[1]); break;
                 case "stole": sim.PlayerStole(st.GetFaction((int)a[0]), (long)a[1], (float)a[2]); break;
                 case "helped": sim.PlayerHelped(st.GetFaction((int)a[0]), (long)a[1], (float)a[2]); break;
@@ -544,10 +623,31 @@ namespace LivingFactions
             return r;
         }
 
-        public static void PlayerKilledMember(Settlement s, long pid, bool soldier)
+        public static void PlayerKilledMember(Settlement s, long pid, bool soldier, bool witnessed = true, bool chief = false, bool counted = true)
         {
-            SimHost.Sim.PlayerKilledMember(s, pid, soldier);
-            Send("killed", s.Id, pid, soldier);
+            SimHost.Sim.PlayerKilledMember(s, pid, soldier, witnessed, chief, counted);
+            Send("killed", s.Id, pid, soldier, witnessed, chief, counted);
+        }
+
+        /// <summary>Most of a building's pieces are gone in the world: the settlement has a ruin there now.</summary>
+        public static void BuildingWrecked(Settlement s, int buildingId)
+        {
+            SimHost.Sim.BuildingWrecked(s, buildingId);
+            Send("wrecked", s.Id, buildingId);
+        }
+
+        public static void SquadLoss(int squadId)
+        {
+            SimHost.Sim.SquadLoss(squadId);
+            Send("squadloss", squadId);
+        }
+
+        public static void ChiefFell(Settlement s)
+        {
+            Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
+            if (f == null) return;
+            SimHost.Sim.ChiefFell(s, f);
+            Send("chief", s.Id);
         }
 
         public static void MemberDied(Settlement s, bool soldier)
@@ -556,10 +656,10 @@ namespace LivingFactions
             Send("died", s.Id, soldier);
         }
 
-        public static void PlayerAttackedMember(Faction f, long pid)
+        public static void PlayerAttackedMember(Faction f, long pid, float loss = 2f)
         {
-            SimHost.Sim.PlayerAttackedMember(f, pid);
-            Send("attacked", f.Id, pid);
+            SimHost.Sim.PlayerAttackedMember(f, pid, loss);
+            Send("attacked", f.Id, pid, loss);
         }
 
         public static void PlayerDamagedProperty(Faction f, long pid)

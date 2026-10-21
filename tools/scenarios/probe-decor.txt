@@ -1,0 +1,28 @@
+# What the furniture and yard pieces really measure (solid boxes, not just the mesh), which of them
+# exist in this game version, and what they carry (Container, Destructible, drops). Also a bed seen
+# from above beside a 2 m floor tile as a ruler. Read the dump lines in the report.
+god
+env 0.5 Clear
+waitready 200
+hidehud on
+hideme
+dump bed goblin_bed piece_chest_wood piece_table piece_chair piece_bench01 piece_logbench01 piece_walltorch wood_door woodwall stake_wall stone_pillar wood_fence
+dump wood_stack wood_fine_stack wood_core_stack stone_pile coal_pile bone_stack prop_wood_stack wood_pile woodfarm_woodpile northvillage_woodpile
+dump piece_workbench_ext1 piece_workbench_ext2 piece_workbench_ext3 piece_workbench_ext4 piece_cauldron fermenter piece_spinningwheel piece_TrainingDummy piece_ArcheryTarget piece_sapcollector
+dump piece_pot1 piece_pot2 piece_pot3 piece_chair02 piece_chair03 piece_table_oak piece_table_round rug_wolf rug_fur rug_straw rug_hare piece_brazierfloor01 piece_maypole
+dump goblin_trashpile goblin_fence goblin_stepladder goblin_strawpile goblin_totempole goblin_banner skull_pile skeleton_pile draugr_pile Crate barrell CargoCrate itemstand
+dump dvergrprops_barrel dvergrprops_crate dvergrprops_crate_long dvergrprops_stool dvergrprops_table dvergrprops_shelf dvergrprops_lantern_standing dvergrprops_chair piece_dvergr_lantern_pole
+dump fire_pit_iron piece_hoodedlantern piece_cookingstation_iron piece_chest_barrel Cart piece_beehive
+find barrel
+find crate
+find pile
+find stack
+find rug_
+specimen bed 0 wood_floor 2.4 0 0 0
+specam 0 7 0.01
+wait 2
+shot bed_top
+specam 0 1.5 5
+wait 1
+shot bed_front
+quit

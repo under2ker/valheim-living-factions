@@ -1,0 +1,9 @@
+god
+waitready 200
+campsite 4 5
+war 8 9
+campaign 8 5 camp
+squads
+chronicle 5
+war 8 9 peace
+quit

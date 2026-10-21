@@ -1,0 +1,39 @@
+# Beds and yards (0.7.0), Steinvik (4, Raven Clan city); the other cultures are in decor-b.txt. Every
+# home has a bed for each two it houses (Hut 1, House 2, Longhouse 4, great hall 3), set clear of the
+# door, the chest and the torches; yards have a woodpile and things of the culture at the sides and
+# back, never in front of the door or on a road or a path; the square has its woodpile, chopping
+# block, torches and a few things more. At night every villager and the chief must lie in a bed
+# ("beds" lists who sleeps where), no door may be blocked and no road blocked by a yard thing.
+god
+env 0.4 Clear
+goto 4
+waitready 400
+hidehud on
+hideme
+inside 4 Hut 1.3 1.9
+shot decor_hut_in
+inside 4 House 1.3 1.9
+shot decor_house_in
+inside 4 Longhouse 2.2 2.2
+shot decor_longhouse_in
+inside 4 GreatHall 2.2 2.4
+shot decor_hall_in
+outside 4 Hut 0 9 4 135
+shot decor_hut_yard
+outside 4 House 0 10 4 225
+shot decor_house_yard
+outside 4 Longhouse 0 12 5 160
+shot decor_longhouse_yard
+view 4 16 9 200
+shot decor_square
+reject BLOCKED :: doorcheck 4
+reject BLOCKED :: roadcheck 4
+expect everyone in a bed :: beds 4
+env 0.97 Clear
+wait 90
+expect asleep :: npcs
+expect everyone in a bed :: beds 4
+inside 4 House 1.3 1.9
+shot decor_house_night
+cam
+quit

@@ -1,0 +1,14 @@
+# A campaign ends when the place it is aimed at passes to another faction, before any assault.
+# owner <settlement> <faction#>: testing command, puts the place in another faction's hands.
+god
+env 0.4 Clear
+waitready 200
+war 8 9
+campaign 8 5 camp
+expect Camp :: squads
+owner 5 2
+advance 1
+expect Over :: squads
+expect why other :: squads
+expect (gone) :: squads
+quit

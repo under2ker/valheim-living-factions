@@ -1,9 +1,15 @@
+# About 6 min: LF_TIMEOUT=600.
 # The road: found over dry land, painted, cleared, lit. Run twice: the second run must show the
 # same road at once, without waiting for it to be made again.
 god
 env 0.4 Clear
 goto 1
 roads
+waitready 180
+roadcheck 1
+expect walked :: roadcheck 1
+reject BLOCKED :: roadcheck 1
+reject LAMP INSIDE :: roadcheck 1
 roadtp 1 dry 150
 wait 20
 hidehud on

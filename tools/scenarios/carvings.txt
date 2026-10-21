@@ -1,0 +1,33 @@
+# Close up: the clans' carvings against their houses (ridge ends against the gable, the wolf beside the door)
+# and the banners on the longhouse gables. Raven Clan (4), Wolf Clan (1).
+god
+env 0.4 Clear
+hidehud on
+hideme
+goto 4
+waitready 400
+outside 4 House 0 6 5.5 90
+wait 2
+shot carve_raven_house_end
+outside 4 House 0 7 4 60
+wait 2
+shot carve_raven_house_corner
+outside 4 Longhouse 0 7 5 90
+wait 2
+shot carve_raven_longhouse_end
+outside 4 Longhouse 0 5 3 100
+wait 2
+shot banner_raven_longhouse
+goto 1
+waitready 400
+outside 1 Hut 0 4 1.8 15
+wait 2
+shot carve_wolf_hut_door
+outside 1 House 0 4.5 1.8 345
+wait 2
+shot carve_wolf_house_door
+outside 1 Longhouse 0 7 5 90
+wait 2
+shot carve_wolf_longhouse_end
+cam
+quit

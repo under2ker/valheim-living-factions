@@ -1,0 +1,14 @@
+# A settlement's goods are its own: its fields cannot be harvested, and stolen goods cannot be sold or given back.
+god
+env 0.4 Clear
+goto 4
+waitready 120
+expect refused :: pickfield
+rep 8 30
+expect noticed True :: steal 8
+ui open chief
+ui click 1
+expect вор :: ui state
+ui close
+steal 8 off
+quit

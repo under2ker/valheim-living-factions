@@ -1,0 +1,39 @@
+# Anger: an ally forgives four blows and fights back at the fifth; the anger stays where it happened.
+god
+resetgifts
+env 0.4 Clear
+goto 4
+waitready 120
+rep 8 75
+ally 8
+expect patience 5 :: grudge 8
+hit Guard 1
+wait 2
+expect calm :: grudge 8
+reject ANGRY :: npcs
+hit Guard 3
+wait 1
+expect calm :: grudge 8
+hit Guard 1
+wait 2
+expect angry for :: grudge 8
+expect ANGRY :: npcs
+expect allied :: grudge 8
+# run off: they stop at the edge of the fight
+tp 1150 -250
+wait 5
+reject ANGRY :: npcs
+# come back before it cools: it starts again
+goto 4
+wait 3
+expect ANGRY :: npcs
+# a killing in front of the others
+slay Villager 1
+wait 2
+expect standing :: grudge 8
+# the chief falls
+slay Chief 1
+wait 2
+chronicle 5
+grudge 8
+quit

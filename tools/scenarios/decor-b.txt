@@ -1,0 +1,36 @@
+# Beds and yards (0.7.0) of the other cultures: Mokrok (3, Fulings: straw beds, the headman's heap of
+# straw), Barkthicket (5, Greydwarfs: heaps of straw in the dens), Durhall (6, Dvergr). Everyone of the
+# villagers and the chief must have a bed ("beds"), no door or road may be blocked. Three settlements
+# rebuilt on arrival: run with LF_TIMEOUT=600.
+god
+env 0.4 Clear
+hidehud on
+hideme
+goto 3
+waitready 400
+inside 3 Hut 1.2 1.8
+shot decor_fuling_hut_in
+inside 3 Longhouse 1.6 2
+shot decor_fuling_headman_in
+outside 3 House 0 9 4 180
+shot decor_fuling_yard
+expect everyone in a bed :: beds 3
+reject BLOCKED :: doorcheck 3
+goto 5
+waitready 400
+inside 5 House 1.6 2
+shot decor_greydwarf_den_in
+inside 5 Longhouse 1.6 2
+shot decor_greydwarf_longden_in
+expect everyone in a bed :: beds 5
+goto 6
+waitready 400
+outside 6 House 0 10 4 225
+shot decor_dvergr_yard
+view 6 16 9 200
+shot decor_dvergr_square
+expect everyone in a bed :: beds 6
+reject BLOCKED :: doorcheck 6
+reject BLOCKED :: roadcheck 6
+cam
+quit

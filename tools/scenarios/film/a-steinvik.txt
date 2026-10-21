@@ -1,0 +1,51 @@
+# Film: Steinvik through a day. Marks name each shot.
+god
+hideme
+env 0.34 Clear
+goto 4
+waitready 240
+wait 20
+hidehud on
+fly 4 135 420 380 140 140 0.1
+wait 3
+mark rec
+mark s01-flyin
+fly 4 135 420 120 140 45 16
+wait 17
+mark s02-orbit-high
+orbit 4 120 45 18 135 100
+wait 19
+mark s03-orbit-mid
+orbit 4 45 16 16 240 90
+wait 17
+mark s04-follow-villager
+follow Villager 12 1
+wait 13
+mark s05-crane-up
+fly 4 300 40 160 14 110 14
+wait 15
+mark s06-evening
+env 0.76 Clear
+wait 3
+orbit 4 60 22 16 20 90
+wait 17
+mark s07-rain
+env 0.5 Rain
+wait 4
+orbit 4 40 14 14 150 70
+wait 15
+mark s08-night
+env 0.95 Clear
+wait 25
+orbit 4 30 10 18 60 100
+wait 19
+mark s09-night-follow-guard
+follow Guard 12 -1
+wait 13
+mark s10-dawn
+env 0.26 Misty
+wait 4
+fly 4 220 60 180 18 70 14
+wait 15
+mark end
+quit

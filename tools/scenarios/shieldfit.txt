@@ -1,0 +1,37 @@
+# The clans' shields clear of the forearm: for every shield carrier near (the player with the Raven Kite
+# too) the least room between the forearm and the back of the board over 8 s, no CLIPS.
+# Raven Clan (4), Wolf Clan (1), Fuling Horde (3).
+god
+env 0.4 Clear
+waitready 200
+# first, while here: the Fuling roof piece beside the wooden one, high up against the sky
+hidehud on
+specimen goblin_roof_45d 0 wood_roof_45 6 0 0 0 25
+wait 3
+specam 3 0 -10
+shot roof_b_side
+specam 13 0 0
+shot roof_b_end
+specam -10 0 0
+shot roof_b_other_end
+specam 3 -8 -6
+shot roof_b_below
+cam
+hidehud off
+equip LF_RavenShield
+goto 4
+waitready 240
+shieldfit 8
+until shieldfit done :: shieldfit
+reject CLIPS :: shieldfit
+goto 1
+waitready 240
+shieldfit 8
+until shieldfit done :: shieldfit
+reject CLIPS :: shieldfit
+goto 3
+waitready 240
+shieldfit 8
+until shieldfit done :: shieldfit
+reject CLIPS :: shieldfit
+quit

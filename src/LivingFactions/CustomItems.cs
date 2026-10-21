@@ -29,6 +29,8 @@ namespace LivingFactions
         public string Grip = "grip";
         /// <summary>Axes stand on the vanilla axe's butt (-0.16 m); swords are held by the middle of their grip.</summary>
         public bool HeldByGrip;
+        /// <summary>A shield: <see cref="Grip"/> is its board, <see cref="Length"/> the board's width.</summary>
+        public bool Shield;
     }
 
     /// <summary>Items the mod adds to the game. Each axe is listed here once.</summary>
@@ -132,6 +134,56 @@ namespace LivingFactions
                 DescEn = "A knotted root split at the head round ten flint chips, with an amber eye at the butt. Greydwarf guards carry it.",
                 DescRu = "Узловатый корень, расщеплённый на конце вокруг десяти кремней, с янтарным глазом у рукояти. Её носят стражи грейдворфов.",
             },
+            // The shields: sold as stout relics by their traders, the Greydwarf one taken from their guards (Rewards.cs).
+            new AxeSpec
+            {
+                Asset = "wolf-shield", Prefab = "LF_WolfHideShield", Source = "ShieldWood", Length = 0.79f, Shield = true, Grip = "wood_disc",
+                NameEn = "Wolf-Hide Shield", NameRu = "Щит Волчьей Шкуры",
+                DescEn = "A round board under a whole grey wolf pelt, its tail hanging below the rim, an iron band and boss. The Wolf Clan's shield.",
+                DescRu = "Круглый щит под целой серой волчьей шкурой, хвост свисает с края, железный обод и умбон. Щит Клана Волка.",
+            },
+            new AxeSpec
+            {
+                Asset = "stag-shield", Prefab = "LF_StagTrailShield", Source = "ShieldBanded", Length = 0.93f, Shield = true, Grip = "wood_disc",
+                NameEn = "Stag-Trail Shield", NameRu = "Щит Оленьей Тропы",
+                DescEn = "Tan deer-hide on a round board, a bronze trim and boss, two antler tines and bronze coins round the rim. The Stag Clan's shield.",
+                DescRu = "Оленья кожа на круглом щите, бронзовая оковка и умбон, два отростка рога и бронзовые монеты по краю. Щит Клана Оленя.",
+            },
+            new AxeSpec
+            {
+                Asset = "raven-shield", Prefab = "LF_RavenShield", Source = "ShieldBanded", Length = 0.52f, Shield = true, Grip = "kite_wood",
+                NameEn = "Raven Kite", NameRu = "Вороний Щит",
+                DescEn = "A tall kite of black-stained wood faced with black leather, a dark steel boss and raven feathers along the top. The Raven Clan's shield.",
+                DescRu = "Высокий каплевидный щит из чернёного дерева в чёрной коже, тёмный стальной умбон и вороньи перья по верху. Щит Клана Ворона.",
+            },
+            new AxeSpec
+            {
+                Asset = "fuling-shield", Prefab = "LF_BoneShield", Source = "ShieldBanded", Length = 0.93f, Shield = true, Grip = "bone_disc",
+                NameEn = "Bone Shield", NameRu = "Костяной Щит",
+                DescEn = "One great piece of bone with a bead rim, a bone boss and two tusks crossed above. The Fuling Horde's shield.",
+                DescRu = "Цельная огромная кость с бортиком, костяным умбоном и двумя скрещёнными бивнями над краем. Щит Орды фулингов.",
+            },
+            new AxeSpec
+            {
+                Asset = "dvergr-shield", Prefab = "LF_CopperShield", Source = "ShieldBanded", Length = 0.93f, Shield = true, Grip = "copper_face",
+                NameEn = "Copper Shield", NameRu = "Медный Щит",
+                DescEn = "Hammered copper with a bead rim, rune bands across the face and a gem in the boss. The Dvergr Hold's shield.",
+                DescRu = "Кованая медь с бортиком, полосами рун по полю и самоцветом в умбоне. Щит Чертога двергов.",
+            },
+            new AxeSpec
+            {
+                Asset = "greydwarf-shield", Prefab = "LF_BarkShield", Source = "ShieldWood", Length = 0.79f, Shield = true, Grip = "bark_slabs",
+                NameEn = "Bark Shield", NameRu = "Корковый Щит",
+                DescEn = "Five slabs of bark bound with vine, amber resin at the heart and roots past the rim. Greydwarf guards carry it.",
+                DescRu = "Пять пластов коры, стянутых лианой, янтарная смола в центре и корни за краем. Его носят стражи грейдворфов.",
+            },
+            new AxeSpec
+            {
+                Asset = "draugr-shield", Prefab = "LF_BonePlateShield", Source = "ShieldBanded", Length = 0.93f, Shield = true, Grip = "backing",
+                NameEn = "Bone-Plate Shield", NameRu = "Щит Костяных Пластин",
+                DescEn = "Pale bone scales over a dark backing, an iron rim, a crescent boss and bone charms on cords. The Draugr Court's shield.",
+                DescRu = "Бледные костяные чешуи на тёмной основе, железный обод, умбон-полумесяц и костяные обереги на шнурах. Щит Двора драугров.",
+            },
             new AxeSpec
             {
                 Asset = "draugr-sword", Prefab = "LF_RustedBlade", Source = "SwordIron", Length = 1.27f, HeldByGrip = true,
@@ -142,6 +194,9 @@ namespace LivingFactions
         };
 
         private static bool _created;
+
+        /// <summary>Which part of a model (its submesh) is the board or blade it is held by, by prefab: for the dev probes.</summary>
+        internal static readonly Dictionary<string, int> BoardPart = new Dictionary<string, int>();
 
         /// <summary>The vanilla AxeIron in joint space (docs/reference/attach-points-items.tsv): handle on Z, -0.16..+0.72.</summary>
         private const float HandleMin = -0.16f;
@@ -208,6 +263,38 @@ namespace LivingFactions
             }
         }
 
+        /// <summary>
+        /// Kit (x, y, z) to joint space. Weapons: (-x, z, y), the handle along Y in the kit runs along Z in
+        /// the hand, the blade from -X to +X, the thickness from Z to Y. Shields: (x, -z, y), the board
+        /// stands in the hand's XZ with its top (kit +Y) along +Z, up the forearm, and its face (kit +Z) out
+        /// to -Y, as the vanilla shields have it (their tower shields are long on Z and hang mostly below the
+        /// hand, docs/reference/attach-points-items.tsv). The top along +X, as before, is forward: a kite
+        /// stuck out in front of the hand and lay across the back, the round boards had their tops forward.
+        /// Both are turns, not mirrors, so the triangles keep their winding.
+        /// </summary>
+        private static Vector3 Map(AxeSpec spec, float[] p, int i)
+        {
+            return spec.Shield ? new Vector3(p[i], -p[i + 2], p[i + 1]) : new Vector3(-p[i], p[i + 2], p[i + 1]);
+        }
+
+        /// <summary>
+        /// How far the back of a shield's board stands off the hand's joint at the wrist, out toward its face.
+        /// The forearm runs across the back of the board, from the wrist (x -0.10, y -0.03 in the joint's space)
+        /// to the elbow (x -0.36, y -0.06 to -0.12 with the poses of the idle animations; measured with
+        /// `shieldfit`), some 5 cm thick each way. At 2 cm off the joint and lying flat, as before, the elbow end
+        /// of the arm came through the board on most of the people carrying one.
+        /// </summary>
+        private const float ShieldStandoff = 0.115f;
+
+        /// <summary>
+        /// The board turns with the forearm, its elbow side further out (about the joint's Z, the shield's up), as
+        /// the game's own shields lie (they reach from y -0.24 in front to +0.11 behind over a metre of board).
+        /// </summary>
+        private const float ShieldTilt = 17f, WristX = -0.10f;
+
+        /// <summary>The top of a tall shield's board above the hand, as the vanilla kite and tower shields hang (+0.38 to +0.69).</summary>
+        private const float TallShieldTop = 0.45f;
+
         /// <summary>Replaces the clone's visible mesh with the kit's model, keeping the clone's overall size.</summary>
         private static void ApplyModel(GameObject go, AxeSpec spec)
         {
@@ -240,6 +327,7 @@ namespace LivingFactions
 
             // The grip's centre, in joint space before fitting: the handle must pass through the joint's zero.
             float gripX = 0f, gripY = 0f, gripZ = 0f;
+            Bounds grip = new Bounds();
             int gripN = 0;
             foreach (JObject part in (JArray)kit["meshes"])
             {
@@ -250,15 +338,13 @@ namespace LivingFactions
                 // side, each with its own normal, so the axe reads correctly from either side.
                 for (int t = 0; t + 8 < p.Length; t += 9)
                 {
-                    // Kit (x, y, z) -> joint space (-x, z, y): the handle runs along Y in the kit and along Z in
-                    // the hand, the blade goes from -X to +X, the thickness from Z to Y. This is a turn, not a
-                    // mirror, so the triangles keep their winding. Normals are computed after the map.
-                    Vector3 a = new Vector3(-p[t], p[t + 2], p[t + 1]);
-                    Vector3 b = new Vector3(-p[t + 3], p[t + 5], p[t + 4]);
-                    Vector3 c = new Vector3(-p[t + 6], p[t + 8], p[t + 7]);
+                    // Into joint space (see Map); normals are computed after the map.
+                    Vector3 a = Map(spec, p, t), b = Map(spec, p, t + 3), c = Map(spec, p, t + 6);
                     if ((string)part["name"] == spec.Grip)
                     {
                         gripX += a.x + b.x + c.x; gripY += a.y + b.y + c.y; gripZ += a.z + b.z + c.z; gripN += 3;
+                        if (gripN == 3) grip = new Bounds(a, Vector3.zero);
+                        grip.Encapsulate(a); grip.Encapsulate(b); grip.Encapsulate(c);
                     }
                     Vector3 n = Vector3.Cross(b - a, c - a).normalized;
                     int i = t / 3; // index of vertex a; uvs hold two floats per vertex
@@ -274,8 +360,9 @@ namespace LivingFactions
                     k = verts.Count - 3;
                     tris.Add(k); tris.Add(k + 1); tris.Add(k + 2);
                 }
+                if ((string)part["name"] == spec.Grip) BoardPart[prefab] = subs.Count;
                 subs.Add(tris.ToArray());
-                mats.Add(MaterialFor((string)part["texture"], baseMat));
+                mats.Add(MaterialFor((string)part["texture"], baseMat, spec.Shield));
             }
 
             Mesh mesh = new Mesh { name = prefab };
@@ -286,14 +373,32 @@ namespace LivingFactions
             // node's space is the hand. Vanilla AxeIron there (tools/reference attach-points-items.tsv):
             // handle along Z through (0,0), Z from -0.16 to +0.72, head toward +X.
             Transform attach = go.transform.Find("attach") ?? go.transform;
-            float length = kitBounds.size.z;
+            // A shield is sized by the width of its board, the rest is sized by its length.
+            float length = spec.Shield ? grip.size.x : kitBounds.size.z;
             float scale = length > 0f ? spec.Length / length : 1f;
             Vector3 centre = gripN > 0 ? new Vector3(gripX / gripN, gripY / gripN, gripZ / gripN) : Vector3.zero;
             if (gripN == 0 && spec.HeldByGrip) Plugin.Log.LogWarning(prefab + ": no part named " + spec.Grip + " to hold it by");
-            Vector3 offset = spec.HeldByGrip
+            // A shield's board centred where the vanilla one is (x +0.045, z +0.025), its back against the arm;
+            // a tall one hangs below the hand, its top no higher than the vanilla kites'.
+            float boardZ = 0.025f - grip.center.z * scale;
+            if (spec.Shield && grip.size.z > grip.size.x * 1.3f) boardZ = Mathf.Min(boardZ, TallShieldTop - grip.max.z * scale);
+            Vector3 offset = spec.Shield
+                ? new Vector3(0.045f - grip.center.x * scale, -ShieldStandoff - grip.max.y * scale, boardZ)
+                : spec.HeldByGrip
                 ? -centre * scale
                 : new Vector3(-centre.x * scale, -centre.y * scale, HandleMin - kitBounds.min.z * scale);
             for (int i = 0; i < verts.Count; i++) verts[i] = verts[i] * scale + offset;
+            if (spec.Shield)
+            {
+                // Turned about the shield's up through the back of the board at the wrist: the elbow side out, the far side in.
+                Quaternion tilt = Quaternion.AngleAxis(ShieldTilt, Vector3.forward);
+                Vector3 pivot = new Vector3(WristX, -ShieldStandoff, 0f);
+                for (int i = 0; i < verts.Count; i++)
+                {
+                    Vector3 v = verts[i] - pivot;
+                    verts[i] = pivot + tilt * new Vector3(v.x, v.y, 0f) + new Vector3(0f, 0f, v.z);
+                }
+            }
 
             // Joint space -> the mesh's own space. The vertices are then moved into the mesh's local space, and the
             // normals are recomputed from the final triangles: a non-uniform transform would skew the old ones.
@@ -349,9 +454,21 @@ namespace LivingFactions
             uvs.Add(new Vector2(uv[index * 2], uv[index * 2 + 1]));
         }
 
-        private static Material MaterialFor(string texture, Material baseMat)
+        private static Material MaterialFor(string texture, Material baseMat, bool matte)
         {
             Material mat = new Material(baseMat);
+            if (matte)
+            {
+                // The vanilla shields' material shines and glows its own pattern: the kit's paint carries the look.
+                mat.DisableKeyword("_EMISSION");
+                if (mat.HasProperty("_EmissionColor")) mat.SetColor("_EmissionColor", Color.black);
+                if (mat.HasProperty("_EmissionMap")) mat.SetTexture("_EmissionMap", null);
+                if (mat.HasProperty("_Metallic")) mat.SetFloat("_Metallic", 0f);
+                if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0.15f);
+                if (mat.HasProperty("_MetallicGlossMap")) mat.SetTexture("_MetallicGlossMap", null);
+                if (mat.HasProperty("_BumpMap")) mat.SetTexture("_BumpMap", null);
+                if (mat.HasProperty("_Color")) mat.SetColor("_Color", new Color(0.82f, 0.82f, 0.82f));
+            }
             Texture2D tex = LoadTexture(texture + ".png");
             if (tex != null) mat.mainTexture = tex;
             return mat;

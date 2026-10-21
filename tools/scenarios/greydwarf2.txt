@@ -1,0 +1,12 @@
+god
+env 0.4 Clear
+goto 5
+waitready 240
+wait 20
+hidehud on
+hideme
+view 5 26 9 300
+shot greydwarf_c
+view 5 26 9 60
+shot greydwarf_d
+quit

@@ -1,0 +1,22 @@
+# The Fulings' storehouse, smithy and hunters' lodge under their hide roofs (settlement 3, Fuling Horde).
+god
+env 0.4 Clear
+hidehud on
+hideme
+goto 3
+waitready 240
+padcheck 3
+outside 3 Storehouse
+wait 2
+shot fuling_storehouse
+outside 3 Smithy
+wait 2
+shot fuling_smithy
+outside 3 HunterLodge
+wait 2
+shot fuling_lodge
+view 3 35 16 135
+wait 2
+shot fuling_overview
+cam
+quit

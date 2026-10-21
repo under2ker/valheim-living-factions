@@ -1,0 +1,9 @@
+# A broken faction state file must not make the factions start over: the kept copies are read instead.
+# PRECONDITION, done by the shell before the run: the main faction state file is replaced with broken text,
+# with a good copy in its .bak (or no .bak, and the copies in history/ only).
+# The log then says where the state came from, and the main file is written back at once.
+god
+env 0.4 Clear
+waitready 200
+status
+quit

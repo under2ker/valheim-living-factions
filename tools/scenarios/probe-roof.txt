@@ -1,0 +1,21 @@
+# How the Fuling roof piece sits beside the wooden 45-degree one, out in the open (for the Fuling workshops' roofs).
+god
+env 0.4 Clear
+waitready 200
+tp 1150 -250
+waitready 120
+hidehud on
+hideme
+specimen goblin_roof_45d 0 wood_roof_45 6 0 0 0
+wait 3
+specam 3 1.5 -9
+shot roof_a_side
+specam 12 1.5 0
+shot roof_a_end
+specam -9 1.5 0
+shot roof_a_other_end
+specam 3.5 11 0.6
+shot roof_a_top
+dump goblin_roof_45d
+cam
+quit

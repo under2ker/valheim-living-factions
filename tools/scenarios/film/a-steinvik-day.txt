@@ -1,0 +1,24 @@
+# Film: Steinvik by day. Fly in, orbit high, orbit low, walk with a villager.
+god
+hideme
+env 0.36 Clear
+goto 4
+waitready 240
+wait 20
+hidehud on
+speed 1
+fly 4 135 300 260 70 70 0.1
+wait 3
+mark rec
+fly 4 135 300 60 70 22 14
+wait 15
+orbit 4 55 24 16 135 110
+wait 17
+orbit 4 26 5 14 260 80
+wait 15
+follow Villager 14 1
+wait 15
+dolly 960 75 -300 998 66 -250 1040 70 -200 998 66 -250 12
+wait 13
+mark end
+quit

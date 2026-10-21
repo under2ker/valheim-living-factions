@@ -1,16 +1,25 @@
 god
 env 0.4 Clear
 goto 4
+waitready 240
 wait 3
+# minimap: dots of the faction's people around the player (only FactionMember characters)
+expect villager dots (on True :: mapinfo
+reject , 0 drawn :: mapinfo
+shot map_small
 map large 0.5 all
 wait 20
+# large map: the dots are hidden there, the settlement marks have a brief and a full name
+expect settlement marks :: mapinfo
+expect , 0 drawn :: mapinfo
 shot map_all_wide
-map large 0.12 all
+map large 0.05 all
 wait 3
+expect shown full :: mapinfo
 shot map_all_close
 map off
 wait 3
-shot map_small
+shot map_small_after
 map large 0.5
 map off
 quit

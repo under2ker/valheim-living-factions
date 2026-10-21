@@ -1,7 +1,9 @@
 # A boss hunt: the chief names the beast and the bounty, the player kills it, the chief pays.
 god
+resetgifts
 env 0.4 Clear
 goto 4
+waitready 300
 ui open chief
 expect Спросить об охоте :: ui state
 expect 150 монет :: ui press Спросить об охоте

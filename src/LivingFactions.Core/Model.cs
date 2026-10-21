@@ -28,7 +28,12 @@ namespace LivingFactions.Core
         GoodHarvest, Sickness, BeastAttack, Newcomers,
         WarDeclared, PeaceMade, AllianceFormed, AllianceBroken, RaidWon, RaidRepelled, BuildingDestroyed,
         SettlementCaptured, SettlementDestroyed, TradeCaravan, Incident,
-        PlayerWar, PlayerPeace, PlayerAlliance, PlayerAllianceBroken, PlayerGift, PlayerKilledMember
+        PlayerWar, PlayerPeace, PlayerAlliance, PlayerAllianceBroken, PlayerGift, PlayerKilledMember,
+        // New kinds go at the end: saves keep the numbers.
+        ChiefFell, NewChief, PlayerCrimeFound,
+        ExpeditionOut, ExpeditionBack, SquadLost, RaidMarch,
+        CampaignBegun, CampaignScouted, CampaignCamp, CampaignAssault, CampaignWon, CampaignOver, BuildingWrecked,
+        CampaignCounter, AllyAid, Migration, OutpostFounded
     }
 
     public struct Vec2
@@ -71,6 +76,12 @@ namespace LivingFactions.Core
         public int TerrainRev;
         /// <summary>Game-side bookkeeping: which revision of the blueprint the placed pieces follow.</summary>
         public int LayoutRev;
+        /// <summary>Game-side bookkeeping for a settlement wall: its kind and where its gates are, as placed.</summary>
+        public string Wall = "";
+        /// <summary>Game-side bookkeeping: the day its pad was last levelled again for being uneven (a cliff edge stays uneven; it is not tried every session).</summary>
+        public double RelevelDay = -100;
+        /// <summary>2 once a ramp has been cut along its path over any steep bank (Materializer.EaseBanks; 1 = only smoothed, by 0.6).</summary>
+        public int Graded;
     }
 
     public class Settlement
@@ -91,11 +102,24 @@ namespace LivingFactions.Core
         public int Seed;
         public double FoundedDay;
         public double LastRaidDay = -100;
+        /// <summary>Until this day the settlement has no chief (one was killed): it works and builds less.</summary>
+        public double LeaderlessUntil = -1;
         public double LastAttackedDay = -100;
         /// <summary>Lasting quality of the land and its people, rolled at founding (about 0.8 to 1.25).</summary>
         public float Fertility = 1f;
         public float Industry = 1f;
         public double LastExpansionDay = -100;
+        public double LastExpeditionDay = -100;
+        /// <summary>A war camp set up by a campaign: it holds a garrison, does not grow and goes when the campaign ends.</summary>
+        public int CampaignId;
+        /// <summary>1 for settlements founded from 0.7.0 on: their plots are shifted a little off the rings (Defs.PlotTransform).</summary>
+        public int Layout;
+        /// <summary>For an outpost, the settlement it works for (Outposts.cs); 0 for every other place.</summary>
+        public int ParentId;
+        /// <summary>What an outpost is out there for.</summary>
+        public Res OutpostGoal;
+        /// <summary>An outpost that watches a road rather than working the land.</summary>
+        public bool RoadPost;
         /// <summary>Days of food shortage in a row; drives starvation and abandonment.</summary>
         public float HungerDays;
         public bool Destroyed;
@@ -121,6 +145,16 @@ namespace LivingFactions.Core
         public float GiftFatigue;
         public double LastHostileDay = -100;
         public string Name = "";
+        /// <summary>Blood between them: grows with each killing, fades slowly, and while it lasts standing comes back slower.</summary>
+        public float Grievance;
+        /// <summary>Standing the faction would lose for killings nobody saw, once it finds out who did them.</summary>
+        public float Suspicion;
+        /// <summary>Where the last unseen killing was, for the news when it comes out.</summary>
+        public int SuspicionSettlementId;
+        /// <summary>The last time the player was caught taking from the faction's chests.</summary>
+        public double LastStoleDay = -100;
+        /// <summary>When this player last struck a building of the faction: who to name when one comes down.</summary>
+        public double LastDamagedDay = -100;
     }
 
     public class Faction
@@ -134,6 +168,8 @@ namespace LivingFactions.Core
         public float Mercantile;
         public float Honor;
         public int CapitalId;
+        /// <summary>When the faction last looked for a place for an outpost.</summary>
+        public double LastOutpostDay = -100;
         public int ColorIndex;
         public bool Eliminated;
         /// <summary>Key is the other faction's id.</summary>
@@ -157,7 +193,14 @@ namespace LivingFactions.Core
 
     public class WorldState
     {
-        public int Version = 1;
+        /// <summary>The save format this build writes and understands. A state of a newer format is not read.</summary>
+        public const int CurrentVersion = 1;
+        public int Version = CurrentVersion;
+        /// <summary>
+        /// Timeline generation. The host raises it when it takes the factions back (a rewind), so that guests
+        /// can throw away a world built from a future that no longer exists. Older saves have no field and start at 0.
+        /// </summary>
+        public int Epoch;
         public bool Seeded;
         /// <summary>Hour-steps run so far. The clock is derived from this so it never drifts.</summary>
         public long Steps;
@@ -178,6 +221,10 @@ namespace LivingFactions.Core
         public List<Settlement> Settlements = new List<Settlement>();
         /// <summary>Rolling chronicle, newest last.</summary>
         public List<SimEvent> Chronicle = new List<SimEvent>();
+        public List<Squad> Squads = new List<Squad>();
+        public int NextSquadId = 1;
+        public List<Campaign> Campaigns = new List<Campaign>();
+        public int NextCampaignId = 1;
 
         public Faction GetFaction(int id)
         {
@@ -209,5 +256,11 @@ namespace LivingFactions.Core
 
         /// <summary>True when something else already owns the spot (vanilla location, player base, spawn).</summary>
         bool IsReserved(Vec2 pos, float radius);
+
+        /// <summary>
+        /// True when the land from one point to the other can be walked: it does not climb much more than
+        /// the distance allows, and nowhere along it is a bank too steep to get up. Lenient allows more.
+        /// </summary>
+        bool GentleWay(Vec2 from, Vec2 to, bool lenient);
     }
 }

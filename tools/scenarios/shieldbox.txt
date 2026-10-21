@@ -1,0 +1,13 @@
+# Debug: the player's shield board in the hand joint's space, two ways; then the forearm room.
+god
+env 0.4 Clear
+waitready 200
+equip LF_RavenShield
+wait 2
+shieldbox
+equip LF_WolfHideShield
+wait 2
+shieldbox
+shieldfit 3
+until shieldfit done :: shieldfit
+quit

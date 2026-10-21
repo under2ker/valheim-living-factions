@@ -5,7 +5,7 @@
     <RootNamespace>LivingFactions</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.6.5</Version>
+    <Version>0.7.0</Version>
     <!-- The shipped DLL names its sources by their place in the repository, not on the build machine. -->
     <PathMap>$(MSBuildThisFileDirectory)..\..\=/_/</PathMap>
     <DebugType>portable</DebugType>

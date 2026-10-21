@@ -1,0 +1,18 @@
+# How a banner hangs: its mesh, and next to a pole from above and from the side.
+god
+env 0.5 Clear
+waitready 200
+hidehud on
+hideme
+dump piece_banner01 piece_banner05 wood_pole_log_4 stone_pillar
+specimen wood_pole_log_4 0 piece_banner01 0 0 0 0
+specam 0 5 0.01
+wait 2
+shot banner_top
+specam 3 0 0
+wait 1
+shot banner_side_x
+specam 0 0 3
+wait 1
+shot banner_side_z
+quit

@@ -1,0 +1,13 @@
+# A/B of the ground work's wait after each change: settle 1.5 (1.5 = the fixed wait before 0.7.0, 0 = until the
+# heightmap is rebuilt). The same pads, levelled from the restored lab: Fuling Horde (3) and settlement 10.
+settle 1.5
+god
+env 0.4 Clear
+goto 3
+waitready 600
+padcheck 3
+goto 10
+waitready 600
+padcheck 10
+mat
+quit

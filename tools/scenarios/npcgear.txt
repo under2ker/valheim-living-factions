@@ -1,0 +1,6 @@
+god
+goto 4
+wait 12
+npcgear Chief
+npcgear Guard
+quit

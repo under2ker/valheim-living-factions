@@ -1,0 +1,27 @@
+# Walls and roads of settlement 10 (see walls.txt). About 5 min: LF_TIMEOUT=600.
+god
+env 0.4 Clear
+goto 10
+waitready 240
+wait 30
+waitready 240
+roadcheck 10
+reject BLOCKED :: roadcheck 10
+reject MISALIGNED :: roadcheck 10
+reject LAMP INSIDE :: roadcheck 10
+reject FENCE ON ROAD :: roadcheck 10
+hidehud on
+hideme
+roadview 10 gate 0
+wait 2
+shot gate_c
+roadview 10 gate 0 14
+wait 2
+shot gate_d
+view 10 40 45 0
+wait 2
+shot streets_above_10
+cam
+hidehud off
+seams 200
+quit

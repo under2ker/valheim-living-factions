@@ -1,0 +1,57 @@
+# Film: Steinvik at golden hour, night by the fires, dawn; then the cities of the other factions.
+god
+hideme
+env 0.68 Clear
+goto 4
+waitready 240
+wait 20
+hidehud on
+orbit 4 70 30 0.1 300 0
+wait 3
+mark rec
+mark s11-golden-orbit
+orbit 4 70 30 16 300 90
+wait 17
+mark s12-golden-villager
+follow Villager 12 1
+wait 13
+mark s13-night-fire
+env 0.9 Clear
+wait 6
+orbit 4 16 5 18 0 120
+wait 19
+mark s14-night-street
+orbit 4 32 9 14 200 80
+wait 15
+mark s15-dawn
+env 0.27 Clear
+wait 4
+fly 4 40 260 70 90 30 15
+wait 16
+mark s16-vindfell
+env 0.42 Clear
+goto 1
+waitready 120
+wait 8
+orbit 1 70 30 16 0 100
+wait 17
+mark s17-barkthicket
+goto 5
+waitready 120
+wait 8
+orbit 5 60 25 16 90 100
+wait 17
+mark s18-mokrok
+goto 3
+waitready 120
+wait 8
+orbit 3 70 30 16 180 100
+wait 17
+mark s19-durhall
+goto 6
+waitready 120
+wait 8
+orbit 6 60 28 16 270 100
+wait 17
+mark end
+quit

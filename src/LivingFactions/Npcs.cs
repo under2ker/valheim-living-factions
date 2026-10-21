@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace LivingFactions
 {
-    internal enum NpcRole { Villager = 0, Guard = 1, Chief = 2, Raider = 3, Mercenary = 4, Trader = 5, Escort = 6 }
+    internal enum NpcRole { Villager = 0, Guard = 1, Chief = 2, Raider = 3, Mercenary = 4, Trader = 5, Escort = 6, Squad = 7, Envoy = 8 }
 
     /// <summary>Creates the character prefabs the factions are populated with.</summary>
     internal static class Npcs
@@ -21,7 +21,7 @@ namespace LivingFactions
         public static bool IsNpcPrefab(int prefabHash) { return NpcHashes.Contains(prefabHash); }
 
         /// <summary>Raiders, hired fighters and caravans: in the world for a while, never counted as inhabitants.</summary>
-        public static bool IsTemporary(NpcRole role) { return role >= NpcRole.Raider; }
+        public static bool IsTemporary(NpcRole role) { return role >= NpcRole.Raider && role != NpcRole.Envoy; }
 
         public static void CreatePrefabs()
         {
