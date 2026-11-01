@@ -341,7 +341,10 @@ namespace LivingFactions
         {
             if (!SimHost.Active || !IsHost) yield break;
             int count = framed.ReadInt();
+            // Reports come from assigned builders only. Reject malformed or excessive batches.
+            if (count < 1 || count > 4096) yield break;
             ZPackage pkg = new ZPackage(framed.ReadByteArray());
+            bool changed = false;
             for (int i = 0; i < count; i++)
             {
                 int sid = pkg.ReadInt(), bid = pkg.ReadInt(), pieces = pkg.ReadInt();
@@ -349,7 +352,9 @@ namespace LivingFactions
                 int terrain = pkg.ReadInt(), layout = pkg.ReadInt();
                 string wall = pkg.ReadString();
                 Settlement s = SimHost.Sim.State.GetSettlement(sid);
-                if (s == null) continue;
+                long builder;
+                if (s == null || !Builders.TryGetValue(sid, out builder) || builder != sender) continue;
+                if (pieces < 0 || terrain < 0 || layout < 0 || float.IsInfinity(ground) || wall.Length > 4096) continue;
                 foreach (Building b in s.Buildings)
                 {
                     if (b.Id != bid) continue;
@@ -358,9 +363,11 @@ namespace LivingFactions
                     b.TerrainRev = terrain;
                     b.LayoutRev = layout;
                     b.Wall = wall;
+                    changed = true;
+                    break;
                 }
             }
-            _dirty = true;
+            if (changed) _dirty = true;
         }
 
         // ------------------------------------------------------------------ raids a player can see
@@ -432,7 +439,9 @@ namespace LivingFactions
         private static IEnumerator OnDev(long sender, ZPackage pkg)
         {
             string command = pkg.ReadString();
-            if (!ModConfig.DevTools.Value || !IsHost) yield break;
+            // Remote developer commands are not authenticated as admin commands.
+            // Local host commands remain available through DevOnHost.
+            if (!ModConfig.DevTools.Value || !IsHost || sender != Me) yield break;
             string result;
             try
             {
@@ -508,7 +517,9 @@ namespace LivingFactions
         {
             if (!SimHost.Active || !IsHost) yield break;
             string what = pkg.ReadString();
-            object[] a = new object[pkg.ReadInt()];
+            int argCount = pkg.ReadInt();
+            if (argCount < 0 || argCount > 16 || what.Length > 64) yield break;
+            object[] a = new object[argCount];
             for (int i = 0; i < a.Length; i++)
             {
                 switch (pkg.ReadByte())
