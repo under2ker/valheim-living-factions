@@ -157,7 +157,7 @@ namespace LivingFactions
             get
             {
                 Settlement s = SimHost.Active ? SimHost.Sim.State.GetSettlement(SettlementId) : null;
-                if (s == null) return (Job)(Mathf.Abs(Seed) % 3);
+                if (s == null) return (Job)((int)((uint)Seed % 3u));
                 Res need = SimHost.Sim.NeededResource(s);
                 int wood = 3 + (need == Res.Wood ? 3 : 0) + (Has(s, BuildingKind.Woodcutter) ? 1 : 0);
                 int stone = 1 + (need == Res.Stone ? 3 : 0) + (Has(s, BuildingKind.Stonecutter) ? 2 : 0);
