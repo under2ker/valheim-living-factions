@@ -354,7 +354,7 @@ namespace LivingFactions
                 Settlement s = SimHost.Sim.State.GetSettlement(sid);
                 long builder;
                 if (s == null || !Builders.TryGetValue(sid, out builder) || builder != sender) continue;
-                if (pieces < 0 || terrain < 0 || layout < 0 || float.IsInfinity(ground) || wall.Length > 4096) continue;
+                if (pieces < 0 || terrain < 0 || layout < 0 || float.IsInfinity(ground) || (wall != null && wall.Length > 4096)) continue;
                 foreach (Building b in s.Buildings)
                 {
                     if (b.Id != bid) continue;
