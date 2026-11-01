@@ -1055,7 +1055,7 @@ namespace LivingFactions
                     long key = Key(p);
                     // The objects round the spot too: a player's building there keeps its ground.
                     if (Painted.Contains(key) || !ZoneSystem.instance.IsZoneLoaded(p)) continue;
-                    Painted.Add(key);
+                    // A blocked point is not finished: a building may later be removed.
                     if (UnderBuilding(p, 0.5f)) continue;
                     if (road.Bed == null) road.Bed = Bed(road);
                     // Inside a settlement the ground is already shaped pad by pad; reshaping it there would tug at the pads.
@@ -1079,6 +1079,8 @@ namespace LivingFactions
                     // The last stretch into a town is cobbled; the rest is a beaten track.
                     bool cobbled = (a.Tier >= Tier.Town && i * Step < 75f) || (b.Tier >= Tier.Town && (road.Points.Length - 1 - i) * Step < 75f);
                     Materializer.QueuePaint(p, HalfWidth, cobbled ? 2 : 1);
+                    // Mark as processed only after the paint operation has been queued.
+                    Painted.Add(key);
                     _paintedPoints++;
                     budget--;
                 }
