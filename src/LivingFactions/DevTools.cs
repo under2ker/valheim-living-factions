@@ -110,15 +110,27 @@ namespace LivingFactions
             if (worldName.StartsWith("join "))
             {
                 // A guest: the game was started with +connect and +password and joins by itself once a
-                // character is chosen; if it has not begun to after a moment, it is asked to.
+                // character is chosen. The server's data arrives from Steam a moment later, so the join
+                // is tried again until the game is joining: one early try would leave the test in the menu.
                 string host = worldName.Substring(5).Trim();
-                yield return new WaitForSecondsRealtime(1f);
-                if (ZNet.instance == null && FejdStartup.instance != null)
+                for (int attempt = 0; attempt < 30 && ZNet.instance == null; attempt++)
                 {
-                    // +connect only remembers the server; the join itself is the button of the server list.
-                    if (!t.Method("HasServerToJoin").GetValue<bool>()) t.Method("AutoJoinServer", new object[] { host }).GetValue();
-                    Plugin.Log.LogInfo("[dev] autostart: joining " + host);
-                    t.Method("JoinServer").GetValue();
+                    yield return new WaitForSecondsRealtime(1f);
+                    if (FejdStartup.instance == null) break;
+                    try
+                    {
+                        // +connect only remembers the server; the join itself is the button of the server list.
+                        if (!t.Method("HasServerToJoin").GetValue<bool>()) t.Method("AutoJoinServer", new object[] { host }).GetValue();
+                        if (t.Method("HasServerToJoin").GetValue<bool>())
+                        {
+                            Plugin.Log.LogInfo("[dev] autostart: joining " + host + (attempt > 0 ? " (try " + (attempt + 1) + ")" : ""));
+                            t.Method("JoinServer").GetValue();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Plugin.Log.LogInfo("[dev] autostart: not joining yet (" + e.Message + "), trying again");
+                    }
                 }
                 // The server asks for its password in a dialog: the test answers with the one the game was started with.
                 string[] args = System.Environment.GetCommandLineArgs();

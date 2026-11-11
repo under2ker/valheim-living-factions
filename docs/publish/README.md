@@ -1,8 +1,8 @@
 # Публикация Living Factions: что куда вставлять
 
 Готовые тексты для загрузки архива. Сами тексты на английском (сайты англоязычные), пояснения
-по-русски. Версия: **0.7.0**, архив `dist/LivingFactions-0.7.0.zip` (собрать, когда код готов: в архив
-идут `dist/thunderstore/manifest.json`, `icon.png`, `README.md`, `CHANGELOG.md` и
+по-русски. Версия: **0.8.0**, архив `dist/LivingFactions-0.8.0.zip` (в архив идут
+`dist/thunderstore/manifest.json`, `icon.png`, `README.md`, `CHANGELOG.md` и
 `plugins/LivingFactions.dll`).
 
 | Сайт | Файл с текстами |
@@ -20,22 +20,22 @@
 - `docs/store/banner.png`: баннер 960×240, шапка для Discord или Nexus;
 - `docs/store/axes.jpg`: все семь топоров в руке;
 - `docs/store/swords.jpg`: все семь мечей в руке;
-- `docs/store/shields.jpg`: все семь щитов в руке (снято на сборке 0.7.0);
+- `docs/store/shields.jpg`: все семь щитов в руке (снято на сборке 0.8.0);
 - `docs/screenshots/press/*.jpg`, `docs/screenshots/map_zones_0.4.2.jpg`,
   `docs/screenshots/village_paths_0.3.4.jpg`: снимки из игры для галереи.
 
 Перед каждой новой версией: `python tools/store/render.py` перерисовывает иконку, обложку и баннер
-с номером из кода мода, и обновляет адреса картинок в README. Для 0.7.0 это уже сделано.
+с номером из кода мода, и обновляет адреса картинок в README. Для 0.8.0 это уже сделано.
 
-Готово для 0.7.0 (21.10.2026): архив `dist/LivingFactions-0.7.0.zip` собран на финальной сборке, в
-логе игры `Living Factions 0.7.0 loaded`, в архиве свежие README и CHANGELOG, иконка 256×256.
+Готово для 0.8.0 (11.11.2026): дата в `CHANGELOG.md`, картинки `docs/store/*` перерисованы с
+v0.8.0, архив `dist/LivingFactions-0.8.0.zip` собран на финальной сборке, внутри свежие README,
+CHANGELOG и иконка 256×256.
 
-Перед публикацией 0.7.0 ещё нужно:
+Перед публикацией осталось:
 
-- поставить дату в заголовке `## 0.7.0` в `CHANGELOG.md` (сейчас `not released yet`), затем
-  скопировать `CHANGELOG.md` в `dist/thunderstore/` и пересобрать архив (в нём тот же CHANGELOG);
 - закоммитить и запушить: картинки в README и на Nexus берутся с GitHub (`main`), до пуша их там нет.
-  Как с 0.6.5: коммит в локальную `master`, то же дерево одним коммитом в ветку `public`
+  Как раньше: коммит в локальную `master`, то же дерево одним коммитом в ветку `public`
   (она следит за `origin/main`), затем `git push origin public:main`;
-- GitHub Release: тег `v0.7.0`, заголовок `Living Factions 0.7.0`, текст из
-  [github-release.md](github-release.md), приложить `dist/LivingFactions-0.7.0.zip`.
+- GitHub Release: тег `v0.8.0`, заголовок `Living Factions 0.8.0`, текст из
+  [github-release.md](github-release.md), приложить `dist/LivingFactions-0.8.0.zip`;
+- загрузить архив на Thunderstore, Nexus и Hexium.

@@ -7,11 +7,9 @@
     <RootNamespace>LivingFactions.Harness</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\LivingFactions.Core\**\*.cs" LinkBase="Core" />
-    <!-- The game ships Newtonsoft.Json; the plugin uses that same copy for saves. -->
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(ManagedDir)\Newtonsoft.Json.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
+    <Compile Include="../../src/LivingFactions.Core/**/*.cs" LinkBase="Core" />
+    <!-- The harness checks the core without the game, so it brings its own copy of the serializer.
+         The plugin still uses the game's copy; the save format is plain JSON. -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>

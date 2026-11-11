@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.7.0)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.8.0)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -14,7 +14,7 @@ Made for Valheim 1.0.20 with BepInEx 5 and Jötunn. It is an early version.
 Works since 0.4.0, on a dedicated server or with a player hosting.
 
 - Everyone needs the mod: the server and every player. Somebody without it, or with another
-  0.x version of it (0.6 against 0.7), is not let in.
+  0.x version of it (0.7 against 0.8), is not let in.
 - On a dedicated server put BepInEx, Jötunn and `LivingFactions.dll` into the server folder the
   same way as into the game. The state of the factions is kept on the server, next to its config.
 - The host runs the factions. The player nearest a settlement is the one who builds it.
@@ -141,7 +141,7 @@ To make an alliance, talk to anyone in the settlement: the window shows your sta
 it is from the 70 an alliance needs, and each gift shows what it would earn. A gift of what they
 are short of counts double; many gifts in one day count for less.
 
-![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.7.0)
+![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.8.0)
 
 | Sword | Faction | What it does | How you get it |
 |---|---|---|---|
@@ -153,7 +153,7 @@ are short of counts double; many gifts in one day count for less.
 | Root Club | Greydwarf Brood | double durability | one Greydwarf guard in four leaves it |
 | Rusted Blade | Draugr Court | double durability | bought from the court, standing 10 |
 
-![The seven faction swords](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.7.0)
+![The seven faction swords](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.8.0)
 
 | Shield | Faction | What it does | How you get it |
 |---|---|---|---|
@@ -165,7 +165,7 @@ are short of counts double; many gifts in one day count for less.
 | Bark Shield | Greydwarf Brood | +20% armour and block | left by their guards, after the root club |
 | Bone-Plate Shield | Draugr Court | +20% armour and block | bought from the court, standing 10 |
 
-![The seven faction shields](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.7.0)
+![The seven faction shields](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.8.0)
 
 From a village up, the clans' fighters carry their clan's shield, and the chief and one fighter
 in three its sword.
@@ -187,17 +187,17 @@ in three its sword.
 
 ## Screenshots
 
-![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.7.0)
-![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.7.0)
-![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.7.0)
-![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.7.0)
-![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.7.0)
-![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.7.0)
-![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.7.0)
-![A war camp: tents, stakes and the clan's banner](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/war_camp.jpg?v=0.7.0)
-![An envoy's tent by the road out of a settlement](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/envoy_tent.jpg?v=0.7.0)
-![Raven Clan homes under dark shingles, ravens on the gables](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/raven_clan_houses.jpg?v=0.7.0)
-![A Wolf Clan log house in the mountains](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/wolf_clan_house.jpg?v=0.7.0)
+![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.8.0)
+![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.8.0)
+![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.8.0)
+![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.8.0)
+![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.8.0)
+![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.8.0)
+![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.8.0)
+![A war camp: tents, stakes and the clan's banner](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/war_camp.jpg?v=0.8.0)
+![An envoy's tent by the road out of a settlement](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/envoy_tent.jpg?v=0.8.0)
+![Raven Clan homes under dark shingles, ravens on the gables](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/raven_clan_houses.jpg?v=0.8.0)
+![A Wolf Clan log house in the mountains](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/wolf_clan_house.jpg?v=0.8.0)
 
 ## Install
 
@@ -251,7 +251,7 @@ Start the game with `-console` and press F5.
 - Playing together is new and lightly tested. Back up the server world before the first run.
 - Woodcutters fell trees and carriers fill the chests, but what a settlement gathers is still
   counted by the simulation.
-- Ground the mod levelled before 0.7.0 along the borders of terrain tiles while you worked it with
+- Ground the mod levelled before 0.8.0 along the borders of terrain tiles while you worked it with
   the hoe may have ditches or humps: level them over once more.
 - If you remove the mod, the buildings stay in the world as normal pieces.
 

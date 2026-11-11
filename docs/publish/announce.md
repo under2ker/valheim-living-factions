@@ -3,62 +3,40 @@
 ## Discord, русский
 
 ```
-Living Factions 0.7.0
+Living Factions 0.8.0
 
-Что нового:
-- Отряды в пути: поселение, которому не хватает дерева, камня, еды или руды, шлёт отряд за 1,4 км, и тот приносит добычу домой. Набеги идут пешком до цели
-- Военные кампании: разведчики, военный лагерь на полпути, осада, подкрепления из дома, союзники обеих сторон, контратаки
-- Аванпосты и сторожевые посты на дорогах
-- Шатёр посла у каждого поселения: с ним можно говорить даже во время войны, дарить, платить дань, просить мира
-- Ночь: все спят в своих кроватях. Откроете их сундук ночью, можете разбудить деревню
-- Носильщики правда кладут добытое в сундуки склада
-- Удары по жителям: терпят по-разному в зависимости от отношения к вам и предупреждают, прежде чем рассориться
-- Наёмников по отношению: 2, 4 или 6, и они проходят с вами через порталы
-- Семь щитов фракций. Бойцы кланов носят свои щиты и мечи
-- Каждый клан строит по-своему: Ворон под тёмной черепицей с резными воронами, Волк из брёвен под вальмовой соломой, Олень с крыльцом. Свои дома у фулингов и грейдворфов, крыши из шкур у фулингов, каменные стены городов
-- Alt+H прячет хронику
-- Деревни на склонах: площадки домов подогнаны к соседям, вдоль троп пандусы
-- Исправлено: канавы и бугры по краям чанков, когда ровняешь землю мотыгой
-- Исправлено: дороги в стену, ступени на дорогах, застревающие караваны, щиты на руке, «кража» своих вещей
-- Исправлено: поход не прекращался, когда цель переходила к другому владельцу; захваченный военный лагерь оставался с палатками
-- Сохранение: если файл фракций повреждён, фракции не начинаются заново, а берутся из резервной копии
-- Кнопка «Уйти» в диалоге всегда на экране
+Это релиз исправлений:
+- Войны и походы теперь идут при любом порядке id фракций. Раньше половина набегов и штурмов заканчивалась без боя: отношения пары хранятся у фракции с меньшим id, а отряд искал их у атакующего. Монстры не могли взять ничего войной, а их походы всегда заканчивались отступлением
+- Диалоги больше не меняют историю мира: отношение пары больше не берётся из общего генератора случайных чисел, маленькая разница между фракциями считается из их id
+- Кнопка «Уйти» в диалоге всегда на экране: одиннадцать кнопок помещаются, и выход не вытесняется
+- Наёмник помнит, чьи монеты его наняли, а приручённое животное воюет по отношению своего владельца. На выделенном сервере это работает без локального игрока
+- Хост проверяет сообщения гостей: невозможные количества, id и имена отбрасываются с предупреждением в логе, а не ломают фракции
 
-Скачать: Thunderstore (через r2modman) или GitHub: https://github.com/under2ker/valheim-living-factions/releases
-Мод нужен всем игрокам и серверу, версии 0.7.x. С 0.6.x вместе не играют. Перед обновлением сделайте копию мира.
+Совместимость: миры и сохранения 0.7.0 подходят. Всем игрокам и серверу нужна 0.8.x, с 0.7.x вместе не играют. Перед обновлением сделайте копию мира.
+
+Скачать: Thunderstore (через r2modman), Nexus/Hexium или GitHub: https://github.com/under2ker/valheim-living-factions/releases
 ```
 
 ## Discord, English
 
 ```
-Living Factions 0.7.0
+Living Factions 0.8.0
 
-What is new:
-- Bands on the move: a settlement short of wood, stone, food or ore sends a band up to 1.4 km and it brings the load home. Raids march to their target
-- War campaigns: scouts, a war camp halfway there, the siege, supplies from home, allies of both sides, counterattacks
-- Outposts and watch posts on the roads
-- An envoy's tent outside every settlement: talk to a faction even at war, give gifts or tribute, ask for peace
-- Night: everyone sleeps in their own beds. Open their chest after dark and you may wake the village
-- Carriers really put their loads into the storehouse chests
-- Blows answered by standing: they forgive a few, more the better they like you, and warn you before a friendship breaks
-- Hired fighters by standing: 2, 4 or 6, and they go through portals with you
-- Seven faction shields. Clan fighters carry their shield and sword
-- Every clan builds its own way: Raven under dark shingles with carved ravens, Wolf in logs under hipped thatch, Stag with porches. Fuling and Greydwarf homes of their own, Fuling hide roofs, city stone walls
-- Alt+H hides the chronicle
-- Villages on slopes: buildings' level ground fitted to their neighbours, ramps along the paths
-- Fixed: ditches and humps along terrain tile borders when levelling with the hoe
-- Fixed: roads into walls, steps on roads, stuck caravans, shields on the arm, your own goods taken back counted as theft
-- Fixed: a campaign went on after its target changed hands; a war camp taken by the enemy kept its tents
-- Saves: a broken faction state file no longer starts the factions over, the backup is used
-- The dialogue's Leave button is always on screen
+A fix release:
+- Wars and campaigns are fought whatever the order of the factions' ids. Before, half of the raids and assaults ended without a fight: the pair's relation is kept on the faction with the lower id, and the band looked for it on the attacker. The monster factions could not take anything by war, and their campaigns always ended repelled
+- Dialogs no longer change the history of the world: a pair's relation is no longer drawn from the shared random stream, the small difference comes from the two faction ids
+- The Leave button is always on screen: eleven buttons fit, and the way out is not pushed off
+- A hired fighter remembers whose coins pay it, and a tamed animal fights by the standing of its owner. Both are right on a dedicated server without a local player
+- The host checks guest messages: impossible counts, ids and names are ignored with a warning in the log instead of spoiling the factions
 
-Get it on Thunderstore (r2modman) or GitHub: https://github.com/under2ker/valheim-living-factions/releases
-Everyone needs 0.7.x, the server too. 0.6.x does not play with 0.7.x. Back up your world before updating.
+Compatibility: worlds and saves of 0.7.0 carry over. Everyone needs 0.8.x, the server too; 0.7.x and 0.8.x do not play together. Back up your world before updating.
+
+Get it on Thunderstore (r2modman), Nexus/Hexium or GitHub: https://github.com/under2ker/valheim-living-factions/releases
 ```
 
 ## Короткий пост (Reddit, соцсети)
 
 ```
-Living Factions 0.7.0 for Valheim: seven NPC factions that build villages piece by piece, send bands out for wood and ore, march to war, set up war camps and lay siege on their own. Talk to their envoys even at war, trade, hire their fighters, take boss hunts for bounties and earn a relic axe, a sword and a shield from every faction. Single-player and dedicated servers, seven languages.
-https://thunderstore.io/c/valheim/p/under2ker/LivingFactions/
+Living Factions 0.8.0 for Valheim: a fix release for wars between every side, determinism of dialogs, the Leave button, hired fighters and tamed animals by their owner, and safer guest messages. Worlds of 0.7.0 carry over; everyone needs 0.8.x.
+https://github.com/under2ker/valheim-living-factions/releases
 ```

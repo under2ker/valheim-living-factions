@@ -20,7 +20,14 @@ namespace LivingFactions.Core
             Relation r;
             if (!lo.Relations.TryGetValue(hi.Id, out r))
             {
-                float baseline = Defs.Affinity(Defs.Culture(lo.CultureId), Defs.Culture(hi.CultureId)) + _rng.Range(-12f, 12f);
+                // A small per-pair difference, taken from the two ids rather than the shared random
+                // stream: a relation asked for by a dialog must not change the history of the world.
+                uint h = (uint)(lo.Id * 73856093) ^ (uint)(hi.Id * 19349663) ^ 0x5BD1E995u;
+                h ^= h >> 15;
+                h *= 0x2C1B3C6Du;
+                h ^= h >> 12;
+                float jitter = (h & 0x3FF) / 1023f * 24f - 12f;
+                float baseline = Defs.Affinity(Defs.Culture(lo.CultureId), Defs.Culture(hi.CultureId)) + jitter;
                 r = new Relation { Value = baseline, Baseline = baseline, SinceDay = State.Day };
                 lo.Relations[hi.Id] = r;
             }

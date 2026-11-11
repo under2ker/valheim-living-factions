@@ -11,7 +11,7 @@ Living Factions
 
 **Version**
 ```
-0.7.0
+0.8.0
 ```
 
 **Category:** Gameplay (если есть «Overhauls» или «NPC»: тоже подходит).
@@ -34,7 +34,7 @@ Seven NPC factions live on their own: they build settlements piece by piece, sen
 ## Description (вставлять в редактор в режиме BBCode)
 
 ```
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.7.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.8.0[/img][/center]
 
 [size=5][b]Living Factions[/b][/size]
 
@@ -77,9 +77,9 @@ Seven NPC factions move into your world and live their own lives. They set up ca
 [*]Earn seven relic axes, seven swords and seven shields, one of each per faction.
 [/list]
 
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.7.0[/img][/center]
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.7.0[/img][/center]
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.7.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.8.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.8.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.8.0[/img][/center]
 
 [size=4][b]Playing together[/b][/size]
 Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.7.x with any 0.7.x; 0.6.x and 0.7.x do not play together). Back up the server world before the first run.
@@ -117,17 +117,17 @@ Made with the help of AI (Claude Code). No game files, decompiled code or extrac
 
 **File name**
 ```
-Living Factions 0.7.0
+Living Factions 0.8.0
 ```
 
-**File version:** `0.7.0`, категория файла: Main Files (файл 0.6.5 перевести в Old Versions).
+**File version:** `0.8.0`, категория файла: Main Files (файл 0.6.5 перевести в Old Versions).
 
 **File description**
 ```
 The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager. Everyone in a game needs 0.7.x.
 ```
 
-Файл: `dist/LivingFactions-0.7.0.zip`.
+Файл: `dist/LivingFactions-0.8.0.zip`.
 
 ## Images tab
 
@@ -142,28 +142,13 @@ The mod: LivingFactions.dll in a plugins folder, with manifest, README and chang
 - Use assets in other mods: ask first.
 - Use in mod packs / collections: yes.
 
-## Changelog (поле Changelogs, версия 0.7.0)
+## Changelog (поле Changelogs, версия 0.8.0)
 
 ```
-- Bands on the move: settlements send two to six people out for wood, stone, food or ore, up to 1.4 km; raids march to their target and carry the loot home.
-- War campaigns: scouts, a war camp halfway there, the assault, a supply line, allies joining, counterattacks.
-- Outposts and road watch posts; people leave places that starve or are threatened.
-- Envoy's tents: talk to a faction even at war, give gifts or tribute, ask for peace, hear what stands between you.
-- Night: everyone sleeps in their own beds; open their chest after dark and you may wake the village.
-- Carriers put their loads into the storehouse chests for real.
-- Blows answered by standing instead of "hit one, anger all"; warnings before a friendship breaks.
-- Hired fighters by standing (2, 4 or 6), and they go through portals with you.
-- Seven faction shields; clan fighters carry their shield and sword.
-- Every clan builds its own way (Raven shingles and carvings, Wolf logs and hipped thatch, Stag porches); Fuling and Greydwarf homes of their own, Fuling hide roofs, city stone walls with towers, houses and yards that differ.
-- Map: settlement names open up into their state; villagers as dots on the minimap. Alt+H hides the chronicle.
-- Settings: ReputationDecay, HiredLimit, HireMinutes, the Conflict section, LootSweep.
-- Fixed: ditches and humps along terrain tile borders when levelling with the hoe.
-- Fixed: roads into walls, steps on road beds, rocks on roads, caravans stuck on the road.
-- Villages on slopes: buildings' level ground fitted to their neighbours, ramps along the paths (older settlements are fitted once).
-- Fixed: shields turned on the arm and the arm through them; sleepers twitching in bed.
-- Fixed: own goods taken back from a chest counted as theft; false theft for guests in multiplayer.
-- Fixed: a war campaign went on after its target changed hands; a war camp taken by the enemy kept its tents and its old ties.
-- A faction state file that cannot be read no longer starts the factions over: the backup or the latest dated copy is used. A state from a newer version is not loaded.
-- The dialogue's way out is always on screen; the mod menu shows all its rows.
-- Multiplayer: lf rewind on the server resets what guests had built in the timeline taken back.
+- Fixed: wars and campaigns are fought whatever the order of the factions' ids. Before, half of the raids and assaults ended without a fight: the pair's relation is kept on the faction with the lower id, and the band looked for it on the attacker. The monster factions could take nothing by war, and their campaigns always ended repelled.
+- Fixed: a relation asked for by a dialogue or the forecast no longer draws from the shared random stream, so opening a menu cannot change the history of the world.
+- Fixed: the dialogue's Leave button is always on screen; eleven buttons fit.
+- Fixed: a hired fighter fights by the standing of the player whose coins pay it, and a tamed animal by the standing of its owner, including on a dedicated server.
+- Fixed: the host ignores malformed guest messages (impossible counts, ids, amounts and names) with a warning, instead of spoiling the factions.
+- Worlds and saves of 0.7.0 carry over; everyone in a game needs the same 0.8.x version.
 ```

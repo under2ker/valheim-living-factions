@@ -493,8 +493,9 @@ namespace LivingFactions.Core
             Campaign campaign = q.CampaignId != 0 ? GetCampaign(q.CampaignId) : null;
             if (campaign != null && (target == null || target.Destroyed || target.FactionId != campaign.EnemyId)) return;
             if (target == null || target.Destroyed || attacker == null || defender == null || !AreAtWar(attacker.Id, defender.Id)) return;
-            Relation r;
-            if (!attacker.Relations.TryGetValue(defender.Id, out r)) return;
+            // Relations live on the faction with the lower id; Rel gives the shared pair object whichever
+            // side the attacker is, so a war is fought the same way both ways.
+            Relation r = Rel(attacker, defender);
             target.LastAttackedDay = State.Day;
             // A player at the target sees the band come in; the outcome is the simulation's either way.
             if (RaidInterceptor != null) RaidInterceptor(home, target, q.Men);

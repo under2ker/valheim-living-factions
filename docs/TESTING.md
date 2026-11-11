@@ -137,14 +137,14 @@ Campaigns: `campaign <faction#> <settlement id> [camp]` (start one, at its war c
 
 Saves: `rewind` (the kept copies by day), `rewind <day>` / `rewind -<days>`. Multiplayer: `net` (host or
 guest, the timeline's epoch, the settlements this player builds as `[4][9][26]` (each in its own
-brackets, sorted; `none` when it builds none; it was `[4 9 26 ]` before 0.7.0, so test for `[26]`),
+brackets, sorted; `none` when it builds none; it was `[4 9 26 ]` before 0.8.0, so test for `[26]`),
 unconfirmed building reports), `server <command>` (on the host).
 
 Screens: `ui open chief` / `ui state` / `ui click N` (dialog), `inv` / `inv off`,
 `modmenu open|page N|click N|close`.
 
-Lab world facts: settlement 4 is Steinvik (Raven Clan, faction 8), a village; its road runs
-974 m to Barkthicket (5). `status` lists the rest.
+Lab world facts: settlement 4 is Steinvik (Raven Clan, faction 8), a village on an island: it has no
+road, so road checks use Vindfell (1). `status` lists the rest.
 
 ## Known and open
 
@@ -161,3 +161,6 @@ Lab world facts: settlement 4 is Steinvik (Raven Clan, faction 8), a village; it
 - Unverified in the game: cobbles of a town, relic effects in combat, two players in the world at
   once (one guest on a dedicated server is tested with `tools/lfmp.sh`), a guest refusing a host on
   a newer save format.
+- 0.8.0 fixes are checked by the core harness only: wars in both faction-id orders and relation
+  determinism (`ALL CHECKS PASSED`). The in-game runs above were made on 0.7.0; the new path was not
+  re-run in a live game before the release, so keep that in mind when reporting a war problem.

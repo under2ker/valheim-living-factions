@@ -154,9 +154,9 @@ namespace LivingFactions.Core
             }
 
             // A campaign wears a people out: men away, food sent after them. It hastens the peace.
+            // Rel is the shared pair object whichever side has the lower id, so both sides' campaigns wear.
             Faction self = State.GetFaction(c.FactionId), enemy = State.GetFaction(c.EnemyId);
-            Relation r;
-            if (self != null && enemy != null && self.Relations.TryGetValue(enemy.Id, out r) && c.Stage != CampaignStage.Scouting) r.Weariness += 0.4f;
+            if (self != null && enemy != null && c.Stage != CampaignStage.Scouting) Rel(self, enemy).Weariness += 0.4f;
 
             switch (c.Stage)
             {

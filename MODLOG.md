@@ -286,3 +286,22 @@ Valheim, the game is Mono, and the idea needs runtime logic (sim, spawning, AI h
   Not checked in game: the stamina -20%, the 10% buying discount in the game's own prices.
 - 2026-10-13, axes: stamina -20% confirmed in game by the main chat on the shared build (1,60 instead of
   2,00 with merchant's axe in hand). The 10% buying discount is still checked only by the harness.
+
+## 2026-11-11: 0.8.0 fix release
+- The published 0.7.0 was found on GitHub (`origin/main` bb14552, tag v0.7.0) while the local branch had
+  the 0.7.0 work uncommitted and a number of later fixes. 0.8.0 was therefore cut from the published
+  0.7.0 tree and only the new fixes were ported onto it, instead of pushing the older local tree over
+  the release.
+- New in 0.8.0: a war and a campaign are resolved in both faction-id orders (the relation is kept on
+  the lower id and both sides now ask for it); a relation asked for by a dialogue or the forecast no
+  longer draws from the shared random stream; the dialogue holds eleven buttons and keeps Leave; a
+  hired fighter remembers the player whose coins pay it and a tamed animal follows its owner's
+  standing; the host checks guest messages (counts, ids, amounts, names) and ignores malformed ones.
+  The core harness has a regression for the higher-id campaign; the settlement-cap check counts
+  founded places plus captures.
+- Checks: plugin build 0 errors, `ALL CHECKS PASSED`, BlueprintCheck 160858/0, languages problems 0,
+  `git diff --check` 0. The game was not restarted (the owner's Valheim was running), so the new
+  paths are core-checked only; the in-game 0.7.0 evidence stays as it was.
+- Release: local commit on `master`; one snapshot commit of its tree onto `public` (parent
+  `origin/main`, no master history) and `git push origin public:main`; tag `v0.8.0`; GitHub release
+  with `dist/LivingFactions-0.8.0.zip`; site uploads are the owner's next step.

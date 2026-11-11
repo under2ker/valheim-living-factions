@@ -267,7 +267,6 @@ namespace LivingFactions
             /// <summary>Walls around an nx by nz bay rectangle. doorBay is the front bay holding the door, or -1 for an open front.</summary>
             public void Walls(int nx, int nz, bool tall, int doorBay, bool openFront = false)
             {
-                float y = WallBase + 1f;
                 for (int i = 0; i < nx; i++)
                 {
                     float x = -nx + 1 + 2 * i;

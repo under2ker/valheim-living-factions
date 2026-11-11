@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.8.0 - 2026-11-11
+- Fixed: a war or a campaign was fought only when its side's relation could be found. The relation
+  between two factions is kept on the one with the lower id, and a band looked for it on the attacker:
+  when the attacker's id was higher the raid or the assault ended without a fight, so the monster
+  factions could take nothing by war and their campaigns always ended repelled. Both sides now ask
+  for the shared relation, so a war is fought the same way whichever side began it.
+- Fixed: a relation asked for by a dialogue or by the forecast drew from the shared random stream,
+  so opening a menu could change the history of the world. The small per-pair difference now comes
+  from the two faction ids.
+- Fixed: a dialogue showed at most ten buttons and could cut the way out when a friendly faction
+  offered every button it had. Eleven rows fit, and the way out is kept.
+- Fixed: a hired fighter fought by the standing of whoever was at the keyboard, and a tamed animal
+  likewise. A hired fighter now remembers the player whose coins pay it, and a tamed animal fights
+  by the standing of the player it belongs to, so both are right on a dedicated server.
+- Fixed: a malformed message from a guest (an impossible count, id, amount or name) could spoil the
+  host's factions or throw the host's game into errors. The host checks every amount, id and name
+  against the state and ignores what cannot be true, with a warning in the log.
+- This is a fix release: worlds and saves of 0.7.0 carry over, and everyone in a game needs the same
+  0.8.x version.
+
 ## 0.7.0 - 2026-10-21
 - Bands on the move. A settlement short of wood, stone, food or metal sends a band out (two to six
   people) to the place within 1.4 km where that is plentiful, weighed against the distance and the

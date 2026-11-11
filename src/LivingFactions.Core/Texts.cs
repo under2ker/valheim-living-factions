@@ -244,7 +244,7 @@ namespace LivingFactions.Core
             { "r_no_wares", new[] { "We have nothing of that kind for outsiders.", "Для чужаков у нас такого нет." } },
             { "msg_chest_trade", new[] { "{0} bought goods from your chest for {1} coins.", "{0}: из вашего сундука куплено товаров на {1} монет." } },
             { "msg_raid", new[] { "Raid! The {0} fall upon {1}!", "Набег! {0}: нападение на {1}!" } },
-            { "fc_head", new[] { "{0} — {1}: {2} people, {3} guards", "{0} — {1}: жителей {2}, стражи {3}" } },
+            { "fc_head", new[] { "{0} - {1}: {2} people, {3} guards", "{0} — {1}: жителей {2}, стражи {3}" } },
             { "fc_ruin", new[] { "{0} lies in ruins", "{0}: одни развалины" } },
             { "fc_build0", new[] { "raising a {0}, {1}% done", "строят: {0}, готово {1}%" } },
             { "fc_build1", new[] { "hammers ring: a {0} is {1}% up", "стучат молотки: {0}, {1}%" } },
@@ -443,7 +443,7 @@ namespace LivingFactions.Core
             { "bark_merc2", new[] { "Coin first, songs later.", "Сперва монета, песни потом." } },
             { "hud_elsewhere", new[] { "Elsewhere", "В других краях" } },
             { "hud_news", new[] { "News", "Вести" } },
-            { "msg_enter", new[] { "{0} — {1} of the {2}", "{0} — {1}, {2}" } },
+            { "msg_enter", new[] { "{0} - {1} of the {2}", "{0} — {1}, {2}" } },
         };
 
         // People and places in Russian. Settlements are a first part and a second part put together,

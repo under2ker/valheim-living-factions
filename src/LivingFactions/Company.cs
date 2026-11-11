@@ -52,7 +52,7 @@ namespace LivingFactions
             return n;
         }
 
-        private static FactionMember Spawn(Settlement s, Vector3 pos, NpcRole role, double seconds, int seed = 0)
+        private static FactionMember Spawn(Settlement s, Vector3 pos, NpcRole role, double seconds, int seed = 0, long ownerPlayerId = 0)
         {
             Faction faction = SimHost.Sim.State.GetFaction(s.FactionId);
             GameObject prefab = faction != null ? Npcs.PrefabFor(faction) : null;
@@ -68,7 +68,7 @@ namespace LivingFactions
                 return null;
             }
             member.Expire(seconds);
-            member.Setup(s.FactionId, s.Id, role, seed != 0 ? seed : Random.Range(1, int.MaxValue));
+            member.Setup(s.FactionId, s.Id, role, seed != 0 ? seed : Random.Range(1, int.MaxValue), ownerPlayerId);
             return member;
         }
 
@@ -103,7 +103,7 @@ namespace LivingFactions
             for (int i = 0; i < 2; i++)
             {
                 Vector3 pos = player.transform.position - player.transform.forward * 2.5f + player.transform.right * (i == 0 ? -1.5f : 1.5f);
-                if (Spawn(s, pos, NpcRole.Mercenary, HireSeconds(standing)) != null) joined++;
+                if (Spawn(s, pos, NpcRole.Mercenary, HireSeconds(standing), 0, player.GetPlayerID()) != null) joined++;
             }
             return joined > 0 ? "r_hired" : "r_hire_none";
         }

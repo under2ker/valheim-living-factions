@@ -132,20 +132,22 @@ namespace LivingFactions.Harness
         /// A world with an attacker and a defender, a synthetic pair of places 600 m apart and a war
         /// between them, then a campaign on the defender's place (at its war camp, or still scouting).
         /// </summary>
-        private static Simulation CampaignWorld(int seed, bool atCamp, out Campaign campaign, out Settlement home, out Settlement target)
+        private static Simulation CampaignWorld(int seed, bool atCamp, out Campaign campaign, out Settlement home, out Settlement target, bool attackerHigh = false)
         {
             campaign = null;
             home = null;
             target = null;
             Balance balance = new Balance { Expeditions = false, Outposts = false, Migration = false, AllyAid = false, RaidRange = 0f };
             Simulation sim = NewSim(seed, balance);
-            Faction attacker = null, defender = null;
+            Faction first = null, second = null;
             foreach (Faction f in sim.State.Factions)
             {
                 if (f.Eliminated) continue;
-                if (attacker == null) attacker = f;
-                else if (defender == null) defender = f;
+                if (first == null) first = f;
+                else if (second == null) second = f;
             }
+            Faction attacker = attackerHigh ? second : first;
+            Faction defender = attackerHigh ? first : second;
             // Only the two sides that matter take part: no other war or campaign runs beside the test.
             foreach (Faction f in sim.State.Factions) if (f.Id != attacker.Id && f.Id != defender.Id) f.Eliminated = true;
             if (attacker == null || defender == null) return null;
@@ -168,17 +170,41 @@ namespace LivingFactions.Harness
             return sim;
         }
 
-        private static Simulation CampaignForTest(bool atCamp, out Campaign campaign, out Settlement home, out Settlement target)
+        private static Simulation CampaignForTest(bool atCamp, out Campaign campaign, out Settlement home, out Settlement target, bool attackerHigh = false)
         {
             for (int seed = 1; seed <= 25; seed++)
             {
-                Simulation sim = CampaignWorld(seed * 101, atCamp, out campaign, out home, out target);
+                Simulation sim = CampaignWorld(seed * 101, atCamp, out campaign, out home, out target, attackerHigh);
                 if (sim != null) return sim;
             }
             campaign = null;
             home = null;
             target = null;
             return null;
+        }
+
+        /// <summary>Regression: a war is resolved whatever the sides' ids are, not only when the attacker has the lower one.</summary>
+        private static void CampaignHighIdChecks()
+        {
+            Campaign c;
+            Settlement home, target;
+            Simulation sim = CampaignForTest(true, out c, out home, out target, true);
+            Check(sim != null, "a campaign can be started with the higher-id faction as the attacker");
+            if (sim == null) return;
+            Faction attacker = sim.State.GetFaction(c.FactionId);
+            Check(attacker.Id > c.EnemyId, "the test attacker has the higher faction id (" + attacker.Id + " > " + c.EnemyId + ")");
+            // The attacker is overwhelming, so the only reason the place could stay unconquered is a lost relation lookup.
+            home.Population = 80f;
+            home.Soldiers = 60f;
+            target.Population = 3f;
+            target.Soldiers = 0.5f;
+            c.StageSinceDay = sim.State.Day - sim.Balance.CampDays;
+            List<SimEvent> events = new List<SimEvent>();
+            sim.EventRaised += e => events.Add(e);
+            double until = sim.State.Day + 20.0;
+            while (sim.State.Day < until && target.FactionId != attacker.Id && c.Stage != CampaignStage.Over) sim.Step();
+            Check(events.Any(e => e.Kind == EventKind.CampaignWon) || target.FactionId == attacker.Id,
+                "a campaign of the higher-id faction still fights and takes the place (" + c.Stage + ", " + c.Why + ", owner " + target.FactionId + ")");
         }
 
         /// <summary>Regression: a campaign must notice when the place it is aimed at changes hands.</summary>
@@ -432,9 +458,11 @@ namespace LivingFactions.Harness
             // ---------------------------------------------------------- long run
             Simulation sim = NewSim(seed);
             int shown = 0;
+            int longCaptures = 0;
             sim.EventRaised += e =>
             {
                 bool minor = e.Kind == EventKind.BuildingStarted || e.Kind == EventKind.BuildingCompleted || e.Kind == EventKind.TradeCaravan;
+                if (e.Kind == EventKind.SettlementCaptured) longCaptures++;
                 if (verbose || !minor)
                 {
                     Console.WriteLine("  d" + e.Day.ToString("0.0").PadLeft(6) + "  " + Texts.Describe(e, sim.State));
@@ -475,7 +503,10 @@ namespace LivingFactions.Harness
             Check(firstVillage > 0 && firstVillage <= 40, "a village appears within 40 days (day " + firstVillage + ")");
             Check(firstTown > 0 && firstTown <= 110, "a town appears within 110 days (day " + firstTown + ")");
             Check(sim.State.Settlements.Count > sim.State.Factions.Count, "factions found daughter settlements (" + sim.State.Settlements.Count + " settlements)");
-            Check(sim.State.Settlements.Count(x => x.CampaignId == 0) <= sim.Balance.MaxSettlementsTotal, "settlement cap respected (war camps aside)");
+            // Founding respects the total cap; a war camp is temporary and may be taken beyond it, so
+            // a received place can add at most one settlement over the cap per capture.
+            int liveNormal = sim.State.Settlements.Count(x => !x.Destroyed && x.CampaignId == 0);
+            Check(liveNormal <= sim.Balance.MaxSettlementsTotal + longCaptures, "settlement cap respected for founded places: " + liveNormal + " live, " + longCaptures + " captures of " + sim.Balance.MaxSettlementsTotal);
 
             // ---------------------------------------------------------- forecast
             string badLine = null;
@@ -594,6 +625,8 @@ namespace LivingFactions.Harness
             CampaignScoutLossChecks();
             // ---------------------------------------------------------- a taken camp must not stay a camp of the old owner
             CaptureCleanupChecks();
+            // ---------------------------------------------------------- wars resolve whatever the sides' ids are
+            CampaignHighIdChecks();
 
             // ---------------------------------------------------------- many seeds
             int wars = 0, alliances = 0, captures = 0, worstFactions = 99, camps = 0, counters = 0, aid = 0, moves = 0, won = 0, outposts = 0, roadPosts = 0;

@@ -341,6 +341,11 @@ namespace LivingFactions
         {
             if (!SimHost.Active || !IsHost) yield break;
             int count = framed.ReadInt();
+            if (count < 0 || count > 4096)
+            {
+                Plugin.Log.LogWarning("Ignored a malformed building report from a guest: " + count + " entries.");
+                yield break;
+            }
             ZPackage pkg = new ZPackage(framed.ReadByteArray());
             for (int i = 0; i < count; i++)
             {
@@ -348,6 +353,7 @@ namespace LivingFactions
                 float ground = pkg.ReadSingle();
                 int terrain = pkg.ReadInt(), layout = pkg.ReadInt();
                 string wall = pkg.ReadString();
+                if (pieces < 0 || pieces > 1000000 || terrain < 0 || layout < 0 || !Finite(ground) || wall == null || wall.Length > 64) continue;
                 Settlement s = SimHost.Sim.State.GetSettlement(sid);
                 if (s == null) continue;
                 foreach (Building b in s.Buildings)
@@ -508,7 +514,13 @@ namespace LivingFactions
         {
             if (!SimHost.Active || !IsHost) yield break;
             string what = pkg.ReadString();
-            object[] a = new object[pkg.ReadInt()];
+            int count = pkg.ReadInt();
+            if (count < 0 || count > 16)
+            {
+                Plugin.Log.LogWarning("Ignored a malformed '" + what + "' from a guest: " + count + " arguments.");
+                yield break;
+            }
+            object[] a = new object[count];
             for (int i = 0; i < a.Length; i++)
             {
                 switch (pkg.ReadByte())
@@ -531,46 +543,175 @@ namespace LivingFactions
             _dirty = true;
         }
 
+        /// <summary>True for a number that can be stored in the state (not NaN or endless).</summary>
+        private static bool Finite(float v) { return !float.IsNaN(v) && !float.IsInfinity(v); }
+
+        private static bool IntArg(object[] a, int at, out int v)
+        {
+            v = 0;
+            if (a == null || at >= a.Length || !(a[at] is int)) return false;
+            v = (int)a[at];
+            return true;
+        }
+
+        private static bool LongArg(object[] a, int at, out long v)
+        {
+            v = 0L;
+            if (a == null || at >= a.Length || !(a[at] is long)) return false;
+            v = (long)a[at];
+            return true;
+        }
+
+        private static bool FloatArg(object[] a, int at, out float v)
+        {
+            v = 0f;
+            if (a == null || at >= a.Length || !(a[at] is float)) return false;
+            v = (float)a[at];
+            return Finite(v);
+        }
+
+        private static bool BoolArg(object[] a, int at, out bool v)
+        {
+            v = false;
+            if (a == null || at >= a.Length || !(a[at] is bool)) return false;
+            v = (bool)a[at];
+            return true;
+        }
+
+        private static bool StrArg(object[] a, int at, out string v)
+        {
+            v = "";
+            if (a == null || at >= a.Length || !(a[at] is string)) return false;
+            v = (string)a[at];
+            return v.Length <= 64 && v.IndexOf('\n') < 0 && v.IndexOf('\r') < 0;
+        }
+
+        /// <summary>A guest's message that does not fit what the game sends: ignore it and say so.</summary>
+        private static void Malformed(string what)
+        {
+            Plugin.Log.LogWarning("Ignored a malformed '" + what + "' from a guest.");
+        }
+
         /// <summary>The host does for a remote player what that player's own game has already done to its copy.</summary>
         private static void Apply(string what, object[] a)
         {
             Simulation sim = SimHost.Sim;
             WorldState st = sim.State;
+            int id, res, amount, coins, bid;
+            long pid;
+            float value, loss, delta;
             switch (what)
             {
-                case "war": sim.PlayerDeclareWar(st.GetFaction((int)a[0]), (long)a[1]); break;
-                case "peace": sim.PlayerProposePeace(st.GetFaction((int)a[0]), (long)a[1], (int)a[2]); break;
-                case "ally": sim.PlayerProposeAlliance(st.GetFaction((int)a[0]), (long)a[1]); break;
-                case "unally": sim.PlayerBreakAlliance(st.GetFaction((int)a[0]), (long)a[1]); break;
-                case "gift": sim.PlayerGift(st.GetSettlement((int)a[0]), (long)a[1], (Res)(int)a[2], (float)a[3]); break;
-                case "buy": sim.PlayerBuy(st.GetSettlement((int)a[0]), (Res)(int)a[1], (int)a[2], (long)a[3], (int)a[4]); break;
-                case "sell": sim.PlayerSell(st.GetSettlement((int)a[0]), (Res)(int)a[1], (int)a[2], (long)a[3]); break;
-                case "killed": sim.PlayerKilledMember(st.GetSettlement((int)a[0]), (long)a[1], (bool)a[2], (bool)a[3], (bool)a[4], (bool)a[5]); break;
-                case "squadloss": sim.SquadLoss((int)a[0]); break;
-                case "wrecked": sim.BuildingWrecked(st.GetSettlement((int)a[0]), (int)a[1]); break;
+                case "war":
+                case "ally":
+                case "unally":
+                {
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || st.GetFaction(id) == null) { Malformed(what); return; }
+                    Faction f = st.GetFaction(id);
+                    if (what == "war") sim.PlayerDeclareWar(f, pid);
+                    else if (what == "ally") sim.PlayerProposeAlliance(f, pid);
+                    else sim.PlayerBreakAlliance(f, pid);
+                    return;
+                }
+                case "peace":
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !IntArg(a, 2, out coins) || coins < 0 || coins > 1000000 || st.GetFaction(id) == null) { Malformed(what); return; }
+                    sim.PlayerProposePeace(st.GetFaction(id), pid, coins);
+                    return;
+                case "gift":
+                    // Gift: settlement, player, resource, amount.
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !IntArg(a, 2, out res) || !FloatArg(a, 3, out value)
+                        || value <= 0f || value > 1000000f || res < 0 || res > (int)Res.Coins || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    sim.PlayerGift(st.GetSettlement(id), pid, (Res)res, value);
+                    return;
+                case "buy":
+                    // Buy: settlement, resource, amount, player, coins the player says they have.
+                    if (!IntArg(a, 0, out id) || !IntArg(a, 1, out res) || !IntArg(a, 2, out amount) || !LongArg(a, 3, out pid) || !IntArg(a, 4, out coins)
+                        || amount <= 0 || amount > 100000 || coins < 0 || coins > 1000000 || res < 0 || res > (int)Res.Coins || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    sim.PlayerBuy(st.GetSettlement(id), (Res)res, amount, pid, coins);
+                    return;
+                case "sell":
+                    if (!IntArg(a, 0, out id) || !IntArg(a, 1, out res) || !IntArg(a, 2, out amount) || !LongArg(a, 3, out pid)
+                        || amount <= 0 || amount > 100000 || res < 0 || res > (int)Res.Coins || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    sim.PlayerSell(st.GetSettlement(id), (Res)res, amount, pid);
+                    return;
+                case "killed":
+                {
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || a.Length < 6 || !(a[2] is bool) || !(a[3] is bool) || !(a[4] is bool) || !(a[5] is bool) || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    sim.PlayerKilledMember(st.GetSettlement(id), pid, (bool)a[2], (bool)a[3], (bool)a[4], (bool)a[5]);
+                    return;
+                }
+                case "squadloss":
+                    if (!IntArg(a, 0, out id) || id < 0) { Malformed(what); return; }
+                    sim.SquadLoss(id);
+                    return;
+                case "wrecked":
+                    if (!IntArg(a, 0, out id) || !IntArg(a, 1, out bid) || bid < 0 || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    sim.BuildingWrecked(st.GetSettlement(id), bid);
+                    return;
                 case "chief":
                 {
-                    Settlement fallen = st.GetSettlement((int)a[0]);
+                    Settlement fallen = IntArg(a, 0, out id) ? st.GetSettlement(id) : null;
                     Faction ff = fallen != null ? st.GetFaction(fallen.FactionId) : null;
-                    if (ff != null) sim.ChiefFell(fallen, ff);
-                    break;
+                    if (ff == null) { Malformed(what); return; }
+                    sim.ChiefFell(fallen, ff);
+                    return;
                 }
-                case "died": sim.MemberDied(st.GetSettlement((int)a[0]), (bool)a[1]); break;
-                case "attacked": sim.PlayerAttackedMember(st.GetFaction((int)a[0]), (long)a[1], a.Length > 2 ? (float)a[2] : 2f); break;
-                case "damaged": sim.PlayerDamagedProperty(st.GetFaction((int)a[0]), (long)a[1]); break;
-                case "stole": sim.PlayerStole(st.GetFaction((int)a[0]), (long)a[1], (float)a[2]); break;
-                case "helped": sim.PlayerHelped(st.GetFaction((int)a[0]), (long)a[1], (float)a[2]); break;
-                case "rep": sim.AddReputation(st.GetFaction((int)a[0]), (long)a[1], (float)a[2]); break;
-                case "name": sim.PlayerRel(st.GetFaction((int)a[0]), (long)a[1]).Name = (string)a[2]; break;
+                case "died":
+                {
+                    bool soldier;
+                    if (!IntArg(a, 0, out id) || !BoolArg(a, 1, out soldier) || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    sim.MemberDied(st.GetSettlement(id), soldier);
+                    return;
+                }
+                case "attacked":
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || st.GetFaction(id) == null) { Malformed(what); return; }
+                    loss = 2f;
+                    if (a.Length > 2 && !FloatArg(a, 2, out loss)) { Malformed(what); return; }
+                    sim.PlayerAttackedMember(st.GetFaction(id), pid, Mathf.Clamp(loss, 0f, 100f));
+                    return;
+                case "damaged":
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || st.GetFaction(id) == null) { Malformed(what); return; }
+                    sim.PlayerDamagedProperty(st.GetFaction(id), pid);
+                    return;
+                case "stole":
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !FloatArg(a, 2, out value) || value < 0f || value > 1000000f || st.GetFaction(id) == null) { Malformed(what); return; }
+                    sim.PlayerStole(st.GetFaction(id), pid, value);
+                    return;
+                case "helped":
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !FloatArg(a, 2, out value) || value < 0f || value > 1000f || st.GetFaction(id) == null) { Malformed(what); return; }
+                    sim.PlayerHelped(st.GetFaction(id), pid, value);
+                    return;
+                case "rep":
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !FloatArg(a, 2, out delta) || Mathf.Abs(delta) > 1000f || st.GetFaction(id) == null) { Malformed(what); return; }
+                    sim.AddReputation(st.GetFaction(id), pid, delta);
+                    return;
+                case "name":
+                {
+                    string name;
+                    if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !StrArg(a, 2, out name) || st.GetFaction(id) == null) { Malformed(what); return; }
+                    sim.PlayerRel(st.GetFaction(id), pid).Name = name.Trim();
+                    return;
+                }
                 case "stock":
-                    Settlement s = st.GetSettlement((int)a[0]);
-                    if (s != null) s.Stock[(int)a[1]] = Mathf.Max(0f, s.Stock[(int)a[1]] + (float)a[2]);
-                    break;
+                    if (!IntArg(a, 0, out id) || !IntArg(a, 1, out res) || !FloatArg(a, 2, out delta) || Mathf.Abs(delta) > 1000000f || res < 0 || res > (int)Res.Coins)
+                    { Malformed(what); return; }
+                    {
+                        Settlement s = st.GetSettlement(id);
+                        if (s == null) { Malformed(what); return; }
+                        s.Stock[res] = Mathf.Max(0f, s.Stock[res] + delta);
+                    }
+                    return;
                 case "found":
-                    List<int> known;
-                    if (!st.Discovered.TryGetValue((long)a[0], out known)) st.Discovered[(long)a[0]] = known = new List<int>();
-                    if (!known.Contains((int)a[1])) known.Add((int)a[1]);
-                    break;
+                    if (!LongArg(a, 0, out pid) || !IntArg(a, 1, out id) || st.GetSettlement(id) == null) { Malformed(what); return; }
+                    {
+                        List<int> known;
+                        if (!st.Discovered.TryGetValue(pid, out known)) st.Discovered[pid] = known = new List<int>();
+                        if (!known.Contains(id)) known.Add(id);
+                    }
+                    return;
+                default:
+                    Malformed(what);
+                    return;
             }
         }
 

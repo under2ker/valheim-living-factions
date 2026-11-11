@@ -23,12 +23,22 @@ namespace LivingFactions
 
             if (ma != null && mb != null)
             {
-                // A hired sword fights whoever is hostile to the player who pays.
+                // A hired sword fights whoever is hostile to the player who pays. On a dedicated server
+                // there is no local player: the fighter remembers whose it is instead.
                 FactionMember hired = ma.Role == NpcRole.Mercenary ? ma : mb.Role == NpcRole.Mercenary ? mb : null;
-                if (hired != null && Player.m_localPlayer != null && (hired == ma ? mb : ma).IsHostileTo(Player.m_localPlayer))
+                if (hired != null)
                 {
-                    __result = true;
-                    return false;
+                    FactionMember otherMember = hired == ma ? mb : ma;
+                    long ownerId = hired.OwnerPlayerId;
+                    bool localIsOwner = ownerId == 0L || (Player.m_localPlayer != null && Player.m_localPlayer.GetPlayerID() == ownerId);
+                    bool hostile = localIsOwner
+                        ? Player.m_localPlayer != null && otherMember.IsHostileTo(Player.m_localPlayer)
+                        : SimHost.Sim.IsHostileToPlayer(otherMember.FactionId, ownerId);
+                    if (hostile)
+                    {
+                        __result = true;
+                        return false;
+                    }
                 }
                 __result = (ma.FactionId != mb.FactionId && SimHost.Sim.AreAtWar(ma.FactionId, mb.FactionId))
                     || Grudges.AngryAt(ma, b) || Grudges.AngryAt(mb, a) || Grudges.DefendsAgainst(ma, b) || Grudges.DefendsAgainst(mb, a);
@@ -45,8 +55,13 @@ namespace LivingFactions
             }
             if (other.IsTamed())
             {
-                // Tamed animals share their masters' standing.
-                __result = Player.m_localPlayer != null && member.IsHostileTo(Player.m_localPlayer);
+                // Tamed animals share the standing of the player they belong to, not of whoever looks:
+                // on a dedicated server there is no local player to take for their master.
+                MonsterAI animalAi = other.GetComponent<MonsterAI>();
+                GameObject follow = animalAi != null ? animalAi.GetFollowTarget() : null;
+                Player owner = follow != null ? follow.GetComponent<Player>() : null;
+                if (owner == null) owner = Player.m_localPlayer;
+                __result = owner != null && member.IsHostileTo(owner);
                 return false;
             }
             // A creature out in the water is nobody's business: no one wades in after a Neck, nor stands

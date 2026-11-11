@@ -54,28 +54,15 @@ Source and releases: https://github.com/under2ker/valheim-living-factions
 Made with the help of AI (Claude Code). No game files, decompiled code or extracted assets are included.
 ```
 
-## Changelog 0.7.0
+## Changelog 0.8.0
 
 ```
-- Bands on the move: settlements send people out for wood, stone, food or ore; raids march to their target and carry the loot home.
-- War campaigns: scouts, a war camp halfway there, the assault, a supply line, allies joining, counterattacks.
-- Outposts and road watch posts; people leave places that starve or are threatened.
-- Envoy's tents: talk to a faction even at war, give gifts or tribute, ask for peace.
-- Night: everyone sleeps in their own beds; open their chest after dark and you may wake the village.
-- Carriers put their loads into the storehouse chests for real.
-- Blows answered by standing instead of "hit one, anger all".
-- Hired fighters by standing (2, 4 or 6), and they go through portals with you.
-- Seven faction shields; clan fighters carry their shield and sword.
-- Every clan builds its own way; Fuling and Greydwarf homes of their own, Fuling hide roofs, city stone walls with towers.
-- Map: settlement names open up into their state; villagers on the minimap. Alt+H hides the chronicle.
-- Fixed: ditches and humps along terrain tile borders when levelling with the hoe.
-- Fixed: roads into walls, steps on road beds, caravans stuck on the road, shields turned on the arm.
-- Villages on slopes: buildings' level ground fitted to their neighbours, ramps along the paths.
-- Fixed: own goods taken back from a chest counted as theft; false theft for guests in multiplayer.
-- Fixed: a war campaign went on after its target changed hands; a war camp taken by the enemy kept its tents and its old ties.
-- A faction state file that cannot be read no longer starts the factions over: the backup or the latest dated copy is used. A state from a newer version is not loaded.
-- The dialogue's way out is always on screen; the mod menu shows all its rows.
-- Multiplayer: lf rewind on the server resets what guests had built in the timeline taken back.
+- Fixed: wars and campaigns are fought whatever the order of the factions' ids. Before, half of the raids and assaults ended without a fight: the pair's relation is kept on the faction with the lower id, and the band looked for it on the attacker. The monster factions could take nothing by war, and their campaigns always ended repelled.
+- Fixed: a relation asked for by a dialogue or the forecast no longer draws from the shared random stream, so opening a menu cannot change the history of the world.
+- Fixed: the dialogue's Leave button is always on screen; eleven buttons fit.
+- Fixed: a hired fighter fights by the standing of the player whose coins pay it, and a tamed animal by the standing of its owner, including on a dedicated server.
+- Fixed: the host ignores malformed guest messages (impossible counts, ids, amounts and names) with a warning, instead of spoiling the factions.
+- Worlds and saves of 0.7.0 carry over; everyone in a game needs the same 0.8.x version.
 ```
 
 ## Tags

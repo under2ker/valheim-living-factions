@@ -15,6 +15,8 @@ namespace LivingFactions
         private static readonly int HashSeed = "lf_seed".GetStableHashCode();
         private static readonly int HashInit = "lf_init".GetStableHashCode();
         private static readonly int HashUntil = "lf_until".GetStableHashCode();
+        /// <summary>For a hired fighter, the player whose coins pay it (0 for everyone else).</summary>
+        private static readonly int HashOwner = "lf_owner".GetStableHashCode();
         private const double RaidSeconds = 240;
 
         private static readonly Dictionary<Character, FactionMember> ByCharacter = new Dictionary<Character, FactionMember>();
@@ -24,6 +26,7 @@ namespace LivingFactions
         public int SettlementId;
         public int Seed;
         public NpcRole Role;
+        public long OwnerPlayerId;
         public float LastHurt = -999f;
         public string DisplayName = "";
 
@@ -64,6 +67,7 @@ namespace LivingFactions
             SettlementId = zdo.GetInt(Materializer.HashSettlement);
             Role = (NpcRole)zdo.GetInt(HashRole);
             Seed = zdo.GetInt(HashSeed);
+            OwnerPlayerId = zdo.GetLong(HashOwner);
             SquadId = zdo.GetInt(HashSquad);
             DisplayName = zdo.GetString(ZDOVars.s_overrideHoverName);
             if (_humanoid != null) ByCharacter[_humanoid] = this;
@@ -107,17 +111,19 @@ namespace LivingFactions
             _view.GetZDO().Set(HashSquad, squadId);
         }
 
-        public void Setup(int factionId, int settlementId, NpcRole role, int seed)
+        public void Setup(int factionId, int settlementId, NpcRole role, int seed, long ownerPlayerId = 0)
         {
             FactionId = factionId;
             SettlementId = settlementId;
             Role = role;
             Seed = seed;
+            OwnerPlayerId = role == NpcRole.Mercenary ? ownerPlayerId : 0L;
             ZDO zdo = _view.GetZDO();
             zdo.Set(HashFaction, factionId);
             zdo.Set(Materializer.HashSettlement, settlementId);
             zdo.Set(HashRole, (int)role);
             zdo.Set(HashSeed, seed);
+            zdo.Set(HashOwner, OwnerPlayerId);
             Apply();
         }
 
