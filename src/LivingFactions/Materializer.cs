@@ -36,8 +36,8 @@ namespace LivingFactions
             /// spot every metre, it takes the steps out from between the levelled discs.
             /// </summary>
             public bool Blend;
-            /// <summary>Mending a tear between two tiles (HealSeams): not counted as ground the mod shaped.</summary>
-            public bool Seam;
+            /// <summary>The road point a paint job belongs to (Roads.Key): if the paint is given up, the point is painted again later.</summary>
+            public long RoadKey;
             /// <summary>How far off the land a grade may go (0 = as far as a pad); a ramp between two pads cut into a slope needs more.</summary>
             public float Drift;
             /// <summary>When the job was queued: a levelling that has waited long goes first, whatever the pads.</summary>
@@ -50,6 +50,8 @@ namespace LivingFactions
         private static readonly HashSet<string> MissingPrefabs = new HashSet<string>();
         private static readonly AccessTools.FieldRef<TerrainComp, bool> TerrainInitialized = AccessTools.FieldRefAccess<TerrainComp, bool>("m_initialized");
         private static readonly System.Reflection.MethodInfo TerrainDoOperation = AccessTools.Method(typeof(TerrainComp), "DoOperation");
+        private static readonly System.Reflection.MethodInfo TerrainPaintBrush = AccessTools.Method(typeof(TerrainComp), "InternalDoOperation");
+        private static readonly System.Reflection.MethodInfo TerrainSave = AccessTools.Method(typeof(TerrainComp), "Save");
 
         private static readonly HashSet<int> Swept = new HashSet<int>();
         private static float _nextNpcPass;
@@ -114,7 +116,8 @@ namespace LivingFactions
         public static string Describe()
         {
             string head = "pieces placed this session " + _placedTotal + ", terrain jobs queued " + (Terrain.Count + Flatten.Count) + "+" + Paints.Count + "+" + Smooths.Count
-                + ", seam spots mended " + SeamsHealed + ", missing prefabs [" + string.Join(",", MissingPrefabs) + "]";
+                + ", seam spots mended " + SeamsHealed + ", road stretches waiting " + Roads.Unfurnished + " (bed tiles waiting " + Roads.BedTilesWaiting + ")"
+                + ", missing prefabs [" + string.Join(",", MissingPrefabs) + "]";
             return head + "\nramps: paths with a ramp " + _ramps + ", paths steep " + _pathsSteep + ", paths left flat " + _pathsFlat + ", paths not loaded yet " + _pathsUnloaded
                 + ", ramps not fitting " + _rampsSkipped + "; grades done " + _gradesDone + ", refused " + _gradesRefused + ", dropped after waiting " + _gradeDrops;
         }
@@ -151,9 +154,12 @@ namespace LivingFactions
                 if (npcPass) Audit(s, centre);
                 if (npcPass) CheckWrecks(s, centre);
                 if (budget > 0) budget = SyncBuildings(s, budget);
-                if (npcPass && !s.Destroyed) SettlePads(s);
+                // Its own thirty-second gate still applies, but the first repair must be queued before
+                // Materializer.Idle can tell a loading screen or test that the settlement is ready.
+                if (!s.Destroyed) SettlePads(s);
                 if (npcPass && !s.Destroyed)
                 {
+                    if (ModConfig.Roads.Value) Roads.ShapePadBanks(s, reference);
                     Faction owner = SimHost.Sim.State.GetFaction(s.FactionId);
                     if (owner != null) EnvoyPost.Furnish(s, owner);
                 }
@@ -656,19 +662,21 @@ namespace LivingFactions
             {
                 if (s.Destroyed) continue;
                 Vector3 centre = new Vector3(s.Pos.X, 0f, s.Pos.Z);
-                if (Utils.DistanceXZ(reference, centre) > 70f || !ZoneSystem.instance.IsZoneLoaded(centre)) continue;
+                if (Utils.DistanceXZ(reference, centre) > 110f || !ZoneSystem.instance.IsZoneLoaded(centre)) continue;
                 // Again every so often: growth of a tile turns up some time after the tile itself (later still
                 // for a guest, who hears of it from the host), and a single pass would miss it.
                 float due;
                 if (PathsCleared.TryGetValue(s.Id, out due) && Time.time < due) continue;
-                PathsCleared[s.Id] = Time.time + 20f;
-                if (Net.IsBuilder(s))
+                bool builder = Net.IsBuilder(s);
+                bool padsReady = builder && !WorkReachesTile(Terrain, centre, 100f) && !WorkReachesTile(Flatten, centre, 100f);
+                PathsCleared[s.Id] = Time.time + (builder && !padsReady ? 3f : 20f);
+                if (builder)
                 {
                     OpenFences(s, centre);
                     // The streets once a session, when the pads round them are done.
                     // Only once the pads are levelled: a path looked at while its pads wait is still the land, and would be
                     // taken for flat and never looked at again.
-                    if (!StreetsEased.Contains(s.Id) && PadsSettled() && EaseStreets(s)) StreetsEased.Add(s.Id);
+                    if (!StreetsEased.Contains(s.Id) && padsReady && EaseStreets(s)) StreetsEased.Add(s.Id);
                 }
                 foreach (Building b in s.Buildings)
                 {
@@ -694,7 +702,7 @@ namespace LivingFactions
                     // that came later (a new pad beside the path), is seen to the next time.
                     // Every pass while the settlement is near: a bank can come up after the first look (the ground of a
                     // neighbouring pad, a street cut beside it). A path that is flat costs only a few heights to check.
-                    if (b.State == BuildingState.Complete && Net.IsBuilder(s) && PadsSettled() && EaseBanks(s, b, from, to)) b.Graded = 2;
+                    if (b.State == BuildingState.Complete && padsReady && EaseBanks(s, b, from, to)) b.Graded = 2;
                     float length = Utils.DistanceXZ(from, to);
                     for (float d = 0f; d <= length; d += 2f)
                     {
@@ -719,7 +727,9 @@ namespace LivingFactions
         private static bool EaseBanks(Settlement s, Building b, Vector3 from, Vector3 to)
         {
             float length = Utils.DistanceXZ(from, to);
-            int n = Mathf.Max(2, Mathf.CeilToInt(length / 1.5f) + 1);
+            // PathCheck walks in exact 1.5 m steps. Use the same spots here: a different sampling phase
+            // can put the only steep step between two samples at the edge of a pad.
+            int n = Mathf.Max(2, Mathf.FloorToInt(length / 1.5f) + 1);
             float[] ground = new float[n], target = new float[n];
             bool[] fixedAt = new bool[n];
             Vector3[] spots = new Vector3[n];
@@ -796,16 +806,16 @@ namespace LivingFactions
                     pending++;
                     continue;
                 }
-                // A spot that a pad's floor must keep out of is not graded at all (checked here, not at the refusal:
-                // a refused job is queued again on every pass).
+                // The brush must fit between the footprint and the margin PadFloor holds fixed: a wider brush
+                // refused the first spot beyond that margin too and left a permanent step at the pad's edge.
                 bool smoothIt = !OnAPad(s, p, 4.5f), onFloor = false;
-                PadsNear(p, 1.3f, ref smoothIt, ref onFloor);
+                PadsNear(p, 0.9f, ref smoothIt, ref onFloor);
                 if (onFloor)
                 {
                     _gradesRefused++;
                     continue;
                 }
-                QueueGrade(new Vector3(p.x, target[i], p.z), 1.3f, smoothIt, RampDrift);
+                QueueGrade(new Vector3(p.x, target[i], p.z), 0.9f, smoothIt, RampDrift);
                 queued++;
             }
             if (RampNotes.Add(-(s.Id * 100000 + b.Id) - 1))
@@ -1180,6 +1190,54 @@ namespace LivingFactions
         /// the clock: counting attempts instead gave up after a second or two on a fast machine,
         /// which is how freshly reached stretches of road were left unpainted.
         /// </summary>
+        /// <summary>
+        /// The compiler of one terrain tile when its ground may be changed now: it exists, is ours, and its last
+        /// change has been built into the heightmap (Roads lays road beds straight into the tile's heights).
+        /// </summary>
+        internal static TerrainComp ReadyCompiler(Heightmap hm)
+        {
+            List<TerrainComp> compilers = new List<TerrainComp>();
+            if (hm == null || !Compilers(hm.transform.position, 0.5f, compilers)) return null;
+            foreach (TerrainComp comp in compilers)
+            {
+                if (TerrainHeightmap(comp) != hm) continue;
+                return Settling(comp) ? null : comp;
+            }
+            return null;
+        }
+
+        /// <summary>Why <see cref="ReadyCompiler"/> gives nothing for the tile (logged when a road bed waits long).</summary>
+        internal static string CompilerBlock(Heightmap hm)
+        {
+            if (hm == null) return "no tile";
+            TerrainComp comp = TerrainComp.FindTerrainCompiler(hm.transform.position);
+            if (comp == null)
+                return SavedCompilerExists(hm) ? "its saved compiler is not loaded" : Net.IsHost ? "no compiler yet" : "no compiler heard of from the host yet";
+            if (!TerrainInitialized(comp)) return "compiler not initialised";
+            if (!comp.IsOwner()) return "compiler owned by another player";
+            if (TerrainHeightmap(comp) != hm) return "compiler belongs to another tile";
+            if (Settling(comp)) return "tile still rebuilding (" + hm.m_doLateUpdate + ")";
+            return "ready";
+        }
+
+        /// <summary>Publish all changes to a compiler with one save and one rebuild.</summary>
+        internal static void SaveTerrainTile(TerrainComp comp, bool paintOnly)
+        {
+            Heightmap tile = TerrainHeightmap(comp);
+            TerrainSave.Invoke(comp, new object[] { paintOnly });
+            tile.Poke(1, paintOnly);
+            if (ClutterSystem.instance != null)
+                ClutterSystem.instance.ResetGrass(tile.transform.position, tile.m_width * tile.m_scale * 0.71f);
+            if (!paintOnly)
+            {
+                TerrainBusy[comp] = Time.frameCount;
+                TerrainBusyAt[comp] = Time.time;
+            }
+        }
+
+        internal static void NoteModVertex(Vector3 point) { ModWorked.Add(CellOf(point)); }
+        internal static void NoteModArea(Vector3 point, float radius) { Mark(ModWorked, point, radius); }
+
         private static bool StillWaiting(ref TerrainJob job)
         {
             if (job.GiveUpAt <= 0f) job.GiveUpAt = Time.time + 180f;
@@ -1189,9 +1247,12 @@ namespace LivingFactions
         // ------------------------------------------------------------------ torn ground
 
         private static readonly List<Heightmap> SeamTiles = new List<Heightmap>(), SeamAt = new List<Heightmap>();
-        private static readonly Dictionary<long, float> SeamTried = new Dictionary<long, float>();
+        private static readonly HashSet<long> SeamVertices = new HashSet<long>();
+        private static readonly HashSet<TerrainComp> SeamChanges = new HashSet<TerrainComp>();
+        private static readonly Dictionary<Heightmap, TerrainComp> SeamCompilers = new Dictionary<Heightmap, TerrainComp>();
         private static float _nextSeamCheck;
         public static int SeamsHealed;
+        internal static bool SeamsOnPlayerWork;
 
         /// <summary>Ground the mod shaped this session, and ground players worked, by 8 m cells (HealSeams).</summary>
         private static readonly HashSet<long> ModWorked = new HashSet<long>(), PlayerWorked = new HashSet<long>();
@@ -1218,66 +1279,121 @@ namespace LivingFactions
             Mark(PlayerWorked, pos, radius);
         }
 
+        internal static bool PlayerWorkedNear(Vector3 pos, float radius)
+        {
+            int x0 = Mathf.FloorToInt((pos.x - radius) / WorkCell), x1 = Mathf.FloorToInt((pos.x + radius) / WorkCell);
+            int z0 = Mathf.FloorToInt((pos.z - radius) / WorkCell), z1 = Mathf.FloorToInt((pos.z + radius) / WorkCell);
+            for (int x = x0; x <= x1; x++)
+                for (int z = z0; z <= z1; z++)
+                    if (PlayerWorked.Contains(((long)x << 32) ^ (uint)z)) return true;
+            return false;
+        }
+
         /// <summary>
-        /// The game shapes each terrain tile from that tile's own heights, so smoothing that reaches
-        /// across the border of two tiles leaves them disagreeing along it: a visible tear. Once the
-        /// ground work around the player is finished, every vertex where two tiles differ is levelled
-        /// to the mean of the two on both tiles at once, which closes the tear. Only where the mod
-        /// shaped the ground itself, and never where a player worked it.
+        /// Keep shared vertices in step once their own tiles settle. A disc brush would also move
+        /// adjacent vertices and can turn a tear into a new ridge.
         /// </summary>
         private static void HealSeams()
         {
             if (Time.time < _nextSeamCheck) return;
-            _nextSeamCheck = Time.time + 6f;
-            if (Terrain.Count + Flatten.Count + Smooths.Count > 0 || Player.m_localPlayer == null) return;
+            _nextSeamCheck = Time.time + 0.3f;
+            if (Player.m_localPlayer == null || ModWorked.Count == 0) return;
+            Vector3 reference = Player.m_localPlayer.transform.position;
             SeamTiles.Clear();
-            Heightmap.FindHeightmap(Player.m_localPlayer.transform.position, 140f, SeamTiles);
-            int queued = 0;
+            Heightmap.FindHeightmap(reference, 160f, SeamTiles);
+            SeamTiles.RemoveAll(tile => tile == null || tile.IsDistantLod);
+            SeamTiles.Sort((a, b) => Utils.DistanceXZ(reference, a.transform.position).CompareTo(Utils.DistanceXZ(reference, b.transform.position)));
+            SeamChanges.Clear();
+            SeamCompilers.Clear();
+            SeamVertices.Clear();
+            int repaired = 0;
             foreach (Heightmap hm in SeamTiles)
             {
-
+                if (repaired >= 64 || SeamChanges.Count >= 4) break;
                 int w = hm.m_width;
                 float half = w * hm.m_scale * 0.5f;
                 Vector3 origin = hm.transform.position;
                 for (int side = 0; side < 2; side++)
                 {
                     // Every vertex is looked at: a tear can be a single one.
-                    for (int k = 0; k <= w && queued < 80; k++)
+                    for (int k = 0; k <= w && repaired < 64; k++)
                     {
                         Vector3 p = side == 0 ? new Vector3(origin.x + half, 0f, origin.z - half + k * hm.m_scale) : new Vector3(origin.x - half + k * hm.m_scale, 0f, origin.z + half);
                         // Only a tear the mod's own ground work can have made, and none where a player has worked the
                         // ground: mending the game's own small seams under a player levelling a field with the hoe
                         // dug ditches and raised humps along every tile border they crossed.
-                        long cell = CellOf(p);
-                        if (!ModWorked.Contains(cell) || PlayerWorked.Contains(cell)) continue;
+                        if (!ModWorked.Contains(CellOf(p)) || !SeamsOnPlayerWork && PlayerWorkedNear(p, 1.3f)) continue;
                         float mine = origin.y + hm.GetHeight(side == 0 ? w : k, side == 0 ? k : w);
                         SeamAt.Clear();
                         Heightmap.FindHeightmap(p, 0.2f, SeamAt);
+                        bool torn = false;
                         foreach (Heightmap other in SeamAt)
                         {
-                            if (other == hm || other.m_width != w) continue;
-                            Vector3 o = other.transform.position;
-                            int gx = Mathf.RoundToInt((p.x - o.x + half) / other.m_scale), gz = Mathf.RoundToInt((p.z - o.z + half) / other.m_scale);
-                            if (gx < 0 || gz < 0 || gx > w || gz > w) continue;
-                            float theirs = o.y + other.GetHeight(gx, gz);
-                            if (Mathf.Abs(mine - theirs) < 0.06f) continue;
-                            long key = ((long)Mathf.RoundToInt(p.x) << 32) ^ (uint)Mathf.RoundToInt(p.z);
-                            float tried;
-                            // A spot that would not close is left alone for a while rather than worked on forever.
-                            if (SeamTried.TryGetValue(key, out tried) && Time.time - tried < 90f) continue;
-                            SeamTried[key] = Time.time;
-                            float mean = (mine + theirs) * 0.5f;
-                            if (mean < ZoneSystem.c_WaterLevel - 1f) continue;
-                            // Never at a player's own building: the ground there is theirs.
-                            if (Roads.PlayerBuilt(p, 4f)) continue;
-                            EnqueueTerrain(new TerrainJob { Pos = new Vector3(p.x, mean, p.z), Radius = 1.3f, LevelOnly = true, NoPaint = true, Seam = true });
-                            queued++;
+                            int index;
+                            float height;
+                            if (other == hm || !SharedVertex(other, p, out index, out height) || Mathf.Abs(mine - height) < 0.05f) continue;
+                            torn = true;
                             break;
                         }
+                        if (!torn || Roads.PlayerBuilt(p, 4f) || Roads.InBedCorridor(p)) continue;
+                        long key = ((long)Mathf.RoundToInt(p.x) << 32) | (uint)Mathf.RoundToInt(p.z);
+                        if (SeamVertices.Add(key) && RepairSeam(p)) repaired++;
                     }
                 }
             }
-            SeamsHealed += queued;
+            foreach (TerrainComp comp in SeamChanges) SaveTerrainTile(comp, false);
+            SeamsHealed += repaired;
+        }
+
+        private struct SeamVertex
+        {
+            public TerrainComp Compiler;
+            public int Index;
+            public float Height;
+        }
+
+        private static readonly List<SeamVertex> SeamAddresses = new List<SeamVertex>(4);
+
+        private static bool SharedVertex(Heightmap tile, Vector3 point, out int index, out float height)
+        {
+            index = 0;
+            height = 0f;
+            if (tile == null || tile.IsDistantLod) return false;
+            Vector3 centre = tile.transform.position;
+            int w = tile.m_width;
+            float x = (point.x - centre.x) / tile.m_scale + w * 0.5f;
+            float z = (point.z - centre.z) / tile.m_scale + w * 0.5f;
+            int gx = Mathf.RoundToInt(x), gz = Mathf.RoundToInt(z);
+            if (gx < 0 || gz < 0 || gx > w || gz > w || Mathf.Abs(x - gx) > 0.01f || Mathf.Abs(z - gz) > 0.01f) return false;
+            index = gz * (w + 1) + gx;
+            height = centre.y + tile.GetHeight(gx, gz);
+            return true;
+        }
+
+        private static bool RepairSeam(Vector3 point)
+        {
+            SeamAddresses.Clear();
+            float sum = 0f, low = float.NegativeInfinity, high = float.PositiveInfinity;
+            foreach (Heightmap tile in SeamAt)
+            {
+                int index;
+                float height;
+                if (!SharedVertex(tile, point, out index, out height)) continue;
+                TerrainComp comp;
+                if (!SeamCompilers.TryGetValue(tile, out comp)) SeamCompilers[tile] = comp = ReadyCompiler(tile);
+                if (comp == null) return false;
+                float basis = height - Roads.TerrainOffset(comp, index);
+                low = Mathf.Max(low, basis - 8f);
+                high = Mathf.Min(high, basis + 8f);
+                SeamAddresses.Add(new SeamVertex { Compiler = comp, Index = index, Height = height });
+                sum += height;
+            }
+            if (SeamAddresses.Count < 2 || low > high) return false;
+            float target = Mathf.Clamp(sum / SeamAddresses.Count, low, high);
+            if (target < ZoneSystem.c_WaterLevel - 1f) return false;
+            foreach (SeamVertex vertex in SeamAddresses)
+                if (Roads.SetTerrainVertex(vertex.Compiler, vertex.Index, vertex.Height, target)) SeamChanges.Add(vertex.Compiler);
+            return true;
         }
 
         /// <summary>Evens out the ground at one spot of a road bed, without levelling it to a set height.</summary>
@@ -1320,10 +1436,26 @@ namespace LivingFactions
             return false;
         }
 
-        /// <summary>One spot of path: 1 = beaten earth, 2 = cobbles.</summary>
-        public static void QueuePaint(Vector3 pos, float radius, int paint)
+        internal static bool GroundWorkInTile(Vector3 centre, float half)
         {
-            Paints.Enqueue(new TerrainJob { Pos = pos, Radius = radius, Paint = paint });
+            return WorkReachesTile(Terrain, centre, half) || WorkReachesTile(Flatten, centre, half)
+                || WorkReachesTile(Smooths, centre, half);
+        }
+
+        private static bool WorkReachesTile(IEnumerable<TerrainJob> jobs, Vector3 centre, float half)
+        {
+            foreach (TerrainJob job in jobs)
+            {
+                float reach = half + job.Radius + 4f;
+                if (Mathf.Abs(centre.x - job.Pos.x) <= reach && Mathf.Abs(centre.z - job.Pos.z) <= reach) return true;
+            }
+            return false;
+        }
+
+        /// <summary>One spot of path: 1 = beaten earth, 2 = cobbles.</summary>
+        public static void QueuePaint(Vector3 pos, float radius, int paint, long roadKey = 0L)
+        {
+            Paints.Enqueue(new TerrainJob { Pos = pos, Radius = radius, Paint = paint, RoadKey = roadKey });
         }
 
         public static void QueueRoad(Vector3 from, Vector3 to, int paint, float width)
@@ -1550,8 +1682,6 @@ namespace LivingFactions
         /// <summary>Counts for `mat`: grades done, grades refused, the pad-queue drops (testing the ramps and streets).</summary>
         private static int _gradeLog;
         private static int _gradesDone, _gradesRefused, _ramps, _rampsSkipped, _gradeDrops, _pathsFlat, _pathsUnloaded, _pathsSteep;
-        private static Vector3 _headPos;
-        private static float _headRadius, _headSince;
 
         /// <summary>How far round a building's footprint (its radius) no grade of a ramp or road bed may reach.</summary>
         private const float FootprintKeep = 0.5f;
@@ -1659,7 +1789,17 @@ namespace LivingFactions
                     comp = hm.GetAndCreateTerrainCompiler();
                 }
                 // The compiler initialises a frame or two after it is created.
-                if (comp == null || !TerrainInitialized(comp) || !comp.IsOwner()) return false;
+                if (comp == null || !TerrainInitialized(comp)) return false;
+                if (!comp.IsOwner())
+                {
+                    // A loaded tile on the edge of the simulation can still be unowned in a local world.
+                    // With no peers, the host can take it long enough to apply and save the terrain job.
+                    if (!Net.IsHost || Net.IsDedicated || ZNet.instance.GetPeers().Count != 0) return false;
+                    ZNetView view = comp.GetComponent<ZNetView>();
+                    if (view == null || !view.IsValid()) return false;
+                    view.ClaimOwnership();
+                    if (!comp.IsOwner()) return false;
+                }
                 compilers.Add(comp);
             }
             return true;
@@ -1672,22 +1812,36 @@ namespace LivingFactions
         /// lifts or sinks the ground past its target and tears it along zone borders. So height jobs
         /// run strictly in order, and never on a zone whose last change has not settled.
         /// </summary>
-        private static void ProcessTerrain()
-        {
-            List<TerrainComp> compilers = new List<TerrainComp>();
+        private static readonly List<TerrainComp> JobCompilers = new List<TerrainComp>();
+        private static readonly HashSet<TerrainComp> PaintedCompilers = new HashSet<TerrainComp>();
 
-            for (int n = Mathf.Min(Paints.Count, 8); n > 0; n--)
+        private static void ProcessPaints(List<TerrainComp> compilers)
+        {
+            PaintedCompilers.Clear();
+            float started = Time.realtimeSinceStartup;
+            for (int n = Mathf.Min(Paints.Count, 48); n > 0; n--)
             {
+                if (Time.realtimeSinceStartup - started > 0.003f) break;
                 TerrainJob job = Paints.Dequeue();
                 float ground;
-                if (!Compilers(job.Pos, job.Radius + 1f, compilers))
+                if ((job.RoadKey != 0L && !Roads.BedReady(job.Pos, job.Radius + 1f))
+                    || !ZoneSystem.instance.GetGroundHeight(job.Pos, out ground)
+                    || !Compilers(job.Pos, job.Radius + 1f, compilers) || compilers.Exists(Settling))
                 {
                     if (StillWaiting(ref job)) Paints.Enqueue(job);
+                    // Given up: the road point is painted again when the player comes back, not left as a gap.
+                    else if (job.RoadKey != 0L) Roads.Unpaint(job.RoadKey);
                     continue;
                 }
                 Vector3 spot = job.Pos;
-                if (!ZoneSystem.instance.GetGroundHeight(spot, out ground) || ground < ZoneSystem.c_WaterLevel + 0.2f) continue;
+                if (ground < ZoneSystem.c_WaterLevel + 0.2f) continue;
                 spot.y = ground;
+                // A player can build after a path or square was queued for painting.
+                if (Roads.PlayerBuilt(spot, job.Radius + 1f))
+                {
+                    if (job.RoadKey != 0L) Roads.Unpaint(job.RoadKey);
+                    continue;
+                }
                 TerrainOp.Settings road = new TerrainOp.Settings
                 {
                     m_level = false,
@@ -1696,8 +1850,19 @@ namespace LivingFactions
                     m_paintType = job.Paint == 2 ? TerrainModifier.PaintType.Paved : TerrainModifier.PaintType.Dirt,
                     m_paintRadius = job.Radius
                 };
-                foreach (TerrainComp comp in compilers) TerrainDoOperation.Invoke(comp, new object[] { spot, Vector3.zero, road });
+                object[] brush = { spot, Vector3.zero, road };
+                foreach (TerrainComp comp in compilers)
+                {
+                    TerrainPaintBrush.Invoke(comp, brush);
+                    PaintedCompilers.Add(comp);
+                }
             }
+            foreach (TerrainComp comp in PaintedCompilers) SaveTerrainTile(comp, true);
+        }
+
+        private static void ProcessTerrain()
+        {
+            List<TerrainComp> compilers = JobCompilers;
 
             // Road beds only smooth, so they do not wait in line behind the building pads; but, like every
             // height change, never on a zone whose last change has not been rebuilt yet.
@@ -1706,12 +1871,15 @@ namespace LivingFactions
             // the line, so the wait costs next to nothing however long the line is. While building pads wait, beds
             // give way to them, but not for ever: the oldest bed goes first once it has waited 45 s (the pads are
             // queued all the time in a settlement under construction, so the beds were starved for good before).
-            bool padsWaiting = Terrain.Count + Flatten.Count > 0;
             for (int looked = 0; looked < 6 && Smooths.Count > 0 && smoothed < 1; looked++)
             {
                 TerrainJob bed = Smooths[0];
-                if (padsWaiting && Time.time - bed.Queued < 45f) break;
                 Smooths.RemoveAt(0);
+                if (Time.time - bed.Queued < 45f && (WorkReachesTile(Terrain, bed.Pos, bed.Radius) || WorkReachesTile(Flatten, bed.Pos, bed.Radius)))
+                {
+                    Smooths.Add(bed);
+                    continue;
+                }
                 if (!Compilers(bed.Pos, bed.Radius + (bed.Grade && bed.Smooth ? 4f : 1f), compilers))
                 {
                     if (StillWaiting(ref bed)) Smooths.Add(bed);
@@ -1819,44 +1987,32 @@ namespace LivingFactions
                 }
             }
 
-            // Shaping (level + blend) always goes first; the final flattening of every pad comes after all of it,
-            // because the blend around one pad reaches onto the pads next to it.
-            Queue<TerrainJob> queue = Terrain.Count > 0 ? Terrain : Flatten;
-            if (queue.Count > 0)
+            ProcessPads(Terrain, compilers);
+            ProcessPads(Flatten, compilers);
+            ProcessPaints(compilers);
+        }
+
+        private static void ProcessPads(Queue<TerrainJob> queue, List<TerrainComp> compilers)
+        {
+            // A pad is flattened after neighbouring shaping, while unrelated or unloaded jobs can wait.
+            for (int n = Mathf.Min(queue.Count, 12), applied = 0; n > 0 && applied < 2; n--)
             {
-                // A job at the head of the line that has not gone anywhere for two minutes is dropped, and said
-                // so: one job that can never run must not hold up every pad behind it.
-                TerrainJob head = queue.Peek();
-                if (head.Pos != _headPos || head.Radius != _headRadius)
+                TerrainJob job = queue.Dequeue();
+                if (job.LevelOnly && WorkReachesTile(Terrain, job.Pos, job.Radius))
                 {
-                    _headPos = head.Pos;
-                    _headRadius = head.Radius;
-                    _headSince = Time.time;
+                    queue.Enqueue(job);
+                    continue;
                 }
-                else if (Time.time - _headSince > 120f)
+                if (!Compilers(job.Pos, job.Radius + (job.LevelOnly ? 1f : 4f), compilers) || compilers.Exists(Settling))
                 {
-                    queue.Dequeue();
-                    Plugin.Log.LogWarning("Gave up ground work at " + head.Pos.ToString("0") + " (radius " + head.Radius.ToString("0.0") + (head.LevelOnly ? ", levelling" : ", shaping") + "): it could not run for two minutes; "
-                        + (Compilers(head.Pos, head.Radius + 5f, compilers) ? "its terrain stayed busy" : "its terrain was not ready or not ours"));
-                    _headSince = Time.time;
-                    _gradeDrops++;
-                    return;
-                }
-            }
-            for (int n = 0; n < 4 && queue.Count > 0; n++)
-            {
-                TerrainJob job = queue.Peek();
-                if (!Compilers(job.Pos, job.Radius + 5f, compilers))
-                {
-                    queue.Dequeue();
                     if (StillWaiting(ref job)) queue.Enqueue(job);
-                    return;
+                    else
+                    {
+                        _gradeDrops++;
+                        Plugin.Log.LogWarning("Gave up ground work at " + job.Pos.ToString("0") + ": its terrain was not ready or not ours");
+                    }
+                    continue;
                 }
-                foreach (TerrainComp comp in compilers)
-                {
-                    if (Settling(comp)) return;
-                }
-                queue.Dequeue();
                 // The last guard against pits: a levelling far from the land as the world made it is a
                 // mistake somewhere upstream, and is not carried out.
                 float land = NaturalHeight(job.Pos, job.LevelOnly ? job.Radius * 0.5f : job.Radius);
@@ -1866,6 +2022,13 @@ namespace LivingFactions
                     continue;
                 }
                 AllowDeepDig = false;
+                if (job.LevelOnly && job.NoPaint)
+                {
+                    FlattenPad(job, compilers);
+                    Mark(ModWorked, job.Pos, job.Radius);
+                    applied++;
+                    continue;
+                }
                 TerrainOp.Settings settings = new TerrainOp.Settings
                 {
                     m_level = true,
@@ -1883,8 +2046,38 @@ namespace LivingFactions
                     TerrainDoOperation.Invoke(comp, new object[] { job.Pos, Vector3.zero, settings });
                     TerrainBusy[comp] = Time.frameCount;
                     TerrainBusyAt[comp] = Time.time;
+                    Roads.InvalidatePadBanks(TerrainHeightmap(comp));
                 }
-                if (!job.Seam) Mark(ModWorked, job.Pos, settings.m_smooth ? settings.m_smoothRadius : settings.m_levelRadius);
+                Mark(ModWorked, job.Pos, settings.m_smooth ? settings.m_smoothRadius : settings.m_levelRadius);
+                applied++;
+            }
+        }
+
+        private static void FlattenPad(TerrainJob job, List<TerrainComp> compilers)
+        {
+            foreach (TerrainComp comp in compilers)
+            {
+                Heightmap tile = TerrainHeightmap(comp);
+                if (tile == null) continue;
+                Vector3 centre = tile.transform.position;
+                float half = tile.m_width * tile.m_scale * 0.5f;
+                int w = tile.m_width;
+                bool moved = false;
+                for (int z = 0; z <= w; z++)
+                {
+                    for (int x = 0; x <= w; x++)
+                    {
+                        Vector3 p = new Vector3(centre.x + x * tile.m_scale - half, 0f, centre.z + z * tile.m_scale - half);
+                        if (Utils.DistanceXZ(p, job.Pos) > job.Radius) continue;
+                        float ground = centre.y + tile.GetHeight(x, z);
+                        if (!Roads.SetTerrainVertex(comp, z * (w + 1) + x, ground, job.Pos.y)) continue;
+                        Materializer.NoteModVertex(p);
+                        moved = true;
+                    }
+                }
+                if (!moved) continue;
+                SaveTerrainTile(comp, false);
+                Roads.InvalidatePadBanks(tile);
             }
         }
 

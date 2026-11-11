@@ -1,0 +1,12 @@
+# Run twice on the same copy of LFLab. Check the settlement and the next stretch of road
+# after travelling there, including after saving and reopening the world.
+god
+tp 5
+wait 12
+expect walked :: roadcheck 5
+expect torn 0 :: seams 120
+perf
+roadtp 5 140
+wait 8
+expect stretches of 10 m :: roadslope 5 140
+quit

@@ -95,7 +95,7 @@ namespace LivingFactions
                 if (!player.GetInventory().AddItem(coin, stack)) ItemDrop.DropItem(coin.GetComponent<ItemDrop>().m_itemData.Clone(), stack, player.transform.position + Vector3.up, Quaternion.identity);
                 left -= stack;
             }
-            Net.AddReputation(f, player.GetPlayerID(), 10f);
+            Net.AddReputation(f, player.GetPlayerID(), 10f, "boss");
             player.m_customData[PaidKey + hunt.Value.Key] = "1";
             player.m_customData.Remove(HuntKey);
             player.m_customData.Remove(DoneKey);
@@ -118,7 +118,7 @@ namespace LivingFactions
                 string kin;
                 string group = Defs.Culture(f.CultureId).Group;
                 float delta = Kin.TryGetValue(f.CultureId, out kin) ? (kin == name ? -25f : 0f) : group == "human" ? 10f : 5f;
-                if (delta != 0f) Net.AddReputation(f, pid, delta);
+                if (delta != 0f) Net.AddReputation(f, pid, delta, "boss");
             }
             if (MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_boss_slain", BossName(name)));
         }

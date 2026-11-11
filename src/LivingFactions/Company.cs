@@ -42,17 +42,17 @@ namespace LivingFactions
 
         public static int HirePrice(Settlement s) { return 120 + 40 * (int)s.Tier; }
 
-        public static int HiredCount()
+        public static int HiredCount(long playerId = 0L)
         {
             int n = 0;
             foreach (FactionMember m in FactionMember.All)
             {
-                if (m.Role == NpcRole.Mercenary) n++;
+                if (m.Role == NpcRole.Mercenary && m.Humanoid != null && !m.Humanoid.IsDead() && (playerId == 0L || m.EmployerId == playerId)) n++;
             }
             return n;
         }
 
-        private static FactionMember Spawn(Settlement s, Vector3 pos, NpcRole role, double seconds, int seed = 0, long ownerPlayerId = 0)
+        private static FactionMember Spawn(Settlement s, Vector3 pos, NpcRole role, double seconds, int seed = 0)
         {
             Faction faction = SimHost.Sim.State.GetFaction(s.FactionId);
             GameObject prefab = faction != null ? Npcs.PrefabFor(faction) : null;
@@ -68,7 +68,7 @@ namespace LivingFactions
                 return null;
             }
             member.Expire(seconds);
-            member.Setup(s.FactionId, s.Id, role, seed != 0 ? seed : Random.Range(1, int.MaxValue), ownerPlayerId);
+            member.Setup(s.FactionId, s.Id, role, seed != 0 ? seed : Random.Range(1, int.MaxValue));
             return member;
         }
 
@@ -89,23 +89,25 @@ namespace LivingFactions
         {
             Faction faction = SimHost.Sim.State.GetFaction(s.FactionId);
             Standing standing = faction != null ? SimHost.Sim.GetStanding(faction, player.GetPlayerID()) : Standing.Neutral;
-            if (HiredCount() + 2 > MaxHired(standing)) return "r_hire_full";
+            if (HiredCount(player.GetPlayerID()) + 2 > MaxHired(standing)) return "r_hire_full";
             if (s.Soldiers < 2f) return "r_hire_none";
             int price = HirePrice(s);
             Inventory inv = player.GetInventory();
-            if (!free)
-            {
-                if (inv.CountItems("$item_coins") < price) return "r_hire_poor";
-                inv.RemoveItem("$item_coins", price);
-                Net.AddStock(s, Res.Coins, price);
-            }
+            if (!free && inv.CountItems("$item_coins") < price) return "r_hire_poor";
             int joined = 0;
             for (int i = 0; i < 2; i++)
             {
                 Vector3 pos = player.transform.position - player.transform.forward * 2.5f + player.transform.right * (i == 0 ? -1.5f : 1.5f);
-                if (Spawn(s, pos, NpcRole.Mercenary, HireSeconds(standing), 0, player.GetPlayerID()) != null) joined++;
+                FactionMember member = Spawn(s, pos, NpcRole.Mercenary, HireSeconds(standing));
+                if (member != null) { member.SetEmployer(player); joined++; }
             }
-            return joined > 0 ? "r_hired" : "r_hire_none";
+            if (joined == 0) return "r_hire_none";
+            if (!free)
+            {
+                inv.RemoveItem("$item_coins", price);
+                Net.AddStock(s, Res.Coins, price);
+            }
+            return "r_hired";
         }
 
         /// <summary>
@@ -116,6 +118,7 @@ namespace LivingFactions
         {
             Vector3 pos = player.transform.position + player.transform.forward * 3f;
             FactionMember archer = Spawn(s, pos, NpcRole.Mercenary, 300, 3 * Random.Range(1, 100000));
+            if (archer != null) archer.SetEmployer(player);
             return archer != null ? "archer " + archer.DisplayName + " stands by, bow in the pack: " + archer.IsArcher : "no room for an archer";
         }
 

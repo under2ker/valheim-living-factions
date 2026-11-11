@@ -447,6 +447,51 @@ namespace LivingFactions.Harness
                 "only the fire of a taken war camp is laid out again (" + string.Join(", ", built.Select(b => b.Kind + " " + b.LayoutRev)) + ")");
         }
 
+        private static void EliminatedFactionChecks()
+        {
+            Simulation sim = NewSim(421);
+            Faction faction = sim.State.Factions[0];
+            int id = faction.Id;
+            string culture = faction.CultureId;
+            foreach (Settlement s in sim.State.Settlements.Where(s => s.FactionId == id && !s.Destroyed).ToArray()) sim.DebugDestroy(s.Id);
+            sim.AdvanceTo(sim.State.Day + 2, 10000);
+            Check(faction.Eliminated, "a faction with no settlements is marked eliminated");
+            WorldState loaded = JsonConvert.DeserializeObject<WorldState>(Hash(sim.State));
+            Simulation mirror = new Simulation(loaded, new FakeWorld(421), new Balance());
+            double target = sim.State.Day + 30;
+            sim.AdvanceTo(target, 100000);
+            mirror.AdvanceTo(target, 100000);
+            Check(sim.State.Factions.Count(f => f.CultureId == culture) == 1 && sim.State.GetFaction(id).Eliminated,
+                "an eliminated faction is not reseeded as a late arrival");
+            Check(!sim.State.Settlements.Any(s => s.FactionId == id && !s.Destroyed), "an eliminated faction founds no new settlements");
+            Check(Hash(sim.State) == Hash(mirror.State), "faction elimination remains deterministic after save and load");
+        }
+
+        private static void InvalidTradeChecks()
+        {
+            Simulation sim = NewSim(422);
+            Settlement s = sim.State.Settlements[0];
+            Faction f = sim.State.GetFaction(s.FactionId);
+            const long player = 12345L;
+            sim.PlayerRel(f, player).LastStoleDay = sim.State.Day;
+            string before = Hash(sim.State);
+            Check(sim.PlayerGift(s, player, Res.Wood, -5f) == 0f && Hash(sim.State) == before,
+                "a negative gift cannot remove stock, including after theft");
+            Check(sim.PlayerGift(s, player, Res.Wood, float.NaN) == 0f && sim.PlayerGift(s, player, Res.Metal, float.MaxValue) == 0f && Hash(sim.State) == before,
+                "non-finite or overflowing gifts leave the state unchanged");
+            Check(sim.PlayerBuy(s, Res.Wood, -5, player, 100) == -1 && sim.PlayerSell(s, Res.Wood, -5, player) == -1 && Hash(sim.State) == before,
+                "non-positive trade quantities leave the state unchanged");
+            Check(sim.PlayerGift(s, player, (Res)100, 1f) == 0f && sim.PlayerBuy(s, (Res)(-1), 1, player, 100) == -1
+                && sim.PlayerSell(s, (Res)100, 1, player) == -1 && Hash(sim.State) == before,
+                "unknown resources are rejected without changing the state");
+            sim.PlayerRel(f, player).LastStoleDay = -100;
+            sim.PlayerBuyMult = _ => float.MaxValue;
+            before = Hash(sim.State);
+            Check(sim.PlayerBuy(s, Res.Wood, 1, player, int.MaxValue) == -1 && Hash(sim.State) == before,
+                "an overflowing purchase price cannot become a cheap purchase");
+            sim.PlayerBuyMult = null;
+        }
+
         private static int Main(string[] args)
         {
             int seed = args.Length > 0 ? int.Parse(args[0]) : 42;
@@ -627,6 +672,9 @@ namespace LivingFactions.Harness
             CaptureCleanupChecks();
             // ---------------------------------------------------------- wars resolve whatever the sides' ids are
             CampaignHighIdChecks();
+            // Current behaviour for LF-018, recorded as a test rather than choosing a new respawn policy.
+            EliminatedFactionChecks();
+            InvalidTradeChecks();
 
             // ---------------------------------------------------------- many seeds
             int wars = 0, alliances = 0, captures = 0, worstFactions = 99, camps = 0, counters = 0, aid = 0, moves = 0, won = 0, outposts = 0, roadPosts = 0;

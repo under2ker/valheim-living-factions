@@ -161,6 +161,3 @@ road, so road checks use Vindfell (1). `status` lists the rest.
 - Unverified in the game: cobbles of a town, relic effects in combat, two players in the world at
   once (one guest on a dedicated server is tested with `tools/lfmp.sh`), a guest refusing a host on
   a newer save format.
-- 0.8.0 fixes are checked by the core harness only: wars in both faction-id orders and relation
-  determinism (`ALL CHECKS PASSED`). The in-game runs above were made on 0.7.0; the new path was not
-  re-run in a live game before the release, so keep that in mind when reporting a war problem.

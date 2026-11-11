@@ -13,7 +13,7 @@ namespace LivingFactions
     {
         public const string Guid = "alexandr.livingfactions";
         public const string ModName = "Living Factions";
-        public const string Version = "0.8.0";
+        public const string Version = "0.8.1";
 
         internal static Plugin Instance;
         internal static ManualLogSource Log;
@@ -24,6 +24,18 @@ namespace LivingFactions
         {
             Instance = this;
             Log = Logger;
+            // The game reads -savedir only on a dedicated server; a client given it keeps its saves there too
+            // (test copies of the game run side by side, each with its own worlds: tools/lfinst.sh).
+            string[] args = System.Environment.GetCommandLineArgs();
+            // -lfmute: a test copy of the game makes no sound (several play at once).
+            if (System.Array.IndexOf(args, "-lfmute") >= 0) _mute = true;
+            for (int i = 0; i + 1 < args.Length; i++)
+            {
+                if (args[i] != "-savedir") continue;
+                Utils.SetSaveDataPath(args[i + 1]);
+                Log.LogInfo("Saves kept in " + args[i + 1]);
+                break;
+            }
             Net.Init();
             ModConfig.Bind(Config);
 
@@ -36,8 +48,12 @@ namespace LivingFactions
             Log.LogInfo(ModName + " " + Version + " loaded");
         }
 
+        private static bool _mute;
+
         private void Update()
         {
+            // Kept at zero: the game sets the listener's volume from its own settings when they load.
+            if (_mute && UnityEngine.AudioListener.volume != 0f) UnityEngine.AudioListener.volume = 0f;
             if (ModConfig.DevTools.Value)
             {
                 DevTools.Update();
@@ -51,6 +67,7 @@ namespace LivingFactions
             Chests.Update();
             LootSweep.Update();
             NightThief.Update();
+            NightWatch.Update();
             Rewards.Update();
             if (SimHost.Active && ZoneSystem.instance != null) Forestry.Update();
             SquadPresence.Update();

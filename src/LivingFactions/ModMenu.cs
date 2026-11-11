@@ -41,6 +41,8 @@ namespace LivingFactions
         private static readonly List<Page> Pages = new List<Page>();
         private static GameObject _panel, _icon;
         private static Text _title, _note;
+        private static RectTransform _chronicleEditor;
+        private static Text _chronicleAction, _chronicleHint, _chronicleSave, _chronicleCancel;
         private static readonly List<GameObject> Buttons = new List<GameObject>();
         private static int _page;
 
@@ -86,6 +88,7 @@ namespace LivingFactions
             general.Rows[general.Rows.Count - 1].Click += ApplyLanguage;
             Toggle(general, "opt_hud", ModConfig.HudWidget);
             Toggle(general, "opt_messages", ModConfig.ShowChronicleMessages);
+            general.Rows.Add(new Row { Label = () => Texts.Get("menu_chronicle_edit"), Click = EditChronicle });
 
             Page life = AddPage("menu_page_life");
             Toggle(life, "opt_work", ModConfig.VisibleWork);
@@ -131,6 +134,7 @@ namespace LivingFactions
 
         public static void Open()
         {
+            if (HudWidget.Editing) return;
             BuildPages();
             if (_panel == null && !Build()) return;
             if (InventoryGui.instance != null && InventoryGui.IsVisible()) InventoryGui.instance.Hide();
@@ -141,15 +145,87 @@ namespace LivingFactions
 
         public static void Close()
         {
-            if (!IsOpen) return;
-            _panel.SetActive(false);
+            if (!IsOpen && !HudWidget.Editing) return;
+            HudWidget.EndEdit(false);
+            if (_chronicleEditor != null) _chronicleEditor.gameObject.SetActive(false);
+            if (_panel != null) _panel.SetActive(false);
             GUIManager.BlockInput(false);
         }
 
         public static void Update()
         {
             EnsureIcon();
+            if (HudWidget.Editing)
+            {
+                if (!HudWidget.CanEdit || _chronicleEditor == null || _panel == null) Close();
+                else if (Input.GetKeyDown(KeyCode.Escape)) FinishChronicleEdit(false);
+                else PlaceChronicleEditor();
+                return;
+            }
             if (IsOpen && Input.GetKeyDown(KeyCode.Escape)) Close();
+        }
+
+        private static void EditChronicle()
+        {
+            if (!HudWidget.CanEdit) return;
+            if (_chronicleEditor == null) BuildChronicleEditor();
+            HudWidget.BeginEdit();
+            _panel.SetActive(false);
+            _chronicleEditor.gameObject.SetActive(true);
+            _chronicleEditor.SetAsLastSibling();
+            _chronicleHint.text = Texts.Get("menu_chronicle_drag");
+            _chronicleSave.text = Texts.Get("menu_save");
+            _chronicleCancel.text = Texts.Get("menu_cancel");
+            RefreshChronicleAction();
+            PlaceChronicleEditor();
+        }
+
+        private static void BuildChronicleEditor()
+        {
+            Vector2 top = new Vector2(0.5f, 1f);
+            _chronicleEditor = (RectTransform)GUIManager.Instance.CreateWoodpanel(GUIManager.CustomGUIFront.transform,
+                top, top, Vector2.zero, 630f, 116f, false).transform;
+            _chronicleHint = GUIManager.Instance.CreateText("", _chronicleEditor, top, top, new Vector2(0f, -35f),
+                GUIManager.Instance.AveriaSerifBold, 18, Color.white, true, Color.black, 580f, 28f, false).GetComponent<Text>();
+            _chronicleHint.alignment = TextAnchor.MiddleCenter;
+            _chronicleAction = ChronicleButton(-190f, () =>
+            {
+                HudWidget.ToggleCollapsed();
+                RefreshChronicleAction();
+            });
+            _chronicleSave = ChronicleButton(0f, () => FinishChronicleEdit(true));
+            _chronicleCancel = ChronicleButton(190f, () => FinishChronicleEdit(false));
+        }
+
+        private static Text ChronicleButton(float x, Action click)
+        {
+            Vector2 bottom = new Vector2(0.5f, 0f);
+            GameObject button = GUIManager.Instance.CreateButton("", _chronicleEditor, bottom, bottom, new Vector2(x, 35f), 176f, 32f);
+            button.GetComponent<Button>().onClick.AddListener(() => click());
+            return button.GetComponentInChildren<Text>();
+        }
+
+        private static void RefreshChronicleAction()
+        {
+            _chronicleAction.text = Texts.Get(HudWidget.Collapsed ? "menu_chronicle_expand" : "menu_chronicle_fold");
+        }
+
+        private static void PlaceChronicleEditor()
+        {
+            // Keep the controls opposite the preview so a player can drag it to any edge.
+            Vector2 anchor = new Vector2(0.5f, HudWidget.OnLowerHalf ? 1f : 0f);
+            Vector2 position = new Vector2(0f, anchor.y == 1f ? -12f : 12f);
+            if (_chronicleEditor.anchorMin == anchor && _chronicleEditor.anchoredPosition == position) return;
+            _chronicleEditor.anchorMin = _chronicleEditor.anchorMax = _chronicleEditor.pivot = anchor;
+            _chronicleEditor.anchoredPosition = position;
+        }
+
+        private static void FinishChronicleEdit(bool save)
+        {
+            HudWidget.EndEdit(save);
+            _chronicleEditor.gameObject.SetActive(false);
+            _panel.SetActive(true);
+            Refresh();
         }
 
         private static bool Build()
@@ -279,8 +355,9 @@ namespace LivingFactions
                 int row = int.Parse(a[2]);
                 if (row < 0 || row >= page.Rows.Count) return "no such row";
                 page.Rows[row].Click();
-                Refresh();
+                if (IsOpen) Refresh();
             }
+            if (HudWidget.Editing) return Texts.Get("menu_chronicle_drag");
             if (!IsOpen) return "menu closed, icon " + (_icon != null ? "present" : "absent");
             StringBuilder sb = new StringBuilder("[" + Texts.Get(Pages[_page].TitleKey) + "] of " + Pages.Count + " pages, icon " + (_icon != null ? "present" : "absent")
                 + ", rows " + Mathf.Min(Pages[_page].Rows.Count, MaxRows) + " of " + Pages[_page].Rows.Count + " shown\n");

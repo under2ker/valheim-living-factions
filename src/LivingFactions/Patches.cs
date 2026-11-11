@@ -29,7 +29,7 @@ namespace LivingFactions
                 if (hired != null)
                 {
                     FactionMember otherMember = hired == ma ? mb : ma;
-                    long ownerId = hired.OwnerPlayerId;
+                    long ownerId = hired.EmployerId;
                     bool localIsOwner = ownerId == 0L || (Player.m_localPlayer != null && Player.m_localPlayer.GetPlayerID() == ownerId);
                     bool hostile = localIsOwner
                         ? Player.m_localPlayer != null && otherMember.IsHostileTo(Player.m_localPlayer)

@@ -11,6 +11,8 @@ namespace LivingFactions
         public static ConfigEntry<int> MaxSettlementsPerFaction;
         public static ConfigEntry<int> MaxSettlementsTotal;
         public static ConfigEntry<int> MaxVisibleNpcs;
+        public static ConfigEntry<bool> GearByBiome;
+        public static ConfigEntry<int> GearAgeDays;
         public static ConfigEntry<int> PiecesPerFrame;
         public static ConfigEntry<int> WorkersPerTree;
         public static ConfigEntry<float> NightAttackChance;
@@ -26,6 +28,8 @@ namespace LivingFactions
         public static ConfigEntry<string> Language;
         public static ConfigEntry<bool> ShowChronicleMessages;
         public static ConfigEntry<KeyboardShortcut> ChronicleKey;
+        public static ConfigEntry<float> ChronicleX, ChronicleY;
+        public static ConfigEntry<bool> ChronicleCollapsed;
         public static ConfigEntry<bool> DevTools;
         public static ConfigEntry<int> AngerHitsAllied, AngerHitsFriendly, AngerHitsNeutral, AngerHitsWary;
         public static ConfigEntry<float> ReputationPerHit, GrudgeMinutes, PursuitRange, HelpRange, WitnessRange;
@@ -53,6 +57,8 @@ namespace LivingFactions
             HudWidget = cfg.Bind("Features", "HudWidget", true, "A small on-screen chronicle of what the factions are doing.");
             Relics = cfg.Bind("Features", "Relics", true, "Factions sell culture-specific relics and unidentified goods.");
             Archers = cfg.Bind("Features", "Archers", true, "Some guards and raiders are archers who keep their distance.");
+            GearByBiome = cfg.Bind("World", "GearByBiome", true, "Fighters of a settlement are armed at least for the dangers of its biome (bronze in the Black Forest, iron in the Swamp, silver in the Mountains, black metal on the Plains, carapace in the Mistlands), not only by the settlement's size.");
+            GearAgeDays = cfg.Bind("World", "GearAgeDays", 200, new ConfigDescription("Every this many days of the world the fighters' gear is a level better, two levels at most. 0: the world's age does not count.", new AcceptableValueRange<int>(0, 2000)));
             Caravans = cfg.Bind("Features", "Caravans", true, "Traders with an escort leave settlements along their roads and arrive by them while you are near.");
             Mercenaries = cfg.Bind("Features", "Mercenaries", true, "Friendly settlements hire out two fighters who follow you for a while.");
             HiredLimit = cfg.Bind("World", "HiredLimit", 6, new ConfigDescription("Most hired fighters at your back at once when the faction you hire from is allied with you; friends let you have two thirds of it, anyone else two.", new AcceptableValueRange<int>(2, 12)));
@@ -70,6 +76,9 @@ namespace LivingFactions
             Language = cfg.Bind("General", "Language", "auto", "Mod text language: auto (follow the game when the mod speaks its language, otherwise English) or one of en, ru, pl, de, fr, es, pt.");
             ShowChronicleMessages = cfg.Bind("General", "ShowChronicleMessages", true, "Show notable faction events (wars, new settlements, raids) as on-screen messages.");
             ChronicleKey = cfg.Bind("General", "ChronicleKey", new KeyboardShortcut(UnityEngine.KeyCode.H, UnityEngine.KeyCode.LeftAlt), "Key that hides the chronicle under the minimap, or shows it again (the same as Features/HudWidget and the switch in the mod menu).");
+            ChronicleX = cfg.Bind("General", "ChronicleX", -1f, new ConfigDescription("Chronicle position as a fraction of screen width; -1 uses the minimap position.", new AcceptableValueRange<float>(-1f, 1f)));
+            ChronicleY = cfg.Bind("General", "ChronicleY", -1f, new ConfigDescription("Chronicle position as a fraction of screen height; -1 uses the minimap position.", new AcceptableValueRange<float>(-1f, 1f)));
+            ChronicleCollapsed = cfg.Bind("General", "ChronicleCollapsed", false, "Show just the chronicle heading and day. Change it in the chronicle editor in the mod menu.");
             AngerHitsAllied = cfg.Bind("Conflict", "HitsToAngerAllied", 5, new ConfigDescription("Blows an allied faction's people take from you before they fight back. A stray blow is forgiven.", new AcceptableValueRange<int>(1, 50)));
             AngerHitsFriendly = cfg.Bind("Conflict", "HitsToAngerFriendly", 3, new ConfigDescription("The same for a friendly faction.", new AcceptableValueRange<int>(1, 50)));
             AngerHitsNeutral = cfg.Bind("Conflict", "HitsToAngerNeutral", 2, new ConfigDescription("The same for a neutral faction.", new AcceptableValueRange<int>(1, 50)));

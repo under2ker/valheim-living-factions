@@ -19,6 +19,7 @@ namespace LivingFactions
             public float WarnedAt = -1f;
             public bool Resolved;
             public float AngryUntil;
+            public readonly Dictionary<long, float> Targets = new Dictionary<long, float>();
             public Vector3 AlarmAt;
         }
 
@@ -32,8 +33,30 @@ namespace LivingFactions
             return Watches.TryGetValue(settlementId, out w) && Time.time < w.AngryUntil;
         }
 
+        public static bool AngryAt(int settlementId, Player player)
+        {
+            Watch w;
+            return player != null && Watches.TryGetValue(settlementId, out w)
+                && IsTarget(w, player.GetPlayerID(), Time.time);
+        }
+
+        private static bool IsTarget(Watch watch, long playerId, float now)
+        {
+            float until;
+            return playerId != 0L && watch.Targets.TryGetValue(playerId, out until) && now < until;
+        }
+
+        private static void Target(Watch watch, long playerId, float now, float until)
+        {
+            foreach (long id in new List<long>(watch.Targets.Keys))
+                if (watch.Targets[id] <= now) watch.Targets.Remove(id);
+            if (playerId == 0L) return;
+            float existing;
+            if (!watch.Targets.TryGetValue(playerId, out existing) || until > existing) watch.Targets[playerId] = until;
+        }
+
         /// <summary>A thief was caught: the watch is out for the rest of the night's trouble, no more warnings.</summary>
-        public static void Raise(int settlementId, Vector3 where)
+        public static void Raise(int settlementId, Player player, Vector3 where)
         {
             Watch w;
             if (!Watches.TryGetValue(settlementId, out w))
@@ -43,7 +66,8 @@ namespace LivingFactions
             }
             w.Night = (int)(SimHost.WorldDay + 0.5);
             w.Resolved = true;
-            w.AngryUntil = Time.time + 180f;
+            w.AngryUntil = Mathf.Max(w.AngryUntil, Time.time + 180f);
+            Target(w, player != null ? player.GetPlayerID() : 0L, Time.time, Time.time + 180f);
             w.AlarmAt = where;
         }
 
@@ -55,6 +79,41 @@ namespace LivingFactions
             if (!Watches.TryGetValue(settlementId, out w) || Time.time >= w.AngryUntil || w.AlarmAt == Vector3.zero) return false;
             where = w.AlarmAt;
             return true;
+        }
+
+        private const float WarnSeconds = 15f;
+        // The warning given to this player: the time left to go is counted down on screen, as for a thief.
+        private static int _warnedIn;
+        private static float _warnLimit;
+        private static int _warnShown;
+
+        public static void Update()
+        {
+            if (_warnedIn == 0) return;
+            Player player = Player.m_localPlayer;
+            Settlement s = SimHost.Active ? SimHost.Sim.State.GetSettlement(_warnedIn) : null;
+            Watch w;
+            if (player == null || player.IsDead() || s == null || s.Destroyed || !Watches.TryGetValue(_warnedIn, out w) || w.WarnedAt < 0f)
+            {
+                _warnedIn = 0;
+                return;
+            }
+            if (Utils.DistanceXZ(player.transform.position, new Vector3(s.Pos.X, 0f, s.Pos.Z)) > _warnLimit)
+            {
+                if (MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_night_away"));
+                _warnedIn = 0;
+                return;
+            }
+            if (w.Resolved)
+            {
+                _warnedIn = 0;
+                return;
+            }
+            int left = Mathf.CeilToInt(WarnSeconds - (Time.time - w.WarnedAt));
+            // The challenge itself stays on screen for its first seconds.
+            if (left <= 0 || left > WarnSeconds - 3f || left == _warnShown) return;
+            _warnShown = left;
+            if (MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_night_count", left));
         }
 
         /// <summary>Called by a guard on night duty. Returns the line the guard should say, or null.</summary>
@@ -88,15 +147,19 @@ namespace LivingFactions
             if (w.WarnedAt < 0f)
             {
                 w.WarnedAt = Time.time;
+                _warnedIn = s.Id;
+                _warnLimit = limit;
+                _warnShown = -1;
                 return "night_halt";
             }
-            if (Time.time - w.WarnedAt < 15f) return null;
+            if (Time.time - w.WarnedAt < WarnSeconds) return null;
 
             w.Resolved = true;
             if (Random.value < ModConfig.NightAttackChance.Value)
             {
                 // Its guards are hostile to strangers for a while (FactionMember.IsHostileTo).
-                w.AngryUntil = Time.time + 90f;
+                w.AngryUntil = Mathf.Max(w.AngryUntil, Time.time + 90f);
+                Target(w, player.GetPlayerID(), Time.time, Time.time + 90f);
                 return "night_attack";
             }
             return "night_pass";
@@ -157,7 +220,7 @@ namespace LivingFactions
             get
             {
                 Settlement s = SimHost.Active ? SimHost.Sim.State.GetSettlement(SettlementId) : null;
-                if (s == null) return (Job)(Mathf.Abs(Seed) % 3);
+                if (s == null) return (Job)((int)((uint)Seed % 3u));
                 Res need = SimHost.Sim.NeededResource(s);
                 int wood = 3 + (need == Res.Wood ? 3 : 0) + (Has(s, BuildingKind.Woodcutter) ? 1 : 0);
                 int stone = 1 + (need == Res.Stone ? 3 : 0) + (Has(s, BuildingKind.Stonecutter) ? 2 : 0);
@@ -1315,7 +1378,9 @@ namespace LivingFactions
         /// </summary>
         public void FollowThroughPortal(Vector3 to, int index)
         {
-            if (_view == null || !_view.IsValid() || !_view.IsOwner()) return;
+            if (_view == null || !_view.IsValid()) return;
+            if (!_view.IsOwner()) _view.ClaimOwnership();
+            if (!_view.IsOwner()) return;
             float a = index * 2.1f;
             Vector3 at = to + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * 2.5f + Vector3.up * 0.3f;
             Relocate(at);
@@ -1417,7 +1482,15 @@ namespace LivingFactions
             }
             if (Role == NpcRole.Mercenary)
             {
-                if (player == null) return;
+                // Hired before employers were written down: the player whose game runs them hired them
+                // (they were spawned there), so that one is recorded once and kept.
+                if (EmployerId == 0L && Player.m_localPlayer != null) SetEmployer(Player.m_localPlayer);
+                player = Employer();
+                if (player == null)
+                {
+                    if (_ai.GetFollowTarget() != null) _ai.SetFollowTarget(null);
+                    return;
+                }
                 if (_ai.GetFollowTarget() != player.gameObject) _ai.SetFollowTarget(player.gameObject);
                 // Left behind by a portal or a long run: they catch up.
                 if (!player.IsTeleporting() && Vector3.Distance(player.transform.position, transform.position) > 45f)
@@ -1723,6 +1796,7 @@ namespace LivingFactions
             foreach (FactionMember m in new List<FactionMember>(FactionMember.All))
             {
                 if (m.Role != NpcRole.Mercenary || m.Humanoid == null || m.Humanoid.IsDead()) continue;
+                if (m.EmployerId != __instance.GetPlayerID()) continue;
                 if (Vector3.Distance(m.transform.position, __instance.transform.position) > 40f) continue;
                 m.FollowThroughPortal(pos, n++);
             }

@@ -155,6 +155,17 @@ namespace LivingFactions.Core
         public double LastStoleDay = -100;
         /// <summary>When this player last struck a building of the faction: who to name when one comes down.</summary>
         public double LastDamagedDay = -100;
+        /// <summary>The latest changes of standing and what they were for (newest last), so a player can see why it moved.</summary>
+        public List<RepChange> Ledger = new List<RepChange>();
+    }
+
+    /// <summary>One entry of a player's standing ledger: changes of one kind on one day are summed into one.</summary>
+    public class RepChange
+    {
+        public double Day;
+        /// <summary>Text key suffix: gift, trade, help, boss, theft, kill, crime, attack, damage, wreck, side, drift, dev, other.</summary>
+        public string Why = "";
+        public float Delta;
     }
 
     public class Faction

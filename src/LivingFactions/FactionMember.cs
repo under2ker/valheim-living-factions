@@ -15,8 +15,7 @@ namespace LivingFactions
         private static readonly int HashSeed = "lf_seed".GetStableHashCode();
         private static readonly int HashInit = "lf_init".GetStableHashCode();
         private static readonly int HashUntil = "lf_until".GetStableHashCode();
-        /// <summary>For a hired fighter, the player whose coins pay it (0 for everyone else).</summary>
-        private static readonly int HashOwner = "lf_owner".GetStableHashCode();
+        private static readonly int HashEmployer = "lf_employer".GetStableHashCode();
         private const double RaidSeconds = 240;
 
         private static readonly Dictionary<Character, FactionMember> ByCharacter = new Dictionary<Character, FactionMember>();
@@ -26,7 +25,6 @@ namespace LivingFactions
         public int SettlementId;
         public int Seed;
         public NpcRole Role;
-        public long OwnerPlayerId;
         public float LastHurt = -999f;
         public string DisplayName = "";
 
@@ -56,6 +54,23 @@ namespace LivingFactions
 
         public Humanoid Humanoid { get { return _humanoid; } }
 
+        public long EmployerId { get { return _view != null && _view.IsValid() ? _view.GetZDO().GetLong(HashEmployer) : 0L; } }
+
+        public void SetEmployer(Player player)
+        {
+            if (player != null && _view != null && _view.IsValid() && _view.IsOwner())
+                _view.GetZDO().Set(HashEmployer, player.GetPlayerID());
+        }
+
+        public Player Employer()
+        {
+            long id = EmployerId;
+            if (id == 0L) return null;
+            foreach (Player player in Player.GetAllPlayers())
+                if (player != null && player.GetPlayerID() == id) return player;
+            return null;
+        }
+
         private void Awake()
         {
             _view = GetComponent<ZNetView>();
@@ -67,7 +82,6 @@ namespace LivingFactions
             SettlementId = zdo.GetInt(Materializer.HashSettlement);
             Role = (NpcRole)zdo.GetInt(HashRole);
             Seed = zdo.GetInt(HashSeed);
-            OwnerPlayerId = zdo.GetLong(HashOwner);
             SquadId = zdo.GetInt(HashSquad);
             DisplayName = zdo.GetString(ZDOVars.s_overrideHoverName);
             if (_humanoid != null) ByCharacter[_humanoid] = this;
@@ -111,19 +125,17 @@ namespace LivingFactions
             _view.GetZDO().Set(HashSquad, squadId);
         }
 
-        public void Setup(int factionId, int settlementId, NpcRole role, int seed, long ownerPlayerId = 0)
+        public void Setup(int factionId, int settlementId, NpcRole role, int seed)
         {
             FactionId = factionId;
             SettlementId = settlementId;
             Role = role;
             Seed = seed;
-            OwnerPlayerId = role == NpcRole.Mercenary ? ownerPlayerId : 0L;
             ZDO zdo = _view.GetZDO();
             zdo.Set(HashFaction, factionId);
             zdo.Set(Materializer.HashSettlement, settlementId);
             zdo.Set(HashRole, (int)role);
             zdo.Set(HashSeed, seed);
-            zdo.Set(HashOwner, OwnerPlayerId);
             Apply();
         }
 
@@ -178,7 +190,7 @@ namespace LivingFactions
                 vis.SetHairColor(Utils.ColorToVec3(hairColors[rnd.Next(hairColors.Length)]));
                 float tone = 0.8f + (float)rnd.NextDouble() * 0.2f;
                 vis.SetSkinColor(new Vector3(tone, tone, tone));
-                GiveGear(rnd, tier, faction.CultureId);
+                GiveGear(rnd, tier, faction.CultureId, settlement);
             }
 
             bool fighter = Role == NpcRole.Guard || Role == NpcRole.Mercenary || Role == NpcRole.Escort || Role == NpcRole.Squad;
@@ -232,7 +244,7 @@ namespace LivingFactions
             { "clan_raven", new[] { "LF_BlackBeak", "LF_RavenShield" } },
         };
 
-        private void GiveGear(System.Random rnd, int tier, string cultureId)
+        private void GiveGear(System.Random rnd, int tier, string cultureId, LivingFactions.Core.Settlement home)
         {
             List<string> gear = new List<string>();
             if (Role == NpcRole.Envoy)
@@ -252,46 +264,28 @@ namespace LivingFactions
             }
             else
             {
-                int level = Mathf.Clamp(tier + (Role == NpcRole.Chief ? 1 : 0), 0, 4);
+                int level = GearLevel(tier, home);
                 // One fighter in three is an archer: a bow tuned for AI use (it keeps its distance) and a knife.
                 if (ModConfig.Archers.Value && Role != NpcRole.Chief && Mathf.Abs(Seed) % 3 == 0 && ObjectDB.instance.GetItemPrefab("FW_BowDraugrFang") != null)
                 {
                     gear.Add("FW_BowDraugrFang");
                     gear.Add(ObjectDB.instance.GetItemPrefab("FW_KnifeSilver") != null ? "FW_KnifeSilver" : "KnifeFlint");
-                    gear.Add("ArmorLeatherChest");
-                    gear.Add("ArmorLeatherLegs");
-                    gear.Add(level >= 2 ? "CapeTrollHide" : "CapeDeerHide");
-                }
-                else if (level <= 1)
-                {
-                    gear.Add(Pick(rnd, new[] { "SpearFlint", "AxeFlint", "Club" }));
-                    gear.Add("ShieldWood");
-                    gear.Add("ArmorLeatherChest");
-                    gear.Add("ArmorLeatherLegs");
-                    gear.Add("HelmetLeather");
-                }
-                else if (level == 2)
-                {
-                    gear.Add(Pick(rnd, new[] { "SwordBronze", "AxeBronze", "MaceBronze", "SpearBronze" }));
-                    gear.Add("ShieldBronzeBuckler");
-                    gear.Add("ArmorBronzeChest");
-                    gear.Add("ArmorBronzeLegs");
-                    gear.Add("HelmetBronze");
+                    gear.Add(Kit(level, 2));
+                    gear.Add(Kit(level, 3));
+                    if (level >= 3) gear.Add(Kit(level, 4));
                 }
                 else
                 {
-                    gear.Add(Pick(rnd, new[] { "SwordIron", "AxeIron" }));
-                    gear.Add("ShieldBanded");
-                    gear.Add("ArmorIronChest");
-                    gear.Add("ArmorIronLegs");
-                    gear.Add("HelmetIron");
+                    gear.Add(Pick(rnd, KitWeapons(level)));
+                    for (int slot = 1; slot <= 4; slot++) gear.Add(Kit(level, slot));
                 }
-                gear.Add(Role == NpcRole.Chief ? (level >= 2 ? "CapeWolf" : "CapeTrollHide") : (level >= 3 ? "CapeTrollHide" : "CapeDeerHide"));
+                gear.Add(Role == NpcRole.Chief ? (level >= 2 ? "CapeWolf" : "CapeTrollHide") : (level >= 4 ? "CapeWolf" : level >= 3 ? "CapeTrollHide" : "CapeDeerHide"));
 
                 // From a village up the clan shows its colours: its shield on every shield arm, its sword in
                 // the chief's hand and in one fighter's hand in three (the seed, not rnd: looks stay as they were).
+                // Past iron the clan's own gear would be a step down: only the chief still carries it.
                 string[] own;
-                if (level >= 2 && ClanGear.TryGetValue(cultureId, out own))
+                if (level >= 2 && (level <= 3 || Role == NpcRole.Chief) && ClanGear.TryGetValue(cultureId, out own))
                 {
                     int shield = gear.FindIndex(g => g.StartsWith("Shield"));
                     if (shield >= 0) gear[shield] = own[1];
@@ -312,6 +306,89 @@ namespace LivingFactions
                 if (!item.IsWeapon() && item.m_shared.m_itemType != ItemDrop.ItemData.ItemType.Tool) _humanoid.EquipItem(item, false);
             }
             _humanoid.EquipBestWeapon(null, null, null, null);
+        }
+
+        /// <summary>
+        /// A fighter's gear level: the settlement's size (the chief one better), at least what its biome calls for
+        /// (World/GearByBiome), and better with the world's age (World/GearAgeDays). 0-1 flint and leather,
+        /// 2 bronze, 3 iron, 4 silver, 5 black metal, 6 carapace.
+        /// </summary>
+        private int GearLevel(int tier, LivingFactions.Core.Settlement home)
+        {
+            int level = tier + (Role == NpcRole.Chief ? 1 : 0);
+            if (ModConfig.GearByBiome.Value)
+            {
+                // The home settlement's biome; one without a home (a raider band) goes by where it stands.
+                int floor = home != null ? BiomeGearFloor(home.Biome)
+                    : WorldGenerator.instance != null ? BiomeGearFloor(WorldGenerator.instance.GetBiome(transform.position)) : 0;
+                level = Mathf.Max(level, floor + (Role == NpcRole.Chief ? 1 : 0));
+            }
+            int every = ModConfig.GearAgeDays.Value;
+            if (every > 0) level += Mathf.Clamp((int)(SimHost.WorldDay / every), 0, 2);
+            return Mathf.Clamp(level, 0, KitLevels.Length - 1);
+        }
+
+        internal static int BiomeGearFloor(LivingFactions.Core.Biome biome)
+        {
+            switch (biome)
+            {
+                case LivingFactions.Core.Biome.BlackForest: return 2;
+                case LivingFactions.Core.Biome.Swamp: return 3;
+                case LivingFactions.Core.Biome.Mountain: return 4;
+                case LivingFactions.Core.Biome.Plains: return 5;
+                case LivingFactions.Core.Biome.Mistlands:
+                case LivingFactions.Core.Biome.Ashlands:
+                case LivingFactions.Core.Biome.DeepNorth: return 6;
+                default: return 0;
+            }
+        }
+
+        internal static int BiomeGearFloor(Heightmap.Biome biome)
+        {
+            switch (biome)
+            {
+                case Heightmap.Biome.BlackForest: return 2;
+                case Heightmap.Biome.Swamp: return 3;
+                case Heightmap.Biome.Mountain: return 4;
+                case Heightmap.Biome.Plains: return 5;
+                case Heightmap.Biome.Mistlands:
+                case Heightmap.Biome.AshLands:
+                case Heightmap.Biome.DeepNorth: return 6;
+                default: return 0;
+            }
+        }
+
+        /// <summary>Per gear level: weapons, shield, chest, legs, helmet.</summary>
+        private static readonly string[][] KitLevels =
+        {
+            new[] { "SpearFlint|AxeFlint|Club", "ShieldWood", "ArmorLeatherChest", "ArmorLeatherLegs", "HelmetLeather" },
+            new[] { "SpearFlint|AxeFlint|Club", "ShieldWood", "ArmorLeatherChest", "ArmorLeatherLegs", "HelmetLeather" },
+            new[] { "SwordBronze|AxeBronze|MaceBronze|SpearBronze", "ShieldBronzeBuckler", "ArmorBronzeChest", "ArmorBronzeLegs", "HelmetBronze" },
+            new[] { "SwordIron|AxeIron|MaceIron", "ShieldBanded", "ArmorIronChest", "ArmorIronLegs", "HelmetIron" },
+            new[] { "SwordSilver|MaceSilver|SpearWolfFang", "ShieldSilver", "ArmorWolfChest", "ArmorWolfLegs", "HelmetDrake" },
+            new[] { "SwordBlackmetal|AxeBlackMetal|AtgeirBlackmetal", "ShieldBlackmetal", "ArmorPaddedCuirass", "ArmorPaddedGreaves", "HelmetPadded" },
+            new[] { "SwordMistwalker|MaceNeedle|AxeJotunBane", "ShieldCarapace", "ArmorCarapaceChest", "ArmorCarapaceLegs", "HelmetCarapace" },
+        };
+
+        /// <summary>The item for a slot at a level, or at the best level below it whose item the game has (another mod may remove some).</summary>
+        private static string Kit(int level, int slot)
+        {
+            for (int l = Mathf.Clamp(level, 0, KitLevels.Length - 1); l >= 0; l--)
+            {
+                string name = KitLevels[l][slot];
+                if (ObjectDB.instance == null || ObjectDB.instance.GetItemPrefab(name) != null) return name;
+            }
+            return KitLevels[0][slot];
+        }
+
+        private static string[] KitWeapons(int level)
+        {
+            for (int l = Mathf.Clamp(level, 0, KitLevels.Length - 1); l >= 0; l--)
+            {
+                string[] found = System.Array.FindAll(KitLevels[l][0].Split('|'), n => ObjectDB.instance == null || ObjectDB.instance.GetItemPrefab(n) != null);
+                if (found.Length > 0) return found;
+            }
+            return KitLevels[0][0].Split('|');
         }
 
         private static string Pick(System.Random rnd, string[] options)
@@ -336,7 +413,7 @@ namespace LivingFactions
             // Under the envoy's shelter the faction does not set on anyone, at war or not, unless they strike first.
             if (EnvoyPost.Shelters(FactionId, player.transform.position) && !Grudges.AngryAt(this, player)) return false;
             if (SimHost.Sim.IsHostileToPlayer(FactionId, player.GetPlayerID())) return true;
-            if (Role != NpcRole.Villager && NightWatch.Angry(SettlementId)) return true;
+            if (Role != NpcRole.Villager && NightWatch.AngryAt(SettlementId, player)) return true;
             return Grudges.AngryAt(this, player);
         }
 
@@ -350,6 +427,11 @@ namespace LivingFactions
                 if (FactionId != 0) Apply();
                 return;
             }
+            // A hired sword is run by its employer's game: after a portal or a zone change another player's
+            // game may have taken it over, and from there it could neither find nor follow the one who pays.
+            if (Role == NpcRole.Mercenary && _view != null && _view.IsValid() && !_view.IsOwner() && Player.m_localPlayer != null
+                && EmployerId != 0L && EmployerId == Player.m_localPlayer.GetPlayerID())
+                _view.ClaimOwnership();
             if (_view == null || !_view.IsValid() || !_view.IsOwner() || !SimHost.Active) return;
             long until = _view.GetZDO().GetLong(HashUntil);
             double now = ZNet.instance.GetTimeSeconds();

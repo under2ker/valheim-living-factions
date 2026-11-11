@@ -89,12 +89,13 @@ namespace LivingFactions
             _hoeSeams = Materializer.SeamsHealed;
             Plugin.Instance.StartCoroutine(HoeRun(level));
             return "levelling a " + (half * 2f).ToString("0", Inv) + " m square at " + _hoeCentre.ToString("0.0") + " to " + _hoeHeight.ToString("0.00", Inv) + " m with "
-                + (level != null ? level.name : "a levelling stroke of its own (level r 2, smooth r 3), the hoe's " + HoePieces());
+                + (level != null ? level.name : "no registered hoe terrain operation; " + HoePieces());
         }
 
         /// <summary>
         /// The hoe's "Level ground", found in the hoe's own pieces (a terrain operation that levels and raises
-        /// nothing) rather than by a prefab name, which was guessed wrong once.
+        /// nothing) rather than by a prefab name, which was guessed wrong once. Newer game versions only expose
+        /// the raise operation here: its registered prefab can be configured as a levelling stroke before it wakes.
         /// </summary>
         private static GameObject HoeLevelPiece()
         {
@@ -107,6 +108,8 @@ namespace LivingFactions
                 TerrainOp op = piece != null ? piece.GetComponentInChildren<TerrainOp>(true) : null;
                 if (op != null && op.m_settings.m_level && !op.m_settings.m_raise) return piece;
             }
+            foreach (GameObject piece in table.m_pieces)
+                if (piece != null && piece.GetComponentInChildren<TerrainOp>(true) != null) return piece;
             return null;
         }
 
@@ -128,16 +131,18 @@ namespace LivingFactions
         }
 
         /// <summary>
-        /// One stroke of levelling as a player's tool makes it: a TerrainOp that, waking up, sends its operation to
-        /// each tile's owner (TerrainComp.ApplyOperation, the way every player's ground work goes), then goes.
+        /// One stroke of levelling as a player's tool makes it. The registered prefab wakes only after its settings
+        /// are changed, so TerrainOp sends a normal, deserializable operation to each tile's owner.
         /// </summary>
-        private static void LevelStroke(Vector3 at)
+        private static void LevelStroke(GameObject level, Vector3 at)
         {
-            GameObject stroke = new GameObject("lf_hoe_stroke");
-            stroke.SetActive(false);
+            GameObject holder = new GameObject("lf_hoe_holder");
+            holder.SetActive(false);
+            GameObject stroke = Object.Instantiate(level, holder.transform);
             stroke.transform.position = at;
-            TerrainOp op = stroke.AddComponent<TerrainOp>();
+            TerrainOp op = stroke.GetComponentInChildren<TerrainOp>(true);
             op.m_settings.m_level = true;
+            op.m_settings.m_raise = false;
             op.m_settings.m_levelRadius = 2f;
             op.m_settings.m_square = false;
             op.m_settings.m_smooth = true;
@@ -146,7 +151,8 @@ namespace LivingFactions
             op.m_settings.m_paintCleared = true;
             op.m_settings.m_paintType = TerrainModifier.PaintType.Dirt;
             op.m_settings.m_paintRadius = 2f;
-            stroke.SetActive(true);
+            stroke.transform.SetParent(null, true);
+            Object.Destroy(holder);
         }
 
         private static System.Collections.IEnumerator HoeRun(GameObject level)
@@ -159,8 +165,7 @@ namespace LivingFactions
             _hoeLeft = spots.Count;
             foreach (Vector3 spot in spots)
             {
-                if (level != null) Object.Instantiate(level, spot, Quaternion.identity);
-                else LevelStroke(spot);
+                if (level != null) LevelStroke(level, spot);
                 _hoeLeft--;
                 yield return new WaitForSecondsRealtime(0.3f);
             }

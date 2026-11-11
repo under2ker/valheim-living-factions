@@ -43,7 +43,7 @@ namespace LivingFactions
                 case "status": return Status();
                 case "factions": return Factions();
                 case "chronicle": return Chronicle(a.Length > 1 ? int.Parse(a[1]) : 15);
-                case "advance": return Advance(a.Length > 1 ? double.Parse(a[1], Inv) : 1);
+                case "advance": return Advance(a);
                 case "rewind": return SimHost.Rewind(a);
                 case "audit":
                     {
@@ -82,6 +82,9 @@ namespace LivingFactions
                 case "shieldfit": return DevProbes.ShieldFit(a);
                 case "shieldbox": return DevProbes.ShieldBox();
                 case "seams": return DevProbes.Seams(a.Length > 1 ? float.Parse(a[1], Inv) : 150f);
+                case "seamsall":
+                    Materializer.SeamsOnPlayerWork = a.Length > 1 && a[1] == "on";
+                    return "seams on player-worked ground " + (Materializer.SeamsOnPlayerWork ? "on" : "off");
                 case "hoe": return DevProbes.Hoe(a);
                 case "hoecheck": return DevProbes.HoeCheck();
                 case "emptybag":
@@ -713,9 +716,13 @@ namespace LivingFactions
             return sb.Length == 0 ? Texts.Get("ui_no_news") : sb.ToString().TrimEnd();
         }
 
-        private static string Advance(double days)
+        private static string Advance(string[] args)
         {
             if (!SimHost.Active) return NoSim;
+            if (!Net.IsHost) return "lf advance can only change the simulation on the host";
+            double days = 1;
+            if (args.Length > 1 && (!double.TryParse(args[1], NumberStyles.Float, Inv, out days) || double.IsNaN(days) || double.IsInfinity(days)))
+                return "usage: lf advance <number of days to add> (0-400)";
             days = Math.Max(0, Math.Min(days, 400));
             SimHost.FastForward(days);
             // The factions move on by this many days; there is no going back but a world backup.
@@ -759,11 +766,18 @@ namespace LivingFactions
         private static string Rep(string[] a)
         {
             if (!SimHost.Active) return NoSim;
+            if (!Net.IsHost) return "lf rep can only change standing on the host";
             if (a.Length < 3 || Player.m_localPlayer == null) return "usage: lf rep <faction#> <value>";
-            Faction f = SimHost.Sim.State.GetFaction(int.Parse(a[1]));
+            int factionId;
+            float value;
+            if (!int.TryParse(a[1], out factionId) || !float.TryParse(a[2], NumberStyles.Float, Inv, out value) || float.IsNaN(value) || float.IsInfinity(value))
+                return "usage: lf rep <faction#> <finite value>";
+            Faction f = SimHost.Sim.State.GetFaction(factionId);
             if (f == null) return "no such faction";
             PlayerRelation rel = SimHost.Sim.PlayerRel(f, Player.m_localPlayer.GetPlayerID());
-            rel.Reputation = Util.Clamp(float.Parse(a[2], Inv), -100, 100);
+            float was = rel.Reputation;
+            rel.Reputation = Util.Clamp(value, -100, 100);
+            SimHost.Sim.Note(rel, "dev", rel.Reputation - was);
             return Texts.FactionName(f) + ": " + rel.Reputation.ToString("0") + " (" + Texts.Get("st_" + SimHost.Sim.GetStanding(f, Player.m_localPlayer.GetPlayerID())) + ")";
         }
 

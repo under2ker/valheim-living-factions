@@ -11,7 +11,7 @@ Living Factions
 
 **Version**
 ```
-0.8.0
+0.8.1
 ```
 
 **Category:** Gameplay (если есть «Overhauls» или «NPC»: тоже подходит).
@@ -34,7 +34,7 @@ Seven NPC factions live on their own: they build settlements piece by piece, sen
 ## Description (вставлять в редактор в режиме BBCode)
 
 ```
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.8.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.8.1[/img][/center]
 
 [size=5][b]Living Factions[/b][/size]
 
@@ -77,12 +77,12 @@ Seven NPC factions move into your world and live their own lives. They set up ca
 [*]Earn seven relic axes, seven swords and seven shields, one of each per faction.
 [/list]
 
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.8.0[/img][/center]
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.8.0[/img][/center]
-[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.8.0[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.8.1[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.8.1[/img][/center]
+[center][img]https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.8.1[/img][/center]
 
 [size=4][b]Playing together[/b][/size]
-Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.7.x with any 0.7.x; 0.6.x and 0.7.x do not play together). Back up the server world before the first run.
+Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too, with the same first two numbers of the version (any 0.8.x with any 0.8.x; 0.7.x and 0.8.x do not play together). Back up the server world before the first run.
 
 [size=4][b]Backups[/b][/size]
 Restoring a backup of the world takes the factions back to the same point. Buildings on record but missing from the world are put up again. [b]lf rewind[/b] in the console takes the factions back without touching the world.
@@ -96,7 +96,7 @@ English, Russian, Polish, German, French, Spanish and Portuguese. The mod follow
 [*]Put [b]LivingFactions.dll[/b] into [b]Valheim/BepInEx/plugins/LivingFactions/[/b].
 [*]Start a world. The factions arrive on the first day. An existing world works too.
 [/list]
-[b]Back up your world first.[/b] Settlements level the ground and place pieces. Updating from 0.6.x: on the first visit each settlement puts up its houses, square, camps, walls and lamps again once.
+[b]Back up your world first.[/b] Settlements level the ground and place pieces. Updating from 0.6.x: on the first visit each settlement puts up its houses, square, camps, walls and lamps again once. Updating from 0.7.0 or 0.8.0: old roads and settlement ground are repaired as you visit them.
 Settings: the "LF" tile on the inventory screen (Tab), or BepInEx/config/alexandr.livingfactions.cfg. Alt+H hides the chronicle.
 
 [size=4][b]Known limits[/b][/size]
@@ -117,17 +117,17 @@ Made with the help of AI (Claude Code). No game files, decompiled code or extrac
 
 **File name**
 ```
-Living Factions 0.8.0
+Living Factions 0.8.1
 ```
 
-**File version:** `0.8.0`, категория файла: Main Files (файл 0.6.5 перевести в Old Versions).
+**File version:** `0.8.1`, категория файла: Main Files (файл 0.6.5 перевести в Old Versions).
 
 **File description**
 ```
-The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager. Everyone in a game needs 0.7.x.
+The mod: LivingFactions.dll in a plugins folder, with manifest, README and changelog. Needs BepInExPack Valheim and Jotunn. Unpack into Valheim/BepInEx/plugins/ or install with a mod manager. Everyone in a game needs 0.8.x.
 ```
 
-Файл: `dist/LivingFactions-0.8.0.zip`.
+Файл: `dist/LivingFactions-0.8.1.zip`.
 
 ## Images tab
 
@@ -142,13 +142,20 @@ The mod: LivingFactions.dll in a plugins folder, with manifest, README and chang
 - Use assets in other mods: ask first.
 - Use in mod packs / collections: yes.
 
-## Changelog (поле Changelogs, версия 0.8.0)
+## Changelog (поле Changelogs, версия 0.8.1)
 
 ```
-- Fixed: wars and campaigns are fought whatever the order of the factions' ids. Before, half of the raids and assaults ended without a fight: the pair's relation is kept on the faction with the lower id, and the band looked for it on the attacker. The monster factions could take nothing by war, and their campaigns always ended repelled.
-- Fixed: a relation asked for by a dialogue or the forecast no longer draws from the shared random stream, so opening a menu cannot change the history of the world.
-- Fixed: the dialogue's Leave button is always on screen; eleven buttons fit.
-- Fixed: a hired fighter fights by the standing of the player whose coins pay it, and a tamed animal by the standing of its owner, including on a dedicated server.
-- Fixed: the host ignores malformed guest messages (impossible counts, ids, amounts and names) with a warning, instead of spoiling the factions.
-- Worlds and saves of 0.7.0 carry over; everyone in a game needs the same 0.8.x version.
+- Roads choose gentler finished beds, rise and fall evenly, and are paved in batches as the ground becomes ready.
+- Settlement ground slopes into building pads along streets and paths; existing settlements are graded as they load.
+- Streets keep their full width clear of buildings, narrow where necessary and avoid water and steep banks.
+- Terrain repairs, road paint, clearing and lamps respect player-built pieces and player-worked ground.
+- Hired fighters remember their employer, follow only that player through portals and use that player's standing for hostility.
+- A failed hire costs nothing; dead fighters no longer consume the employer's hire limit.
+- The chronicle can be dragged anywhere and collapsed; both choices are saved.
+- The dialogue explains the latest changes of standing.
+- Special wares are paginated, and an invalid trade.cfg row no longer hides later valid offers.
+- Night-watch challenges and theft alarms target the involved player; denied chest opens start no theft countdown.
+- Player actions, commands, gifts, trades and building reports are validated more strictly.
+- Faction saves and history copies are promoted only after a complete write.
+- Includes all 0.8.0 fixes: wars in either faction-id order, deterministic relations, owner-based hired fighters and tamed animals, and malformed guest message checks.
 ```

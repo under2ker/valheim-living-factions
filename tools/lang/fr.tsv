@@ -82,6 +82,9 @@ ui_alliance	Proposer une alliance
 ui_break	Rompre l'alliance
 ui_leave	Partir
 ui_back	Retour
+ui_wares_page	Offres : page {0} sur {1}
+ui_wares_previous	Offres précédentes
+ui_wares_next	Offres suivantes
 ui_buy	Acheter {0} {1} pour {2} pièces
 ui_sell	Vendre {0} {1} pour {2} pièces
 ui_give	Donner {0} x{1}
@@ -182,6 +185,12 @@ msg_caravan_out	Une caravane quitte {0}.
 msg_caravan_in	Une caravane arrive à {0}.
 menu_title	Réglages
 menu_close	Fermer
+menu_chronicle_edit	Personnaliser la chronique
+menu_chronicle_drag	Faites glisser la chronique pour la déplacer.
+menu_chronicle_fold	Réduire
+menu_chronicle_expand	Développer
+menu_save	Enregistrer
+menu_cancel	Annuler
 menu_on	oui
 menu_off	non
 menu_page_general	Général
@@ -419,6 +428,8 @@ ev_OutpostFounded	{f} ont établi un avant-poste à {s} pour envoyer {r} à {s2}
 ev_OutpostFounded_road	{f} ont établi un poste de guet à {s}, sur la longue route depuis {s2}.
 msg_thief_count	Quelqu'un remue dans son sommeil... {0}
 msg_thief_away	Vous vous éclipsez dans l'obscurité.
+msg_night_count	La garde attend que vous partiez... {0}
+msg_night_away	La garde vous laisse partir.
 msg_thief_alarm	Au voleur ! {0} se réveille en alerte !
 night_thief_shout	Au voleur ! Debout, tout le monde, un voleur !
 opt_rep_decay	Vitesse à laquelle la réputation s'estompe
@@ -441,3 +452,22 @@ envoy_r_drift_down	Sans nouveaux actes, notre bienveillance envers toi décliner
 envoy_r_old	Rien de nouveau ; mais ce que tu as fait autrefois n'est pas encore oublié.
 ev_CampaignOver_ours	{f} arrêtent leur campagne : {s} est déjà à eux.
 ev_CampaignOver_other	{f} renoncent à leur campagne : {s} est passé en d'autres mains.
+rep_ledger	Derniers changements de notre estime :
+rep_day	jour {0}
+rep_why_gift	cadeaux
+rep_why_trade	commerce
+rep_why_help	aide contre nos ennemis
+rep_why_boss	une grande bête abattue
+rep_why_theft	vol dans nos réserves
+rep_why_kill	notre peuple tué
+rep_why_crime	un ancien meurtre a été découvert
+rep_why_attack	notre peuple attaqué
+rep_why_damage	nos bâtiments endommagés
+rep_why_wreck	un de nos bâtiments abattu
+rep_why_side	de quel côté tu es dans nos guerres
+rep_why_drift	le temps : le passé s'efface
+rep_why_war	guerre déclarée
+rep_why_peace	paix conclue
+rep_why_broke	alliance rompue
+rep_why_dev	commande de console
+rep_why_other	autre

@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.8.1 - 2026-11-11
+- The dialogue explains the latest changes of standing: gifts, trade, help, crimes, war and the slow fading of old deeds.
+- Roads prepare loaded ground farther ahead, then pave it in batches once the bed is ready. Shared terrain edges are repaired as both tiles finish, and town streets avoid shortcuts through water or across steep banks.
+- Settlement ground slopes into the building pads along streets and paths. The grading reaches the edge of the building footprint to smooth sharp spikes left by the levelling brush. Existing settlements are graded as they load.
+- Roads are laid into the ground point by point instead of disc by disc: the way rises and falls evenly along its bed, with smooth banks beside it, instead of steps, ridges and sharp edges. Tiles of a road cut by an older version are laid again when visited.
+- A road point whose paint could not be finished is painted again later instead of staying a gap; past a building the road narrows instead of breaking off.
+- Ways between settlements are chosen by how steep their finished bed would be: a way round a hill, or up it in turns, is taken over one straight up its face.
+- Hired fighters remember who hired them and follow only that player, including through portals.
+- In the mod settings, drag the chronicle anywhere on screen and choose whether it shows all the news or just the heading and day. Save keeps both choices.
+- New settlements and outposts avoid player-built pieces even when their owners are away and the area is unloaded.
+- Settlement streets leave enough room for their full width around buildings and avoid clipping them on diagonal turns.
+- Seam repairs leave player-built structures and ground recently worked by a player alone.
+- A failed hire no longer costs coins; dead hired fighters no longer count toward the hire limit.
+- Road and square paint avoids player-built pieces, including pieces placed while the work is queued.
+- Roadside clearing and lamps are deferred near player-built pieces.
+- A night-watch challenge or theft alarm targets the player involved instead of making the watch hostile to every player nearby.
+- The reputation console command rejects guest-side changes that would be overwritten by the host.
+- A denied chest-opening request no longer starts a theft alarm or attributes later changes to the player.
+- Hired fighters assess faction hostility toward their employer rather than the player running their AI.
+- Console commands reject non-finite time or reputation values; advancing the simulation is restricted to the host.
+- Malformed or oversized player action packets and non-finite numbers are rejected before updating the host's simulation.
+- Guest theft alarms are checked and relayed by the host, and cannot name another player as the thief.
+- Building progress reports are parsed as a complete batch before the host applies them.
+- Direct diplomacy, trade and discovery requests must identify the sending player.
+- Faction saves and compressed history copies are replaced only after their new contents have been written completely.
+- The simulation rejects invalid resource types, non-finite gifts and non-positive trade quantities.
+- Special wares are shown across multiple pages, and an invalid trade.cfg line no longer prevents later offers from loading.
+- A night-watch warning counts down on screen the seconds left to walk away, and says when the watch lets you go.
+- Hired fighters hired before this version keep following the player whose game runs them instead of standing still, and the employer's game takes them over after a portal or zone change.
+- Road points blocked by a building are looked at again every 30 seconds instead of on every pass; streets too tight for the full width fall back to the narrower way instead of disappearing.
+
 ## 0.8.0 - 2026-11-11
 - Fixed: a war or a campaign was fought only when its side's relation could be found. The relation
   between two factions is kept on the one with the lower id, and a band looked for it on the attacker:

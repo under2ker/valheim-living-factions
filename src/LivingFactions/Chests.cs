@@ -186,7 +186,8 @@ namespace LivingFactions
             if (chest.IsInUse()) return;
             ZDO zdo = chest.GetComponent<ZNetView>().GetZDO();
             Inventory inv = chest.GetInventory();
-            bool tracked = zdo.GetBool(HashCountSet) && OpenedByMe(zdo), stoleAny = false;
+            bool opened = OpenedByMe(zdo);
+            bool tracked = zdo.GetBool(HashCountSet) && opened, stoleAny = false;
             for (int k = 0; k < goods.Length; k++)
             {
                 Res res = goods[k];
@@ -500,7 +501,7 @@ namespace LivingFactions
             Net.AddStock(s, res, -back);
             Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
             Player player = Player.m_localPlayer;
-            if (f != null && player != null && gain > 0f) Net.AddReputation(f, player.GetPlayerID(), -gain);
+            if (f != null && player != null && gain > 0f) Net.AddReputation(f, player.GetPlayerID(), -gain, "gift");
             RecentGifts[key] = new Vector3(gift.x - back, gift.y - gain, gift.z);
             return units - back;
         }

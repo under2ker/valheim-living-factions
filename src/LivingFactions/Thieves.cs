@@ -98,8 +98,7 @@ namespace LivingFactions
                 Reset();
                 return;
             }
-            float reach = Defs.RingRadius[Defs.RingsByTier[(int)s.Tier] - 1] + 12f;
-            if (Utils.DistanceXZ(player.transform.position, new Vector3(s.Pos.X, 0f, s.Pos.Z)) > reach)
+            if (!WithinReach(s, player.transform.position))
             {
                 if (MessageHud.instance != null) MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Texts.Get("msg_thief_away"));
                 Reset();
@@ -124,11 +123,18 @@ namespace LivingFactions
             Net.RaiseAlarm(s, player, _where);
         }
 
+        public static bool WithinReach(Settlement s, Vector3 position)
+        {
+            if (s == null || s.Destroyed) return false;
+            float reach = Defs.RingRadius[Defs.RingsByTier[(int)s.Tier] - 1] + 12f;
+            return Utils.DistanceXZ(position, new Vector3(s.Pos.X, 0f, s.Pos.Z)) <= reach;
+        }
+
         /// <summary>The settlement wakes to a thief: on every player's game, so whoever runs its people's minds sends them.</summary>
         public static void Alarm(Settlement s, Character thief, Vector3 where)
         {
             if (s == null || thief == null) return;
-            NightWatch.Raise(s.Id, where);
+            NightWatch.Raise(s.Id, thief as Player, where);
             Grudges.Declare(s.FactionId, thief, where, 180f);
             FactionMember shouter = null;
             float nearest = float.MaxValue;
@@ -148,14 +154,16 @@ namespace LivingFactions
         }
     }
 
-    [HarmonyPatch(typeof(Container), nameof(Container.Interact))]
+    // Interact returns true even when access is denied or the chest is in use. Wait for the
+    // server's successful response before treating this player as having opened it.
+    [HarmonyPatch(typeof(Container), "RPC_OpenResponse")]
     internal static class NightChestPatch
     {
-        private static void Postfix(Container __instance, Humanoid character, bool hold, bool __result)
+        private static void Postfix(Container __instance, bool granted)
         {
-            if (!__result || hold) return;
-            if (character == Player.m_localPlayer) Chests.MarkOpened(__instance);
-            NightThief.Opened(__instance, character);
+            if (!granted || Player.m_localPlayer == null) return;
+            Chests.MarkOpened(__instance);
+            NightThief.Opened(__instance, Player.m_localPlayer);
         }
     }
 }

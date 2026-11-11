@@ -51,10 +51,12 @@ namespace LivingFactions.Core
             return st == Standing.War || st == Standing.Hostile;
         }
 
-        public void AddReputation(Faction f, long playerId, float delta)
+        public void AddReputation(Faction f, long playerId, float delta, string why = "other")
         {
             PlayerRelation rel = PlayerRel(f, playerId);
+            float before = rel.Reputation;
             rel.Reputation = Util.Clamp(rel.Reputation + delta, -100f, 100f);
+            Note(rel, why, rel.Reputation - before);
             if (rel.Allied && rel.Reputation < 40f)
             {
                 rel.Allied = false;
@@ -68,6 +70,29 @@ namespace LivingFactions.Core
                 // Arg 2 says who started it.
                 Raise(new SimEvent { Kind = EventKind.PlayerWar, FactionId = f.Id, PlayerId = playerId, Args = new[] { f.Name, rel.Name, "faction" } });
             }
+        }
+
+        public const int LedgerSize = 12;
+
+        /// <summary>
+        /// Writes a change of standing into the player's ledger. Changes of one kind on one day are one entry; the slow
+        /// daily ones (drift, taking sides) run on in one entry for as long as nothing else comes between.
+        /// </summary>
+        public void Note(PlayerRelation rel, string why, float delta)
+        {
+            if (rel == null || Math.Abs(delta) < 0.005f || float.IsNaN(delta)) return;
+            if (rel.Ledger == null) rel.Ledger = new List<RepChange>();
+            if (string.IsNullOrEmpty(why)) why = "other";
+            RepChange last = rel.Ledger.Count > 0 ? rel.Ledger[rel.Ledger.Count - 1] : null;
+            bool slow = why == "drift" || why == "side";
+            if (last != null && last.Why == why && (slow || Math.Floor(last.Day) == Math.Floor(State.Day)) && Math.Sign(last.Delta) == Math.Sign(delta))
+            {
+                last.Delta += delta;
+                last.Day = State.Day;
+                return;
+            }
+            rel.Ledger.Add(new RepChange { Day = State.Day, Why = why, Delta = delta });
+            while (rel.Ledger.Count > LedgerSize) rel.Ledger.RemoveAt(0);
         }
 
         private void DailyPlayerRelations()
@@ -85,7 +110,9 @@ namespace LivingFactions.Core
                     // Deeds are slowly forgotten, good ones slower than the pull back up from bad ones,
                     // and that pull is weaker while there is blood between them.
                     float rate = (rel.Reputation > disposition ? 0.15f : 0.3f / (1f + rel.Grievance / 15f)) * Math.Max(0f, Balance.ReputationDecay);
+                    float was = rel.Reputation;
                     rel.Reputation = Util.MoveToward(rel.Reputation, disposition, rate);
+                    Note(rel, "drift", rel.Reputation - was);
                     rel.Grievance *= 0.92f;
                     if (rel.Grievance < 0.5f) rel.Grievance = 0f;
                 }
@@ -102,9 +129,9 @@ namespace LivingFactions.Core
                     foreach (var pair in other.Players)
                     {
                         PlayerRelation theirs = pair.Value;
-                        if (treaty == Treaty.War && theirs.Allied) AddReputation(f, pair.Key, -0.4f);
-                        if (treaty == Treaty.War && theirs.AtWar) AddReputation(f, pair.Key, 0.2f);
-                        if (treaty == Treaty.Alliance && theirs.AtWar) AddReputation(f, pair.Key, -0.3f);
+                        if (treaty == Treaty.War && theirs.Allied) AddReputation(f, pair.Key, -0.4f, "side");
+                        if (treaty == Treaty.War && theirs.AtWar) AddReputation(f, pair.Key, 0.2f, "side");
+                        if (treaty == Treaty.Alliance && theirs.AtWar) AddReputation(f, pair.Key, -0.3f, "side");
                     }
                 }
             }
@@ -118,7 +145,9 @@ namespace LivingFactions.Core
             if (rel.AtWar) return DiploResult.No("already_war");
             rel.AtWar = true;
             rel.Allied = false;
+            float was = rel.Reputation;
             rel.Reputation = Math.Min(rel.Reputation, -75f);
+            Note(rel, "war", rel.Reputation - was);
             rel.LastHostileDay = State.Day;
             Raise(new SimEvent { Kind = EventKind.PlayerWar, FactionId = f.Id, PlayerId = playerId, Args = new[] { f.Name, rel.Name, "player" } });
             return DiploResult.Yes("war_declared");
@@ -139,7 +168,9 @@ namespace LivingFactions.Core
             if (State.Day - rel.LastHostileDay < 1.0) return DiploResult.No("blood_too_fresh");
             if (coinsPaid < PeaceCost(f, playerId)) return DiploResult.No("not_enough_coins");
             rel.AtWar = false;
+            float was = rel.Reputation;
             rel.Reputation = Math.Max(rel.Reputation, -30f);
+            Note(rel, "peace", rel.Reputation - was);
             Settlement capital = State.GetSettlement(f.CapitalId);
             if (capital != null) capital.Stock[(int)Res.Coins] += coinsPaid;
             Raise(new SimEvent { Kind = EventKind.PlayerPeace, FactionId = f.Id, PlayerId = playerId, Args = new[] { f.Name, rel.Name } });
@@ -162,7 +193,9 @@ namespace LivingFactions.Core
             PlayerRelation rel = PlayerRel(f, playerId);
             if (!rel.Allied) return DiploResult.No("not_allied");
             rel.Allied = false;
+            float was = rel.Reputation;
             rel.Reputation = Math.Min(rel.Reputation, 20f) - 15f * f.Honor;
+            Note(rel, "broke", rel.Reputation - was);
             Raise(new SimEvent { Kind = EventKind.PlayerAllianceBroken, FactionId = f.Id, PlayerId = playerId, Args = new[] { f.Name, rel.Name } });
             return DiploResult.Yes("alliance_broken");
         }
@@ -175,6 +208,7 @@ namespace LivingFactions.Core
         /// </summary>
         public float GiftGain(Settlement s, long playerId, Res res, float amount)
         {
+            if (s == null || (int)res < 0 || (int)res >= Balance.CoinValue.Length || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return 0f;
             Faction f = State.GetFaction(s.FactionId);
             if (f == null || amount <= 0f) return 0f;
             PlayerRelation rel = PlayerRel(f, playerId);
@@ -187,6 +221,9 @@ namespace LivingFactions.Core
         /// <summary>A gift of goods to a settlement. Returns the reputation gained.</summary>
         public float PlayerGift(Settlement s, long playerId, Res res, float amount)
         {
+            if (s == null || (int)res < 0 || (int)res >= Balance.CoinValue.Length || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return 0f;
+            float value = amount * Balance.CoinValue[(int)res];
+            if (float.IsInfinity(value)) return 0f;
             Faction giver = State.GetFaction(s.FactionId);
             if (giver != null && RecentlyStole(giver, playerId))
             {
@@ -198,12 +235,13 @@ namespace LivingFactions.Core
             Faction f = State.GetFaction(s.FactionId);
             if (f == null || amount <= 0f) return 0f;
             PlayerRelation rel = PlayerRel(f, playerId);
-            float value = amount * Balance.CoinValue[(int)res];
             float gain = GiftGain(s, playerId, res, amount);
-            rel.GiftFatigue += value * 0.12f;
+            float fatigue = rel.GiftFatigue + value * 0.12f;
+            if (float.IsInfinity(fatigue) || float.IsNaN(fatigue)) return 0f;
+            rel.GiftFatigue = fatigue;
             float cap = res == Res.Coins ? StorageCap(s) * 4f : StorageCap(s);
             s.Stock[(int)res] = Math.Min(cap, s.Stock[(int)res] + amount);
-            AddReputation(f, playerId, gain);
+            AddReputation(f, playerId, gain, "gift");
             if (gain >= 1f)
             {
                 Raise(new SimEvent { Kind = EventKind.PlayerGift, FactionId = f.Id, SettlementId = s.Id, PlayerId = playerId, Args = new[] { rel.Name, s.Name, res.ToString(), ((int)amount).ToString() } });
@@ -233,7 +271,7 @@ namespace LivingFactions.Core
             {
                 rel.LastHostileDay = State.Day;
                 Raise(new SimEvent { Kind = EventKind.PlayerKilledMember, FactionId = f.Id, SettlementId = s.Id, PlayerId = playerId, Args = new[] { rel.Name, f.Name, s.Name } });
-                AddReputation(f, playerId, -penalty);
+                AddReputation(f, playerId, -penalty, "kill");
                 if (!rel.AtWar) rel.Grievance += penalty;
             }
             else if (!rel.AtWar)
@@ -256,7 +294,7 @@ namespace LivingFactions.Core
                 Raise(new SimEvent { Kind = EventKind.PlayerCrimeFound, FactionId = f.Id, SettlementId = rel.SuspicionSettlementId, PlayerId = playerId, Args = new[] { rel.Name } });
                 if (!rel.AtWar)
                 {
-                    AddReputation(f, playerId, -penalty);
+                    AddReputation(f, playerId, -penalty, "crime");
                     rel.Grievance += penalty;
                 }
                 return;
@@ -299,7 +337,7 @@ namespace LivingFactions.Core
         {
             PlayerRelation rel = PlayerRel(f, playerId);
             rel.LastHostileDay = State.Day;
-            if (!rel.AtWar) AddReputation(f, playerId, -loss);
+            if (!rel.AtWar) AddReputation(f, playerId, -loss, "attack");
         }
 
         public void PlayerDamagedProperty(Faction f, long playerId)
@@ -307,7 +345,7 @@ namespace LivingFactions.Core
             PlayerRelation rel = PlayerRel(f, playerId);
             rel.LastHostileDay = State.Day;
             rel.LastDamagedDay = State.Day;
-            if (!rel.AtWar) AddReputation(f, playerId, -4f);
+            if (!rel.AtWar) AddReputation(f, playerId, -4f, "damage");
         }
 
         /// <summary>
@@ -337,7 +375,7 @@ namespace LivingFactions.Core
                 float penalty = Defs.Buildings[b.Kind].Wood * 0.15f + 4f;
                 if (!rel.AtWar)
                 {
-                    AddReputation(f, culprit, -Math.Min(20f, penalty));
+                    AddReputation(f, culprit, -Math.Min(20f, penalty), "wreck");
                     rel.Grievance += Math.Min(20f, penalty);
                 }
             }
@@ -351,7 +389,7 @@ namespace LivingFactions.Core
             if (rel.AtWar) return false;
             rel.LastHostileDay = State.Day;
             rel.LastStoleDay = State.Day;
-            AddReputation(f, playerId, -Math.Min(12f, 2f + value * 0.08f) * (0.75f + 0.5f * f.Honor));
+            AddReputation(f, playerId, -Math.Min(12f, 2f + value * 0.08f) * (0.75f + 0.5f * f.Honor), "theft");
             return true;
         }
 
@@ -367,7 +405,7 @@ namespace LivingFactions.Core
         /// <summary>A player killed something the faction considers an enemy near one of its settlements.</summary>
         public void PlayerHelped(Faction f, long playerId, float weight)
         {
-            if (!PlayerRel(f, playerId).AtWar) AddReputation(f, playerId, weight);
+            if (!PlayerRel(f, playerId).AtWar) AddReputation(f, playerId, weight, "help");
         }
 
         // ------------------------------------------------------------------ trade
@@ -426,31 +464,37 @@ namespace LivingFactions.Core
         /// <summary>Player buys goods. Returns the coin cost, or -1 when the deal is refused.</summary>
         public int PlayerBuy(Settlement s, Res res, int amount, long playerId, int playerCoins)
         {
+            if (s == null || (int)res < 0 || (int)res >= Balance.CoinValue.Length || amount <= 0 || playerCoins < 0) return -1;
             Faction f = State.GetFaction(s.FactionId);
             if (f == null || !WillTrade(f, playerId)) return -1;
             // The settlement keeps a reserve: it will not sell itself into hunger.
             float reserve = res == Res.Food ? s.Population * 3f : 10f;
             if (s.Stock[(int)res] - amount < reserve) return -1;
-            int cost = Math.Max(1, (int)Math.Ceiling(BuyPrice(s, res, playerId) * amount));
+            double rawCost = Math.Ceiling((double)BuyPrice(s, res, playerId) * amount);
+            if (double.IsNaN(rawCost) || double.IsInfinity(rawCost) || rawCost <= 0 || rawCost > int.MaxValue) return -1;
+            int cost = Math.Max(1, (int)rawCost);
             if (cost > playerCoins) return -1;
             s.Stock[(int)res] -= amount;
             s.Stock[(int)Res.Coins] += cost;
-            AddReputation(f, playerId, Math.Min(1f, cost * 0.01f));
+            AddReputation(f, playerId, Math.Min(1f, cost * 0.01f), "trade");
             return cost;
         }
 
         /// <summary>Player sells goods. Returns the coins paid out, or -1 when the deal is refused.</summary>
         public int PlayerSell(Settlement s, Res res, int amount, long playerId)
         {
+            if (s == null || (int)res < 0 || (int)res >= Balance.CoinValue.Length || amount <= 0) return -1;
             Faction thief = State.GetFaction(s.FactionId);
             if (thief != null && RecentlyStole(thief, playerId)) return -1;
             Faction f = State.GetFaction(s.FactionId);
             if (f == null || !WillTrade(f, playerId)) return -1;
-            int pay = (int)Math.Floor(SellPrice(s, res, playerId) * amount);
+            double rawPay = Math.Floor((double)SellPrice(s, res, playerId) * amount);
+            if (double.IsNaN(rawPay) || double.IsInfinity(rawPay) || rawPay <= 0 || rawPay > int.MaxValue) return -1;
+            int pay = (int)rawPay;
             if (pay <= 0 || pay > s.Stock[(int)Res.Coins]) return -1;
             s.Stock[(int)res] = Math.Min(StorageCap(s), s.Stock[(int)res] + amount);
             s.Stock[(int)Res.Coins] -= pay;
-            AddReputation(f, playerId, Math.Min(1f, pay * 0.01f));
+            AddReputation(f, playerId, Math.Min(1f, pay * 0.01f), "trade");
             return pay;
         }
     }

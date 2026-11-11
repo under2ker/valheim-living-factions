@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LivingFactions.Core;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ namespace LivingFactions
     /// <summary>Answers the simulation's questions about the Valheim world, including areas that are not loaded.</summary>
     internal class GameWorld : IWorldQuery
     {
+        private static readonly List<ZDO> SiteObjects = new List<ZDO>();
         public float WorldRadius { get { return 10000f; } }
 
         public static Biome Map(Heightmap.Biome biome)
@@ -116,7 +118,7 @@ namespace LivingFactions
 
         public bool IsReserved(Vec2 pos, float radius)
         {
-            if (ZoneSystem.instance == null) return true;
+            if (ZoneSystem.instance == null || ZNet.instance == null || ZDOMan.instance == null) return true;
             Vector3 p = new Vector3(pos.X, 0f, pos.Z);
 
             // The world is dense with small vanilla locations, so only the heart of a new settlement
@@ -127,6 +129,19 @@ namespace LivingFactions
             foreach (ZNet.PlayerInfo info in ZNet.instance.GetPlayerList())
             {
                 if (Utils.DistanceXZ(info.m_position, p) < radius + 60f) return true;
+            }
+            // Player pieces are stored in the world database even when their area is not loaded.
+            // Inspect full sectors, not only the distant-object subset, so an empty base is protected too.
+            float clearance = radius + 60f;
+            int sectors = Mathf.CeilToInt(clearance / 64f) + 1;
+            SiteObjects.Clear();
+            ZDOMan.instance.FindSectorObjects(ZoneSystem.GetZone(p), new SimulationDistance(sectors, 0, true), SiteObjects);
+            foreach (ZDO zdo in SiteObjects)
+            {
+                if (zdo.GetLong(ZDOVars.s_creator) == 0L || Utils.DistanceXZ(zdo.GetPosition(), p) >= clearance) continue;
+                GameObject prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(zdo.GetPrefab()) : null;
+                // A missing prefab may belong to another mod. Keep its owner's ground safe as well.
+                if (prefab == null || prefab.GetComponent<Piece>() != null) return true;
             }
             return false;
         }

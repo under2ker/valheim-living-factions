@@ -1,6 +1,6 @@
 # Living Factions
 
-![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.8.0)
+![Living Factions](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/cover.jpg?v=0.8.1)
 
 A Valheim mod that adds seven NPC factions to your world. They set up camps, gather wood, stone
 and food, put up buildings one piece at a time and grow into villages and towns. They trade with
@@ -107,7 +107,7 @@ settlement when it is raided, the raiders really turn up.
 ## What you can do
 
 - Talk to anyone with `E`. You see how the faction feels about you, what the settlement has and
-  what it needs.
+  what it needs. The dialogue also explains the latest changes of your standing.
 - Give gifts. Things they are short of count double.
 - Trade. Buy from their stores and sell your own goods. Prices depend on how scarce something is
   and how much they like you.
@@ -141,7 +141,7 @@ To make an alliance, talk to anyone in the settlement: the window shows your sta
 it is from the 70 an alliance needs, and each gift shows what it would earn. A gift of what they
 are short of counts double; many gifts in one day count for less.
 
-![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.8.0)
+![The seven relic axes](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/axes.jpg?v=0.8.1)
 
 | Sword | Faction | What it does | How you get it |
 |---|---|---|---|
@@ -153,7 +153,7 @@ are short of counts double; many gifts in one day count for less.
 | Root Club | Greydwarf Brood | double durability | one Greydwarf guard in four leaves it |
 | Rusted Blade | Draugr Court | double durability | bought from the court, standing 10 |
 
-![The seven faction swords](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.8.0)
+![The seven faction swords](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/swords.jpg?v=0.8.1)
 
 | Shield | Faction | What it does | How you get it |
 |---|---|---|---|
@@ -165,7 +165,7 @@ are short of counts double; many gifts in one day count for less.
 | Bark Shield | Greydwarf Brood | +20% armour and block | left by their guards, after the root club |
 | Bone-Plate Shield | Draugr Court | +20% armour and block | bought from the court, standing 10 |
 
-![The seven faction shields](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.8.0)
+![The seven faction shields](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/store/shields.jpg?v=0.8.1)
 
 From a village up, the clans' fighters carry their clan's shield, and the chief and one fighter
 in three its sword.
@@ -173,7 +173,9 @@ in three its sword.
 ## On screen
 
 - A chronicle panel shows what the nearest settlement is doing and what the other factions are
-  up to. Alt+H hides it or shows it again.
+  up to. Alt+H hides it or shows it again. To move or collapse it, open the inventory, click the LF
+  icon and choose **Customize chronicle** under **General**. Drag the preview, choose **Collapse**
+  or **Expand**, and click **Save** to keep the position and display mode.
 - The large map shows the land of every settlement you know of in its faction's colour, with
   a legend of the factions. Each settlement is named with its size; zoom in or point at it to see
   the faction, how it stands with you, its people and warriors, what it is short of and its
@@ -187,17 +189,17 @@ in three its sword.
 
 ## Screenshots
 
-![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.8.0)
-![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.8.0)
-![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.8.0)
-![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.8.0)
-![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.8.0)
-![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.8.0)
-![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.8.0)
-![A war camp: tents, stakes and the clan's banner](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/war_camp.jpg?v=0.8.0)
-![An envoy's tent by the road out of a settlement](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/envoy_tent.jpg?v=0.8.0)
-![Raven Clan homes under dark shingles, ravens on the gables](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/raven_clan_houses.jpg?v=0.8.0)
-![A Wolf Clan log house in the mountains](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/wolf_clan_house.jpg?v=0.8.0)
+![A Raven Clan city in the morning](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_morning.jpg?v=0.8.1)
+![The paved square of a city](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/city_square.jpg?v=0.8.1)
+![A village in the woods with its paths cleared](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/village_paths_0.3.4.jpg?v=0.8.1)
+![Inside the great hall](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/great_hall.jpg?v=0.8.1)
+![Night at the fire](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/night_fire.jpg?v=0.8.1)
+![Faction lands on the map](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/map_zones_0.4.2.jpg?v=0.8.1)
+![Talking to a chieftain](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/ui_dialog.jpg?v=0.8.1)
+![A war camp: tents, stakes and the clan's banner](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/war_camp.jpg?v=0.8.1)
+![An envoy's tent by the road out of a settlement](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/envoy_tent.jpg?v=0.8.1)
+![Raven Clan homes under dark shingles, ravens on the gables](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/raven_clan_houses.jpg?v=0.8.1)
+![A Wolf Clan log house in the mountains](https://raw.githubusercontent.com/under2ker/valheim-living-factions/main/docs/screenshots/press/wolf_clan_house.jpg?v=0.8.1)
 
 ## Install
 
@@ -244,14 +246,14 @@ Start the game with `-console` and press F5.
 | `lf advance <days>` | runs the simulation forward |
 | `lf rewind [day]` | lists the days you can go back to, or takes the factions back (`-30`: thirty days back) |
 | `lf tp <settlement>` | takes you to a settlement |
-| `lf rep <faction#> <value>` | sets your standing |
+| `lf rep <faction#> <value>` | sets the host player's standing; unavailable to guests |
 
 ## Known limits
 
 - Playing together is new and lightly tested. Back up the server world before the first run.
 - Woodcutters fell trees and carriers fill the chests, but what a settlement gathers is still
   counted by the simulation.
-- Ground the mod levelled before 0.8.0 along the borders of terrain tiles while you worked it with
+- Ground the mod levelled before 0.7.0 along the borders of terrain tiles while you worked it with
   the hoe may have ditches or humps: level them over once more.
 - If you remove the mod, the buildings stay in the world as normal pieces.
 

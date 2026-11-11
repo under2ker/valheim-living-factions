@@ -82,6 +82,9 @@ ui_alliance	Proponer una alianza
 ui_break	Romper la alianza
 ui_leave	Irse
 ui_back	Atrás
+ui_wares_page	Ofertas: página {0} de {1}
+ui_wares_previous	Ofertas anteriores
+ui_wares_next	Más ofertas
 ui_buy	Comprar {0} {1} por {2} monedas
 ui_sell	Vender {0} {1} por {2} monedas
 ui_give	Dar {0} x{1}
@@ -182,6 +185,12 @@ msg_caravan_out	Una caravana sale de {0}.
 msg_caravan_in	Una caravana llega a {0}.
 menu_title	Ajustes
 menu_close	Cerrar
+menu_chronicle_edit	Personalizar crónica
+menu_chronicle_drag	Arrastra la crónica para moverla.
+menu_chronicle_fold	Plegar
+menu_chronicle_expand	Desplegar
+menu_save	Guardar
+menu_cancel	Cancelar
 menu_on	sí
 menu_off	no
 menu_page_general	General
@@ -419,6 +428,8 @@ ev_OutpostFounded	{f} han levantado un puesto avanzado en {s} para enviar {r} a 
 ev_OutpostFounded_road	{f} han levantado un puesto de guardia en {s}, en el largo camino desde {s2}.
 msg_thief_count	Alguien se revuelve en sueños... {0}
 msg_thief_away	Te escabulles en la oscuridad.
+msg_night_count	La guardia espera a que te vayas... {0}
+msg_night_away	La guardia te deja marchar.
 msg_thief_alarm	¡Ladrón! ¡{0} se despierta con la alarma!
 night_thief_shout	¡Un ladrón! ¡Despertad todos, un ladrón!
 opt_rep_decay	Rapidez con que se desvanece la reputación
@@ -441,3 +452,22 @@ envoy_r_drift_down	Sin nuevas obras, nuestra buena voluntad hacia ti bajará hac
 envoy_r_old	Nada nuevo; pero lo que hiciste antes aún no se ha olvidado.
 ev_CampaignOver_ours	{f} suspenden su campaña: {s} ya es suyo.
 ev_CampaignOver_other	{f} abandonan su campaña: {s} ha pasado a otras manos.
+rep_ledger	Últimos cambios de nuestra estima:
+rep_day	día {0}
+rep_why_gift	regalos
+rep_why_trade	comercio
+rep_why_help	ayuda contra nuestros enemigos
+rep_why_boss	una gran bestia abatida
+rep_why_theft	robo de nuestras reservas
+rep_why_kill	nuestra gente asesinada
+rep_why_crime	salió a la luz una vieja muerte
+rep_why_attack	nuestra gente atacada
+rep_why_damage	nuestros edificios dañados
+rep_why_wreck	uno de nuestros edificios derribado
+rep_why_side	de qué lado estás en nuestras guerras
+rep_why_drift	el tiempo: lo viejo se olvida
+rep_why_war	guerra declarada
+rep_why_peace	paz firmada
+rep_why_broke	alianza rota
+rep_why_dev	comando de consola
+rep_why_other	otros

@@ -4,6 +4,8 @@ set -eu
 MODE="${1:?--save or --load}"; DIR="${2:?copy dir}"
 SAVES="$USERPROFILE/AppData/LocalLow/IronGate/Valheim/worlds_local"
 DATA="${VALHEIM_INSTALL:-/c/Program Files (x86)/Steam/steamapps/common/Valheim}/BepInEx/config/LivingFactions"
+# LF_INST=N: the lab of test copy N (tools/lfinst.sh)
+if [ -n "${LF_INST:-}" ]; then I="${LF_INST_ROOT:-/e/lf-inst}/$LF_INST"; SAVES="$I/saves/worlds_local"; DATA="$I/BepInEx/config/LivingFactions"; mkdir -p "$SAVES" "$DATA"; fi
 if [ "$MODE" = --save ]; then
   rm -rf "$DIR"; mkdir -p "$DIR"
   cp -r "$SAVES/LFLab" "$DIR/"; cp "$DATA"/LFLab_*.json "$DIR/"; mkdir -p "$DIR/history"; cp -r "$DATA"/history/LFLab_* "$DIR/history/"

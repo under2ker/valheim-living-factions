@@ -6,6 +6,12 @@ set -u
 SCENARIO="${1:?scenario file}"
 WORLD="${2:-LFLab}"
 GAME="${VALHEIM_INSTALL:-/c/Program Files (x86)/Steam/steamapps/common/Valheim}"
+# LF_INST=N: run in test copy N of the game (tools/lfinst.sh), with its own saves, side by side with others.
+EXTRA=()
+if [ -n "${LF_INST:-}" ]; then
+  GAME="${LF_INST_ROOT:-/e/lf-inst}/$LF_INST"
+  EXTRA=(-savedir "$(cygpath -w "$GAME/saves")" -logFile "$(cygpath -w "$GAME/player.log")")
+fi
 CFG="$GAME/BepInEx/config"
 DATA="$CFG/LivingFactions"
 START=$(date +%s)
@@ -20,7 +26,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if tasklist //FI "IMAGENAME eq valheim.exe" //NH 2>/dev/null | grep -qi valheim.exe; then
+if [ -z "${LF_INST:-}" ] && tasklist //FI "IMAGENAME eq valheim.exe" //NH 2>/dev/null | grep -qi valheim.exe; then
   echo "Valheim is already running; close it first."; exit 2
 fi
 
@@ -30,7 +36,9 @@ printf '%s' "$WORLD" > "$DATA/autostart.txt"
 rm -f "$DATA/report.txt" "$DATA/out.txt"
 cp "$SCENARIO" "$DATA/scenario.txt"
 
-( cd "$GAME" && ./valheim.exe -console -screen-fullscreen 0 -screen-width "${LF_WIDTH:-1280}" -screen-height "${LF_HEIGHT:-720}" >/dev/null 2>&1 & )
+# Test runs are silent (several copies of the game may play at once); LF_SOUND=1 keeps the sound.
+MUTE=(-lfmute); [ "${LF_SOUND:-0}" = 1 ] && MUTE=()
+( cd "$GAME" && ./valheim.exe "${EXTRA[@]}" "${MUTE[@]}" -console -screen-fullscreen 0 -screen-width "${LF_WIDTH:-1280}" -screen-height "${LF_HEIGHT:-720}" >/dev/null 2>&1 & )
 
 # Wait for the report to finish; give up after LF_TIMEOUT seconds (default 480; long tours of several settlements need more).
 for i in $(seq 1 "${LF_TIMEOUT:-480}"); do

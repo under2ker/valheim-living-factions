@@ -82,6 +82,9 @@ ui_alliance	Bündnis vorschlagen
 ui_break	Bündnis brechen
 ui_leave	Gehen
 ui_back	Zurück
+ui_wares_page	Angebote: Seite {0} von {1}
+ui_wares_previous	Vorherige Angebote
+ui_wares_next	Weitere Angebote
 ui_buy	{0} {1} für {2} Münzen kaufen
 ui_sell	{0} {1} für {2} Münzen verkaufen
 ui_give	{0} x{1} geben
@@ -182,6 +185,12 @@ msg_caravan_out	Eine Karawane verlässt {0}.
 msg_caravan_in	Eine Karawane ist unterwegs nach {0}.
 menu_title	Einstellungen
 menu_close	Schließen
+menu_chronicle_edit	Chronik anpassen
+menu_chronicle_drag	Ziehe die Chronik an die gewünschte Stelle.
+menu_chronicle_fold	Einklappen
+menu_chronicle_expand	Ausklappen
+menu_save	Speichern
+menu_cancel	Abbrechen
 menu_on	an
 menu_off	aus
 menu_page_general	Allgemein
@@ -419,6 +428,8 @@ ev_OutpostFounded	{f} haben bei {s} einen Außenposten errichtet, der {r} nach {
 ev_OutpostFounded_road	{f} haben bei {s} einen Wachposten an der langen Straße von {s2} errichtet.
 msg_thief_count	Jemand regt sich im Schlaf... {0}
 msg_thief_away	Du verschwindest in der Dunkelheit.
+msg_night_count	Die Wache wartet, dass du gehst... {0}
+msg_night_away	Die Wache lässt dich ziehen.
 msg_thief_alarm	Dieb! {0} wird alarmiert!
 night_thief_shout	Ein Dieb! Wacht auf, alle, ein Dieb!
 opt_rep_decay	Wie schnell das Ansehen verblasst
@@ -441,3 +452,22 @@ envoy_r_drift_down	Ohne neue Taten sinkt unser Wohlwollen mit den Tagen gegen {0
 envoy_r_old	Nichts Neues; aber was du früher getan hast, ist noch nicht vergessen.
 ev_CampaignOver_ours	{f} brechen ihren Feldzug ab: {s} gehört ihnen schon.
 ev_CampaignOver_other	{f} geben ihren Feldzug auf: {s} ist in andere Hände übergegangen.
+rep_ledger	Letzte Änderungen unseres Wohlwollens:
+rep_day	Tag {0}
+rep_why_gift	Geschenke
+rep_why_trade	Handel
+rep_why_help	Hilfe gegen unsere Feinde
+rep_why_boss	ein großes Ungeheuer erschlagen
+rep_why_theft	Diebstahl aus unseren Vorräten
+rep_why_kill	unsere Leute getötet
+rep_why_crime	ein alter Mord kam ans Licht
+rep_why_attack	unsere Leute angegriffen
+rep_why_damage	unsere Gebäude beschädigt
+rep_why_wreck	eines unserer Gebäude zerstört
+rep_why_side	auf wessen Seite du in unseren Kriegen stehst
+rep_why_drift	die Zeit: alte Taten verblassen
+rep_why_war	Krieg erklärt
+rep_why_peace	Frieden geschlossen
+rep_why_broke	Bündnis gebrochen
+rep_why_dev	Konsolenbefehl
+rep_why_other	Sonstiges

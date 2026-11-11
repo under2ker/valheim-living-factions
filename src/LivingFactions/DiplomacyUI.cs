@@ -24,6 +24,7 @@ namespace LivingFactions
         private static FactionMember _npc;
         private static Player _player;
         private static string _page = "main";
+        private static int _waresPage;
         private static string _note = "";
         private static bool _devOpened;
 
@@ -92,9 +93,9 @@ namespace LivingFactions
         /// <summary>How many action buttons fit under the text; eleven rows of 32 px do.</summary>
         private const int MaxButtons = 11;
 
+        /// <param name="keep">The way out or back: kept even when the page offers more than fits, in place of the last offer.</param>
         private static void AddButton(string label, Action action, bool keep = false)
         {
-            // The way out of the dialogue is kept even when a faction offers every other button it has.
             if (Buttons.Count >= MaxButtons)
             {
                 if (!keep) return;
@@ -122,6 +123,7 @@ namespace LivingFactions
 
         private static void Go(string page)
         {
+            if (page == "wares" && _page != "wares") _waresPage = 0;
             _page = page;
         }
 
@@ -162,7 +164,7 @@ namespace LivingFactions
                         _note = Texts.Get("r_" + Net.PlayerDeclareWar(f, pid).Reason);
                         Go("main");
                     });
-                    AddButton(Texts.Get("ui_back"), () => Go("main"));
+                    AddButton(Texts.Get("ui_back"), () => Go("main"), true);
                     break;
                 default:
                     if (_npc.Role == NpcRole.Envoy) EnvoyPage(sim, s, f, pid, rel, standing, body);
@@ -245,6 +247,7 @@ namespace LivingFactions
             body.AppendLine(Texts.Get("ui_relation") + ": <color=" + StandingColor(standing) + ">" + Texts.Get("st_" + standing) + "</color> (" + rel.Reputation.ToString("+0;-0;0") + ")");
             body.AppendLine(Texts.Get("envoy_between"));
             foreach (string reason in Grievances(sim, f, pid, rel)) body.AppendLine("- " + reason);
+            AppendLedger(sim, rel, body);
             AddButton(Texts.Get("ui_gift"), () => Go("gift"));
             if (rel.AtWar)
             {
@@ -260,6 +263,19 @@ namespace LivingFactions
             }
             AddButton(Texts.Get("ui_news"), () => Go("news"));
             AddButton(Texts.Get("ui_leave"), Close, true);
+        }
+
+        /// <summary>The latest changes of the player's standing, newest first, with what they were for (LF-016).</summary>
+        internal static void AppendLedger(Simulation sim, PlayerRelation rel, StringBuilder body)
+        {
+            if (rel.Ledger == null || rel.Ledger.Count == 0) return;
+            body.AppendLine(Texts.Get("rep_ledger"));
+            for (int i = rel.Ledger.Count - 1, shown = 0; i >= 0 && shown < 6; i--, shown++)
+            {
+                RepChange c = rel.Ledger[i];
+                string amount = c.Delta.ToString(Math.Abs(c.Delta) < 1f ? "+0.0;-0.0" : "+0;-0");
+                body.AppendLine("  " + Texts.Get("rep_day", (int)c.Day) + "  <color=" + (c.Delta < 0f ? "#FF8A6A" : "#9BE36A") + ">" + amount + "</color>  " + Texts.Get("rep_why_" + c.Why));
+            }
         }
 
         /// <summary>What the faction holds against the player, in the envoy's words, and where its goodwill is going.</summary>
@@ -322,9 +338,17 @@ namespace LivingFactions
                 break;
             }
 
-            List<Ware> wares = Wares.For(f);
+            List<Ware> wares = Wares.For(f).Where(w =>
+            {
+                GameObject item = ObjectDB.instance.GetItemPrefab(w.Item);
+                return item != null && item.GetComponent<ItemDrop>() != null;
+            }).ToList();
             if (wares.Count == 0) body.AppendLine(Texts.Get("r_no_wares"));
-            foreach (Ware ware in wares)
+            const int perPage = 6;
+            int pages = Math.Max(1, (wares.Count + perPage - 1) / perPage);
+            _waresPage = Math.Max(0, Math.Min(_waresPage, pages - 1));
+            if (pages > 1) body.AppendLine(Texts.Get("ui_wares_page", _waresPage + 1, pages));
+            foreach (Ware ware in wares.Skip(_waresPage * perPage).Take(perPage))
             {
                 Ware w = ware;
                 GameObject prefab = ObjectDB.instance.GetItemPrefab(w.Item);
@@ -354,12 +378,13 @@ namespace LivingFactions
                     }
                     inv.RemoveItem("$item_coins", w.Price);
                     Net.AddStock(s, Res.Coins, w.Price);
-                    Net.AddReputation(f, pid, Math.Min(1.5f, w.Price * 0.004f));
+                    Net.AddReputation(f, pid, Math.Min(1.5f, w.Price * 0.004f), "trade");
                     _note = Texts.Get("r_deal_done");
                 });
-                if (Buttons.Count >= 9) break;
             }
-            AddButton(Texts.Get("ui_back"), () => Go("main"));
+            if (_waresPage > 0) AddButton(Texts.Get("ui_wares_previous"), () => _waresPage--);
+            if (_waresPage + 1 < pages) AddButton(Texts.Get("ui_wares_next"), () => _waresPage++);
+            AddButton(Texts.Get("ui_back"), () => Go("main"), true);
         }
 
         private class Offer
@@ -411,7 +436,7 @@ namespace LivingFactions
                     _note = gain >= 1f ? Texts.Get("r_gift_thanks", gain.ToString("0")) : Texts.Get("r_gift_meh");
                 });
             }
-            AddButton(Texts.Get("ui_back"), () => Go("main"));
+            AddButton(Texts.Get("ui_back"), () => Go("main"), true);
         }
 
         /// <summary>A hunt for one of the world's great beasts: offered, under way, or ready to be paid.</summary>
@@ -445,7 +470,7 @@ namespace LivingFactions
                     });
                 }
             }
-            AddButton(Texts.Get("ui_back"), () => Go("main"));
+            AddButton(Texts.Get("ui_back"), () => Go("main"), true);
         }
 
         private static void TradePage(Simulation sim, Settlement s, Faction f, long pid, StringBuilder body)
@@ -507,7 +532,7 @@ namespace LivingFactions
                     _note = Texts.Get("r_deal_done");
                 });
             }
-            AddButton(Texts.Get("ui_back"), () => Go("main"));
+            AddButton(Texts.Get("ui_back"), () => Go("main"), true);
         }
 
         private static void NewsPage(Simulation sim, Faction f, StringBuilder body)
@@ -523,7 +548,7 @@ namespace LivingFactions
                 shown++;
             }
             if (shown == 0) body.AppendLine(Texts.Get("ui_no_news"));
-            AddButton(Texts.Get("ui_back"), () => Go("main"));
+            AddButton(Texts.Get("ui_back"), () => Go("main"), true);
         }
 
         private static void PoliticsPage(Simulation sim, Faction f, StringBuilder body)
@@ -536,7 +561,7 @@ namespace LivingFactions
                 string color = r.Treaty == Treaty.War ? "#FF5A4A" : r.Treaty == Treaty.Alliance ? "#5AD7FF" : r.Value >= 25f ? "#9BE36A" : r.Value <= -25f ? "#FFA64A" : "#FFFFFF";
                 body.AppendLine("<color=" + color + ">" + Texts.FactionName(other) + "</color>: " + Texts.Get("tr_" + r.Treaty) + " (" + r.Value.ToString("+0;-0;0") + "), " + Texts.Get("ui_strength").ToLowerInvariant() + " " + sim.Strength(other).ToString("0"));
             }
-            AddButton(Texts.Get("ui_back"), () => Go("main"));
+            AddButton(Texts.Get("ui_back"), () => Go("main"), true);
         }
 
         // ------------------------------------------------------------------ testing hooks

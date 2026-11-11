@@ -340,33 +340,63 @@ namespace LivingFactions
         private static IEnumerator OnReport(long sender, ZPackage framed)
         {
             if (!SimHost.Active || !IsHost) yield break;
-            int count = framed.ReadInt();
-            if (count < 0 || count > 4096)
+            List<KeyValuePair<long, Progress>> entries;
+            if (!ReadReport(framed, out entries)) yield break;
+            bool changed = false;
+            foreach (KeyValuePair<long, Progress> entry in entries)
             {
-                Plugin.Log.LogWarning("Ignored a malformed building report from a guest: " + count + " entries.");
-                yield break;
-            }
-            ZPackage pkg = new ZPackage(framed.ReadByteArray());
-            for (int i = 0; i < count; i++)
-            {
-                int sid = pkg.ReadInt(), bid = pkg.ReadInt(), pieces = pkg.ReadInt();
-                float ground = pkg.ReadSingle();
-                int terrain = pkg.ReadInt(), layout = pkg.ReadInt();
-                string wall = pkg.ReadString();
-                if (pieces < 0 || pieces > 1000000 || terrain < 0 || layout < 0 || !Finite(ground) || wall == null || wall.Length > 64) continue;
+                int sid = (int)(entry.Key >> 32), bid = (int)(uint)entry.Key;
+                Progress progress = entry.Value;
                 Settlement s = SimHost.Sim.State.GetSettlement(sid);
-                if (s == null) continue;
+                long builder;
+                if (s == null || !Builders.TryGetValue(sid, out builder) || builder != sender) continue;
                 foreach (Building b in s.Buildings)
                 {
                     if (b.Id != bid) continue;
-                    b.SpawnedPieces = pieces;
-                    b.GroundY = ground;
-                    b.TerrainRev = terrain;
-                    b.LayoutRev = layout;
-                    b.Wall = wall;
+                    b.SpawnedPieces = progress.Pieces;
+                    b.GroundY = progress.GroundY;
+                    b.TerrainRev = progress.TerrainRev;
+                    b.LayoutRev = progress.LayoutRev;
+                    b.Wall = progress.Wall;
+                    changed = true;
+                    break;
                 }
             }
-            _dirty = true;
+            if (changed) _dirty = true;
+        }
+
+        private static bool ReadReport(ZPackage framed, out List<KeyValuePair<long, Progress>> entries)
+        {
+            entries = null;
+            if (framed == null || framed.Size() > 4 * 1024 * 1024) return false;
+            try
+            {
+                int count = framed.ReadInt();
+                if (count < 1 || count > 4096) return false;
+                int length = framed.ReadInt();
+                if (length < 0 || length > framed.Size() - framed.GetPos()) return false;
+                ZPackage pkg = new ZPackage(framed.ReadByteArray(length));
+                List<KeyValuePair<long, Progress>> parsed = new List<KeyValuePair<long, Progress>>(count);
+                for (int i = 0; i < count; i++)
+                {
+                    int sid = pkg.ReadInt(), bid = pkg.ReadInt();
+                    Progress value = new Progress { Pieces = pkg.ReadInt(), GroundY = pkg.ReadSingle(), TerrainRev = pkg.ReadInt(), LayoutRev = pkg.ReadInt(), Wall = pkg.ReadString() };
+                    // New or reset buildings report NaN until their ground has been fitted.
+                    bool awaitingGround = value.Pieces == 0 && float.IsNaN(value.GroundY);
+                    if (!awaitingGround && !Finite(value.GroundY)) return false;
+                    if (value.Pieces < 0 || value.Pieces > 1000000 || value.TerrainRev < 0 || value.LayoutRev < 0) return false;
+                    // The largest city wall has room for about 75 gates, at up to six characters per angle.
+                    if (value.Wall == null || value.Wall.Length > 512) return false;
+                    parsed.Add(new KeyValuePair<long, Progress>(Key(sid, bid), value));
+                }
+                entries = parsed;
+                return true;
+            }
+            catch (Exception e)
+            {
+                if (Plugin.Log != null) Plugin.Log.LogWarning("Rejected a malformed building report: " + e.Message);
+                return false;
+            }
         }
 
         // ------------------------------------------------------------------ raids a player can see
@@ -402,25 +432,75 @@ namespace LivingFactions
             NightThief.Alarm(s, thief, where);
             Faction f = SimHost.Sim.State.GetFaction(s.FactionId);
             if (f != null) PlayerAttackedMember(f, thief.GetPlayerID(), 3f);
-            if (_alarm == null || ZRoutedRpc.instance == null || Alone) return;
+            if (_alarm == null || ZRoutedRpc.instance == null || (IsHost && Alone)) return;
             ZNetView view = thief.GetComponent<ZNetView>();
             if (view == null || !view.IsValid()) return;
             ZPackage pkg = new ZPackage();
             pkg.Write(s.Id);
             pkg.Write(view.GetZDO().m_uid);
             pkg.Write(where);
-            _alarm.SendPackage(ZRoutedRpc.Everybody, pkg);
+            if (IsHost) _alarm.SendPackage(ZRoutedRpc.Everybody, pkg);
+            else
+            {
+                ZNetPeer server = ZNet.instance.GetServerPeer();
+                if (server != null) _alarm.SendPackage(server.m_uid, pkg);
+            }
         }
 
         private static IEnumerator OnAlarm(long sender, ZPackage pkg)
         {
-            int id = pkg.ReadInt();
-            ZDOID thief = pkg.ReadZDOID();
-            Vector3 where = pkg.ReadVector3();
             if (!SimHost.Active || sender == Me) yield break;
+            int id;
+            ZDOID thief;
+            Vector3 where;
+            if (!ReadAlarm(pkg, out id, out thief, out where)) yield break;
+            Settlement s = SimHost.Sim.State.GetSettlement(id);
             GameObject go = ZNetScene.instance != null ? ZNetScene.instance.FindInstance(thief) : null;
-            Character who = go != null ? go.GetComponent<Character>() : null;
-            if (who != null) NightThief.Alarm(SimHost.Sim.State.GetSettlement(id), who, where);
+            Player who = go != null ? go.GetComponent<Player>() : null;
+            if (s == null || who == null) yield break;
+            if (IsHost)
+            {
+                ZNetPeer peer = ZNet.instance.GetPeers().Find(p => p.m_uid == sender && p.IsReady());
+                if (peer == null || !AlarmIdentityMatches(sender, peer.m_uid, peer.m_playerID, who.GetPlayerID())
+                    || !EnvMan.IsNight() || !NightThief.WithinReach(s, who.transform.position) || !NightThief.WithinReach(s, where))
+                {
+                    Plugin.Log.LogWarning("Rejected a theft alarm with an invalid sender or location");
+                    yield break;
+                }
+                NightThief.Alarm(s, who, where);
+                List<ZNetPeer> recipients = ZNet.instance.GetPeers().Where(p => p.m_uid != sender && p.IsReady()).ToList();
+                if (recipients.Count > 0) _alarm.SendPackage(recipients, pkg);
+            }
+            else
+            {
+                ZNetPeer server = ZNet.instance.GetServerPeer();
+                if (server == null || sender != server.m_uid) yield break;
+                NightThief.Alarm(s, who, where);
+            }
+        }
+
+        private static bool AlarmIdentityMatches(long sender, long peerUid, long peerPlayerId, long thiefPlayerId)
+        {
+            return sender != 0L && sender == peerUid && peerPlayerId != 0L && peerPlayerId == thiefPlayerId;
+        }
+
+        private static bool ReadAlarm(ZPackage pkg, out int id, out ZDOID thief, out Vector3 where)
+        {
+            id = 0;
+            thief = default(ZDOID);
+            where = Vector3.zero;
+            if (pkg == null || pkg.Size() > 64) return false;
+            try
+            {
+                id = pkg.ReadInt();
+                thief = pkg.ReadZDOID();
+                where = pkg.ReadVector3();
+                return id > 0 && pkg.GetPos() == pkg.Size()
+                    && !float.IsNaN(where.x) && !float.IsInfinity(where.x)
+                    && !float.IsNaN(where.y) && !float.IsInfinity(where.y)
+                    && !float.IsNaN(where.z) && !float.IsInfinity(where.z);
+            }
+            catch (Exception) { return false; }
         }
 
         // ------------------------------------------------------------------ testing
@@ -438,7 +518,9 @@ namespace LivingFactions
         private static IEnumerator OnDev(long sender, ZPackage pkg)
         {
             string command = pkg.ReadString();
-            if (!ModConfig.DevTools.Value || !IsHost) yield break;
+            // Remote developer commands are not authenticated as admin commands.
+            // Local host commands remain available through DevOnHost.
+            if (!ModConfig.DevTools.Value || !IsHost || sender != Me) yield break;
             string result;
             try
             {
@@ -513,34 +595,83 @@ namespace LivingFactions
         private static IEnumerator OnCall(long sender, ZPackage pkg)
         {
             if (!SimHost.Active || !IsHost) yield break;
-            string what = pkg.ReadString();
-            int count = pkg.ReadInt();
-            if (count < 0 || count > 16)
+            string what;
+            object[] a;
+            if (!ReadCall(pkg, out what, out a)) yield break;
+            int playerIndex = DirectPlayerArgument(what);
+            if (playerIndex >= 0)
             {
-                Plugin.Log.LogWarning("Ignored a malformed '" + what + "' from a guest: " + count + " arguments.");
-                yield break;
-            }
-            object[] a = new object[count];
-            for (int i = 0; i < a.Length; i++)
-            {
-                switch (pkg.ReadByte())
+                ZNetPeer peer = ZNet.instance.GetPeers().Find(p => p.m_uid == sender && p.IsReady());
+                if (peer == null || peer.m_playerID == 0L || playerIndex >= a.Length || !(a[playerIndex] is long) || (long)a[playerIndex] != peer.m_playerID)
                 {
-                    case 0: a[i] = pkg.ReadInt(); break;
-                    case 1: a[i] = pkg.ReadLong(); break;
-                    case 2: a[i] = pkg.ReadSingle(); break;
-                    case 3: a[i] = pkg.ReadBool(); break;
-                    default: a[i] = pkg.ReadString(); break;
+                    Plugin.Log.LogWarning("Rejected player action with an unmatched sender: " + what);
+                    yield break;
                 }
             }
             try
             {
                 Apply(what, a);
+                _dirty = true;
             }
             catch (Exception e)
             {
                 Plugin.Log.LogWarning("A player's '" + what + "' could not be applied: " + e.Message);
             }
-            _dirty = true;
+        }
+
+        // These actions are initiated by the sender's local player. Combat and world events are
+        // intentionally excluded because a peer can observe and report another player's action.
+        private static int DirectPlayerArgument(string what)
+        {
+            switch (what)
+            {
+                case "war": case "peace": case "ally": case "unally": case "gift": return 1;
+                case "buy": case "sell": return 3;
+                case "found": return 0;
+                default: return -1;
+            }
+        }
+
+        // Reject malformed packets before applying anything to the authoritative world state.
+        private static bool ReadCall(ZPackage pkg, out string what, out object[] args)
+        {
+            what = null;
+            args = null;
+            if (pkg == null || pkg.Size() > 65536) return false;
+            try
+            {
+                what = pkg.ReadString();
+                int count = pkg.ReadInt();
+                if (count < 0 || count > 16 || what.Length > 64) return false;
+                object[] values = new object[count];
+                for (int i = 0; i < count; i++)
+                {
+                    switch (pkg.ReadByte())
+                    {
+                        case 0: values[i] = pkg.ReadInt(); break;
+                        case 1: values[i] = pkg.ReadLong(); break;
+                        case 2:
+                            float value = pkg.ReadSingle();
+                            if (float.IsNaN(value) || float.IsInfinity(value)) return false;
+                            values[i] = value;
+                            break;
+                        case 3: values[i] = pkg.ReadBool(); break;
+                        case 4:
+                            string valueText = pkg.ReadString();
+                            if (valueText.Length > 1024) return false;
+                            values[i] = valueText;
+                            break;
+                        default: return false;
+                    }
+                }
+                args = values;
+                return true;
+            }
+            catch (Exception e)
+            {
+                if (Plugin.Log != null) Plugin.Log.LogWarning("Rejected a malformed player action: " + e.Message);
+                return false;
+            }
         }
 
         /// <summary>True for a number that can be stored in the state (not NaN or endless).</summary>
@@ -618,13 +749,11 @@ namespace LivingFactions
                     sim.PlayerProposePeace(st.GetFaction(id), pid, coins);
                     return;
                 case "gift":
-                    // Gift: settlement, player, resource, amount.
                     if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !IntArg(a, 2, out res) || !FloatArg(a, 3, out value)
                         || value <= 0f || value > 1000000f || res < 0 || res > (int)Res.Coins || st.GetSettlement(id) == null) { Malformed(what); return; }
                     sim.PlayerGift(st.GetSettlement(id), pid, (Res)res, value);
                     return;
                 case "buy":
-                    // Buy: settlement, resource, amount, player, coins the player says they have.
                     if (!IntArg(a, 0, out id) || !IntArg(a, 1, out res) || !IntArg(a, 2, out amount) || !LongArg(a, 3, out pid) || !IntArg(a, 4, out coins)
                         || amount <= 0 || amount > 100000 || coins < 0 || coins > 1000000 || res < 0 || res > (int)Res.Coins || st.GetSettlement(id) == null) { Malformed(what); return; }
                     sim.PlayerBuy(st.GetSettlement(id), (Res)res, amount, pid, coins);
@@ -682,9 +811,12 @@ namespace LivingFactions
                     sim.PlayerHelped(st.GetFaction(id), pid, value);
                     return;
                 case "rep":
+                {
                     if (!IntArg(a, 0, out id) || !LongArg(a, 1, out pid) || !FloatArg(a, 2, out delta) || Mathf.Abs(delta) > 1000f || st.GetFaction(id) == null) { Malformed(what); return; }
-                    sim.AddReputation(st.GetFaction(id), pid, delta);
+                    string why = a.Length > 3 && a[3] is string ? (string)a[3] : "other";
+                    sim.AddReputation(st.GetFaction(id), pid, delta, why);
                     return;
+                }
                 case "name":
                 {
                     string name;
@@ -822,10 +954,10 @@ namespace LivingFactions
             Send("helped", f.Id, pid, weight);
         }
 
-        public static void AddReputation(Faction f, long pid, float delta)
+        public static void AddReputation(Faction f, long pid, float delta, string why = "other")
         {
-            SimHost.Sim.AddReputation(f, pid, delta);
-            Send("rep", f.Id, pid, delta);
+            SimHost.Sim.AddReputation(f, pid, delta, why);
+            Send("rep", f.Id, pid, delta, why);
         }
 
         public static void NamePlayer(Faction f, long pid, string name)

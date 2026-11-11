@@ -46,6 +46,7 @@ namespace LivingFactions
 #          relic   - an item with a property: keen (+25% damage), stout (+20% armour and block),
 #                    light (half weight), lasting (double durability)
 #          mystery - an unidentified relic; its property is revealed by the faction at reputation 30
+# relic and mystery offers must have amount 1.
 # item:    the game's item prefab name. Delete this file to get the defaults back.
 
 *            sell    ArrowFlint           20   18    0
@@ -119,6 +120,20 @@ draugr_court relic   LF_BonePlateShield    1  300   10  stout
             return list;
         }
 
+        private static Ware ParseOffer(string line)
+        {
+            string[] p = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            int amount, price, reputation;
+            string kind = p.Length > 1 ? p[1].ToLowerInvariant() : "";
+            if (p.Length < 6 || (kind != "sell" && kind != "relic" && kind != "mystery")
+                || !int.TryParse(p[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out amount) || amount <= 0
+                || !int.TryParse(p[4], NumberStyles.Integer, CultureInfo.InvariantCulture, out price) || price < 0
+                || !int.TryParse(p[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out reputation)
+                || (kind != "sell" && amount != 1)) return null;
+            return new Ware { Culture = p[0], Kind = kind, Item = p[2], Amount = amount, Price = price,
+                MinReputation = reputation, Affix = p.Length > 6 ? p[6].ToLowerInvariant() : "" };
+        }
+
         private static void Load()
         {
             _all = new List<Ware>();
@@ -126,23 +141,19 @@ draugr_court relic   LF_BonePlateShield    1  300   10  stout
             {
                 Directory.CreateDirectory(SimHost.DataDir);
                 if (!File.Exists(FilePath)) File.WriteAllText(FilePath, Defaults);
-                AddNewItems();
+                try { AddNewItems(); }
+                catch (Exception e) { Plugin.Log.LogWarning("Could not add new trade offers; reading existing trade.cfg: " + e.Message); }
                 foreach (string raw in File.ReadAllLines(FilePath))
                 {
                     string line = raw.Trim();
                     if (line.Length == 0 || line.StartsWith("#")) continue;
-                    string[] p = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (p.Length < 6)
+                    Ware ware = ParseOffer(line);
+                    if (ware == null)
                     {
                         Plugin.Log.LogWarning("trade.cfg: skipped line '" + line + "'");
                         continue;
                     }
-                    _all.Add(new Ware
-                    {
-                        Culture = p[0], Kind = p[1].ToLowerInvariant(), Item = p[2],
-                        Amount = int.Parse(p[3], CultureInfo.InvariantCulture), Price = int.Parse(p[4], CultureInfo.InvariantCulture),
-                        MinReputation = int.Parse(p[5], CultureInfo.InvariantCulture), Affix = p.Length > 6 ? p[6].ToLowerInvariant() : ""
-                    });
+                    _all.Add(ware);
                 }
             }
             catch (Exception e)
@@ -186,8 +197,9 @@ draugr_court relic   LF_BonePlateShield    1  300   10  stout
         /// <summary>The faction tells the owner what the thing is; which property it has was fixed when it was made.</summary>
         public static string Identify(ItemDrop.ItemData item, Faction f)
         {
-            int roll = Mathf.Abs((item.m_dropPrefab != null ? item.m_dropPrefab.name : "").GetStableHashCode() + f.Id * 7919);
-            string affix = Affixes[roll % Affixes.Length];
+            int hash = unchecked((item.m_dropPrefab != null ? item.m_dropPrefab.name : "").GetStableHashCode() + f.Id * 7919);
+            int roll = (int)(Math.Abs((long)hash) % Affixes.Length);
+            string affix = Affixes[roll];
             item.m_customData.Remove(MysteryKey);
             item.m_customData[RelicKey] = affix;
             item.m_crafterName = Texts.FactionName(f);

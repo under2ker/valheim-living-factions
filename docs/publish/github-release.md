@@ -1,31 +1,51 @@
-### 🔧 Fix Release
+### Roads and Ground
 
-- **Wars between every side:** a war or a campaign could be fought only when the attacker's faction
-  id was lower than the defender's. The other half of the raids and assaults ended without a fight,
-  so the monster factions could take nothing by war and their campaigns always ended repelled. Both
-  sides now ask for the shared relation, and a war is fought the same way whichever side began it.
-- **Dialogs no longer change history:** a relation asked for by a dialogue or the forecast drew from
-  the shared random stream. Opening a menu could change what the factions did next. The small
-  per-pair difference now comes from the two faction ids.
-- **The way out is always there:** a dialogue could show ten buttons and cut the Leave button when a
-  friendly faction offered every button it had. Eleven rows fit, and Leave is kept.
-- **Hired fighters and tamed animals by their owner:** a hired fighter now remembers the player whose
-  coins pay it, and a tamed animal fights by the standing of the player it belongs to. Both are right
-  on a dedicated server, where there is no local player to take for the owner.
-- **Bad guest messages are ignored:** the host checks the count, ids, amounts and names in what a
-  guest sends and ignores what cannot be true, with a warning in the log, instead of spoiling the
-  factions or throwing errors.
+- Roads choose a gentler finished bed, rise and fall evenly, and are paved in batches as the ground becomes ready.
+- Settlement ground slopes into building pads along streets and paths. Existing settlements are graded as they load.
+- Streets keep their full width clear of buildings, narrow where necessary instead of breaking, and avoid water and steep banks.
+- Queued terrain repairs, road paint, clearing and lamps leave player-built pieces and player-worked ground alone. Blocked work is tried again later.
 
-### 🧪 Checked
+### Hired Fighters
 
-The core harness checks the new war path in both id orders and the relation determinism. In-game
-checks from 0.7.0 still stand; the new paths were not re-run in a live game before this release.
+- Fighters remember their employer, follow that player through portals and judge hostility by that player's standing.
+- Hire limits count only that player's living fighters. A failed hire costs nothing.
+- Fighters hired before this version keep a compatibility fallback and are taken over by their employer's game after a portal or zone change.
 
-### ⚠️ Important
+### Interface and Trade
 
-Everyone needs version 0.8.x, the server too: 0.7.x and 0.8.x do not play together. Worlds and
-faction state of 0.7.0 carry over. Back up your world before updating.
+- The chronicle can be dragged anywhere on screen and collapsed to its heading and day. Both choices are saved.
+- The dialogue explains the latest changes of standing: gifts, trade, help, crimes, war and the fading of old deeds.
+- Special wares are split into pages. An invalid `trade.cfg` row no longer hides later valid offers.
+- A night-watch warning counts down on screen and confirms when the watch lets you go.
 
-🔗 **Download Ts:** https://thunderstore.io/c/valheim/p/under2ker/LivingFactions/
-🔗 **Download Hex:** https://valheim.hexium.gg/mods/under2ker/LivingFactions
-📂 **Github:** https://github.com/under2ker/valheim-living-factions
+### Multiplayer and Saves
+
+- Night-watch challenges and theft alarms target the involved player instead of everyone nearby.
+- A denied chest-opening request no longer starts a theft countdown or attributes later changes to that player.
+- Player identity, action packets, theft alarms and building reports are checked before the host applies them.
+- Building updates can include plots awaiting ground work and city walls with many gates.
+- Console commands reject guest-side or non-finite simulation changes.
+- Faction saves and compressed history copies are replaced only after their new contents have been written completely.
+- Gifts and trades reject invalid resources, non-finite values and non-positive quantities.
+
+This release also includes every fix from 0.8.0: wars resolve in either faction-id order, interface queries no longer change the world's random history, dialogue keeps its way out, hired fighters and tamed animals follow their owner's standing, and malformed guest values are rejected.
+
+### Verification
+
+- Release build completed.
+- Simulation harness: `ALL CHECKS PASSED`, including higher-id campaigns, deterministic relations, invalid trades and save/load.
+- Blueprint check: 160858 checks, 0 failures.
+- Language build: `problems: 0`.
+- Packet, save, road geometry, night-watch and wares checks passed.
+- The road and terrain repair scenario passed in single-player after reopening a copied world.
+- Full multiplayer regression testing is still pending.
+
+### Important
+
+Everyone needs version 0.8.x, the server too: 0.7.x and 0.8.x do not play together. Worlds and faction state of 0.7.0 and 0.8.0 carry over. Back up your world before updating. Old roads and settlement ground are repaired as you visit them.
+
+Download Thunderstore: https://thunderstore.io/c/valheim/p/under2ker/LivingFactions/
+
+Download Hexium: https://valheim.hexium.gg/mods/under2ker/LivingFactions
+
+Source: https://github.com/under2ker/valheim-living-factions

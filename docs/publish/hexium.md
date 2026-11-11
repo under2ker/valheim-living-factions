@@ -41,7 +41,7 @@ WHAT YOU CAN DO
 - Earn seven relic axes, seven swords and seven shields, one of each per faction.
 
 PLAYING TOGETHER
-Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too (any 0.7.x works with any 0.7.x; 0.6.x does not play with 0.7.x).
+Single-player, a player hosting, and dedicated servers. Everyone needs the mod, the server too (any 0.8.x works with any 0.8.x; 0.7.x does not play with 0.8.x).
 
 BACKUPS
 Restoring a world backup takes the factions back too. "lf rewind" in the console takes the factions back without touching the world.
@@ -54,15 +54,21 @@ Source and releases: https://github.com/under2ker/valheim-living-factions
 Made with the help of AI (Claude Code). No game files, decompiled code or extracted assets are included.
 ```
 
-## Changelog 0.8.0
+## Changelog 0.8.1
 
 ```
-- Fixed: wars and campaigns are fought whatever the order of the factions' ids. Before, half of the raids and assaults ended without a fight: the pair's relation is kept on the faction with the lower id, and the band looked for it on the attacker. The monster factions could take nothing by war, and their campaigns always ended repelled.
-- Fixed: a relation asked for by a dialogue or the forecast no longer draws from the shared random stream, so opening a menu cannot change the history of the world.
-- Fixed: the dialogue's Leave button is always on screen; eleven buttons fit.
-- Fixed: a hired fighter fights by the standing of the player whose coins pay it, and a tamed animal by the standing of its owner, including on a dedicated server.
-- Fixed: the host ignores malformed guest messages (impossible counts, ids, amounts and names) with a warning, instead of spoiling the factions.
-- Worlds and saves of 0.7.0 carry over; everyone in a game needs the same 0.8.x version.
+- Roads choose gentler finished beds, follow the ground evenly and are paved in batches.
+- Settlement ground slopes into building pads; streets keep clear of buildings, water and steep banks.
+- Terrain work, road paint, clearing and lamps respect player-built pieces and player-worked ground.
+- Hired fighters follow their employer through portals and use that player's standing for hostility.
+- A failed hire costs nothing; dead fighters no longer consume the employer's hire limit.
+- The chronicle can be dragged anywhere and collapsed; both choices are saved.
+- The dialogue explains the latest changes of standing.
+- Special wares are paginated; invalid trade.cfg rows no longer hide later offers.
+- Night-watch challenges and theft alarms target the involved player; denied chest opens start no theft countdown.
+- Player actions, commands, gifts, trades and building reports are validated more strictly.
+- Faction saves and history copies are promoted only after a complete write.
+- Includes every 0.8.0 fix.
 ```
 
 ## Tags

@@ -20,7 +20,7 @@ namespace LivingFactions
     /// plots), not of wars or of who holds them: every player works out the same roads, and a road
     /// does not vanish from the plan while its paint stays on the ground.
     /// </summary>
-    internal static class Roads
+    internal static partial class Roads
     {
         private const float Step = 2f;
         /// <summary>Where a road begins, measured from the settlement's centre: on the square, past the fire's benches and woodpile (5.5 m).</summary>
@@ -53,7 +53,8 @@ namespace LivingFactions
         public static readonly int HashRoad = "lf_road".GetStableHashCode();
         /// <summary>When each road point was last cleared: growth the world puts up later (once its zone is loaded) is cleared again.</summary>
         private static readonly Dictionary<long, float> Furnished = new Dictionary<long, float>();
-        private static int _lamps, _cleared, _lampsSwept, _graded;
+        private static readonly Dictionary<long, int> FurnishPasses = new Dictionary<long, int>();
+        private static int _lamps, _cleared, _lampsSwept;
 
         private static readonly float[] SquareRadius = { 0f, 4.5f, 6f, 7.5f, 9f };
 
@@ -88,19 +89,23 @@ namespace LivingFactions
 
         private static readonly List<Road> All = new List<Road>();
         private static readonly HashSet<long> Painted = new HashSet<long>();
+        // Road points a building stood on, and when to look at them again (the building may be gone by then).
+        private static readonly Dictionary<long, float> BlockedUntil = new Dictionary<long, float>();
         private static readonly Dictionary<int, int> SquareTier = new Dictionary<int, int>();
         private static readonly Dictionary<int, int> TrailCount = new Dictionary<int, int>();
         private static readonly HashSet<long> TrailKeys = new HashSet<long>();
         private static string _signature = "";
-        private static float _nextPaint, _nextSweep, _checkedAt = -100f;
+        private static float _nextPaint, _nextFurnish, _nextSweep, _checkedAt = -100f;
         private static int _paintedPoints;
 
         public static void Reset()
         {
             All.Clear();
             Painted.Clear();
+            BlockedUntil.Clear();
             Furnished.Clear();
-            _lamps = _cleared = _lampsSwept = _graded = 0;
+            FurnishPasses.Clear();
+            _lamps = _cleared = _lampsSwept = 0;
             SquareTier.Clear();
             TrailCount.Clear();
             TrailKeys.Clear();
@@ -108,11 +113,16 @@ namespace LivingFactions
             Routes.Clear();
             StreetTerrain.Clear();
             InnerRoutes.Clear();
-            BedCut.Clear();
+            BedTilesDone.Clear();
+            BedWaitSince.Clear();
+            BedWaitLogged.Clear();
+            BedRetryAt.Clear();
+            _nextBed = 0f;
+            PadBankTiles.Clear();
             Standing.Clear();
             PlotHashes.Clear();
             PlotOffsets.Clear();
-            _nextPaint = _nextSweep = 0f;
+            _nextPaint = _nextFurnish = _nextSweep = 0f;
             Unfurnished = 0;
             _checkedAt = -100f;
             _paintedPoints = 0;
@@ -126,9 +136,14 @@ namespace LivingFactions
                 return;
             }
             EnsurePlan();
-            if (Time.time < _nextPaint) return;
-            _nextPaint = Time.time + 1f;
-            PaintRoads(reference);
+            ShapeBeds(reference);
+            if (Time.time >= _nextPaint)
+            {
+                _nextPaint = Time.time + 0.2f;
+                PaintRoads(reference);
+            }
+            if (Time.time < _nextFurnish) return;
+            _nextFurnish = Time.time + 0.5f;
             Furnish(reference);
             PaintSquares(reference);
             Materializer.ClearPaths(reference);
@@ -275,6 +290,9 @@ namespace LivingFactions
             }
 
             All.Clear();
+            BedTilesDone.Clear();
+            BedWaitSince.Clear();
+            BedRetryAt.Clear();
             foreach (Road road in roads)
             {
                 float[] both;
@@ -417,9 +435,9 @@ namespace LivingFactions
                 for (float d = from + 4f; d <= length + 16f; d += 4f)
                 {
                     float h = gen.GetHeight(s.Pos.X + dir.x * d, s.Pos.Z + dir.z * d);
-                    if (h < dry) land += 25f;
+                    if (h < dry) land += 300f + (dry - h) * 30f;
                     float grade = Mathf.Abs(h - previous) / 4f;
-                    if (grade > 0.25f) land += (grade - 0.25f) * 60f;
+                    if (grade > 0.25f) land += (grade - 0.25f) * (grade - 0.25f) * 240f;
                     previous = h;
                 }
                 StreetTerrain[key] = land;
@@ -438,8 +456,10 @@ namespace LivingFactions
             string key = s.Id + ":" + hash + ":" + bearing.ToString("0", CultureInfo.InvariantCulture) + ":" + straightFrom.ToString("0.0", CultureInfo.InvariantCulture);
             List<Vector3> cached;
             if (InnerRoutes.TryGetValue(key, out cached)) return cached;
-            // Room to spare first; a narrower way past the buildings only where there is no other.
-            List<Vector3> way = Inner(s, bearing, straightFrom, standing, 0.8f) ?? Inner(s, bearing, straightFrom, standing, 0.3f);
+            // The whole painted road must clear the building, not only its centre line.
+            List<Vector3> way = Inner(s, bearing, straightFrom, standing, HalfWidth + 0.8f) ?? Inner(s, bearing, straightFrom, standing, HalfWidth + 0.3f)
+                // Too tight for the full width anywhere: a street that brushes a wall is better than none.
+                ?? Inner(s, bearing, straightFrom, standing, 0.8f) ?? Inner(s, bearing, straightFrom, standing, 0.3f);
             InnerRoutes[key] = way;
             return way;
         }
@@ -470,6 +490,7 @@ namespace LivingFactions
             int gx = Mathf.RoundToInt((goalAt.x - centre.x) / cell), gz = Mathf.RoundToInt((goalAt.z - centre.z) / cell);
             long goal = ((long)gx << 32) | (uint)gz;
             System.Func<int, int, Vector3> world = (x, z) => new Vector3(centre.x + x * cell, 0f, centre.z + z * cell);
+            if (!Clear(goalAt, goalAt, pads, room)) return null;
             // What standing on a cell costs on top of the walk; NaN = not to be walked on.
             System.Func<int, int, float> penalty = (x, z) =>
             {
@@ -492,7 +513,7 @@ namespace LivingFactions
                     float e = Utils.DistanceXZ(p, plot.Key);
                     if (e < plot.Value + 2f) v += (plot.Value + 2f - e) * 0.6f;
                 }
-                if (!float.IsNaN(v) && gen.GetHeight(p.x, p.z) < ZoneSystem.c_WaterLevel + 0.5f) v += 20f;
+                if (!float.IsNaN(v) && gen.GetHeight(p.x, p.z) < ZoneSystem.c_WaterLevel + 0.5f) v = float.NaN;
                 extra[k] = v;
                 return v;
             };
@@ -540,9 +561,17 @@ namespace LivingFactions
                         float extraCost = penalty(nx, nz);
                         if (float.IsNaN(extraCost)) continue;
                         long next = ((long)nx << 32) | (uint)nz;
-                        float step = cell * (dx != 0 && dz != 0 ? 1.4142f : 1f);
-                        float grade = Mathf.Abs(height(nx, nz) - here) / step;
-                        float price = soFar + step * (1f + grade * grade * 8f + extraCost * 0.5f);
+                        // Grid endpoints can both be clear while a diagonal clips a building.
+                        Vector3 origin = world(cx, cz), destination = next == goal ? goalAt : world(nx, nz);
+                        if (!Clear(origin, destination, pads, room)) continue;
+                        Vector3 midpoint = (origin + destination) * 0.5f;
+                        float mid = gen.GetHeight(midpoint.x, midpoint.z);
+                        float end = next == goal ? gen.GetHeight(goalAt.x, goalAt.z) : height(nx, nz);
+                        if (Mathf.Min(mid, end) < ZoneSystem.c_WaterLevel + 0.5f) continue;
+                        float step = Mathf.Max(0.5f, Utils.DistanceXZ(origin, destination));
+                        float grade = 2f * Mathf.Max(Mathf.Abs(mid - here), Mathf.Abs(end - mid)) / step;
+                        float over = Mathf.Max(0f, grade - 0.35f);
+                        float price = soFar + step * (1f + grade * grade * 8f + over * over * 60f + extraCost * 0.5f);
                         float known;
                         if (cost.TryGetValue(next, out known) && known <= price) continue;
                         cost[next] = price;
@@ -570,7 +599,7 @@ namespace LivingFactions
                     int to = from + 1;
                     for (int k = way.Count - 1; k > from + 1; k--)
                     {
-                        if (Clear(way[from], way[k], pads, room + 1f))
+                        if (Clear(way[from], way[k], pads, room + 1f) && WalkableShortcut(gen, way[from], way[k]))
                         {
                             to = k;
                             break;
@@ -583,6 +612,21 @@ namespace LivingFactions
             }
             else return null;
             return way;
+        }
+
+        private static bool WalkableShortcut(WorldGenerator gen, Vector3 start, Vector3 end)
+        {
+            float distance = Utils.DistanceXZ(start, end);
+            int steps = Mathf.Max(1, Mathf.CeilToInt(distance / Step));
+            float previous = gen.GetHeight(start.x, start.z);
+            for (int i = 1; i <= steps; i++)
+            {
+                Vector3 point = Vector3.Lerp(start, end, i / (float)steps);
+                float height = gen.GetHeight(point.x, point.z);
+                if (height < ZoneSystem.c_WaterLevel + 0.5f || Mathf.Abs(height - previous) > 0.45f * distance / steps) return false;
+                previous = height;
+            }
+            return true;
         }
 
         private static readonly HashSet<string> Told = new HashSet<string>();
@@ -600,14 +644,9 @@ namespace LivingFactions
 
         private static bool Clear(Vector3 a, Vector3 b, List<KeyValuePair<Vector3, float>> pads, float room)
         {
-            float length = Utils.DistanceXZ(a, b);
-            for (float d = 0f; d <= length; d += 0.5f)
+            foreach (KeyValuePair<Vector3, float> pad in pads)
             {
-                Vector3 p = Vector3.Lerp(a, b, length > 0f ? d / length : 0f);
-                foreach (KeyValuePair<Vector3, float> pad in pads)
-                {
-                    if (Utils.DistanceXZ(p, pad.Key) < pad.Value + room) return false;
-                }
+                if (DistanceToSegment(pad.Key, a, b) < pad.Value + room) return false;
             }
             return true;
         }
@@ -635,7 +674,7 @@ namespace LivingFactions
                 {
                     // Finest first; a coarser grid reaches further when the fine one runs out of breath.
                     Vector4 keep = new Vector4(keepA, keepB, 0f, 0f);
-                    middle = Route(endA, endB, true, Cell, ca, cb, keep) ?? Route(endA, endB, false, Cell, ca, cb, keep) ?? Route(endA, endB, false, Cell * 2f, ca, cb, keep);
+                    middle = BestRoute(endA, endB, ca, cb, keep);
                     Routes[key] = middle;
                 }
                 if (middle == null) return null;
@@ -754,6 +793,84 @@ namespace LivingFactions
 
         private static List<Vector3> Route(Vector3 from, Vector3 to, bool strict, float cell, Vector3 homeA, Vector3 homeB, Vector4 keep)
         {
+            return Route(from, to, strict ? 0.35f : float.MaxValue, cell, homeA, homeB, keep, MaxNodes, 0f);
+        }
+
+        /// <summary>
+        /// Several ways are found, each by other rules (gentle grades only; anything, with climbs priced as before;
+        /// anything, with a hill's face priced out; fairly gentle, searching further), and the one whose road bed
+        /// (the land cut or filled up to 3 m, as it will be laid) has the gentlest steepest 10 m is taken. A longer
+        /// way has to earn its length: each tenth longer than the shortest costs it a point of grade, and none
+        /// twice as long is taken. Judging the land alone chose wrong both ways: a short bump a 3 m cut takes
+        /// away barred a good way, and a long climb that no cut can ease let a bad one through.
+        /// </summary>
+        private static List<Vector3> BestRoute(Vector3 endA, Vector3 endB, Vector3 ca, Vector3 cb, Vector4 keep)
+        {
+            List<List<Vector3>> ways = new List<List<Vector3>>
+            {
+                Route(endA, endB, 0.35f, Cell, ca, cb, keep, MaxNodes, 0f),
+                Route(endA, endB, float.MaxValue, Cell, ca, cb, keep, MaxNodes, 0f),
+                Route(endA, endB, float.MaxValue, Cell, ca, cb, keep, MaxNodes, 600f),
+                Route(endA, endB, 0.5f, Cell, ca, cb, keep, MaxNodes * 3, 600f)
+            };
+            ways.RemoveAll(w => w == null);
+            if (ways.Count == 0)
+            {
+                List<Vector3> coarse = Route(endA, endB, float.MaxValue, Cell * 2f, ca, cb, keep, MaxNodes, 0f);
+                return coarse;
+            }
+            float shortest = float.MaxValue;
+            foreach (List<Vector3> w in ways) shortest = Mathf.Min(shortest, Length(w));
+            List<Vector3> best = null;
+            float bestScore = float.MaxValue;
+            foreach (List<Vector3> w in ways)
+            {
+                float length = Length(w);
+                if (length > shortest * 2f) continue;
+                float score = BedSteepness(w) * 100f + (length / shortest - 1f) * 10f;
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    best = w;
+                }
+            }
+            return best;
+        }
+
+        private static float Length(List<Vector3> way)
+        {
+            float total = 0f;
+            for (int k = 1; k < way.Count; k++) total += Utils.DistanceXZ(way[k - 1], way[k]);
+            return total;
+        }
+
+        /// <summary>The steepest 10 m of the bed a way would get (Bed), on points as far apart as a road's.</summary>
+        private static float BedSteepness(List<Vector3> way)
+        {
+            List<Vector3> points = new List<Vector3>();
+            float total = Length(way), want = 0f, walked = 0f;
+            for (int k = 0; k < way.Count - 1; k++)
+            {
+                float leg = Utils.DistanceXZ(way[k], way[k + 1]);
+                while (want <= walked + leg && want <= total)
+                {
+                    points.Add(Vector3.Lerp(way[k], way[k + 1], leg > 0f ? (want - walked) / leg : 0f));
+                    want += Step;
+                }
+                walked += leg;
+            }
+            if (points.Count < 6) return 0f;
+            float at;
+            return Steepest(Bed(new Road { Points = points.ToArray() }), out at);
+        }
+
+        /// <summary>
+        /// The way, with no 4 m steeper than <paramref name="limit"/> taken at all. Above 0.35 a grade costs
+        /// steeply more (by its fourth power): a way round a hill, or up it in turns, is preferred to straight up
+        /// its face, which a bed cut at most 3 m deep cannot ease.
+        /// </summary>
+        private static List<Vector3> Route(Vector3 from, Vector3 to, float limit, float cell, Vector3 homeA, Vector3 homeB, Vector4 keep, int maxNodes, float steepWeight)
+        {
             float direct = Vector3.Distance(from, to);
             float dry = ZoneSystem.c_WaterLevel + 1f;
             int goalX = Mathf.RoundToInt((to.x - from.x) / cell), goalZ = Mathf.RoundToInt((to.z - from.z) / cell);
@@ -768,7 +885,7 @@ namespace LivingFactions
             HeapPush(open, new KeyValuePair<float, long>(direct, start));
             bool found = false;
             int visited = 0;
-            while (open.Count > 0 && visited < MaxNodes)
+            while (open.Count > 0 && visited < maxNodes)
             {
                 KeyValuePair<float, long> top = HeapPop(open);
                 long current = top.Value;
@@ -799,9 +916,11 @@ namespace LivingFactions
                         if ((h < dry || mid < dry) && next != goal) continue;
                         float step = cell * (dx != 0 && dz != 0 ? 1.4142f : 1f);
                         float grade = Mathf.Max(Mathf.Abs(mid - here), Mathf.Abs(h - mid)) / (step * 0.5f);
-                        if (strict && grade > 0.35f && next != goal) continue;
-                        // A grade of 0.2 costs half again the walk, 0.4 three times, 0.7 seven times; the shore is walked along only if need be.
-                        float price = soFar + step * (1f + grade * grade * 12f) + Mathf.Abs(h - here) * 2f + (h < dry + 1.5f ? step * 0.6f : 0f);
+                        if (grade > limit && next != goal) continue;
+                        // A grade of 0.2 costs half again the walk, 0.4 three times; past 0.35 it climbs fast (0.7 some
+                        // twenty times, 0.9 fifty), so a hill's face is the last way taken. The shore is walked along only if need be.
+                        float over = Mathf.Max(0f, grade - 0.35f);
+                        float price = soFar + step * (1f + grade * grade * 12f + over * over * over * over * steepWeight) + Mathf.Abs(h - here) * 2f + (h < dry + 1.5f ? step * 0.6f : 0f);
                         float known;
                         if (cost.TryGetValue(next, out known) && known <= price) continue;
                         cost[next] = price;
@@ -1010,13 +1129,6 @@ namespace LivingFactions
         }
 
         /// <summary>How far a point is outside the grounds of the nearest settlement (negative inside).</summary>
-        private static readonly Dictionary<long, float> BedCut = new Dictionary<long, float>();
-
-        private static long BedKey(Vector3 p)
-        {
-            return ((long)Mathf.RoundToInt(p.x / 4f) << 32) ^ (uint)Mathf.RoundToInt(p.z / 4f);
-        }
-
         private static float OutsideGrounds(Vector3 p)
         {
             float best = float.MaxValue;
@@ -1041,67 +1153,68 @@ namespace LivingFactions
         private static void PaintRoads(Vector3 reference)
         {
             int budget = 60;
-            List<int> bedded = new List<int>();
             for (int r = 0; r < All.Count && budget > 0; r++)
             {
                 Road road = All[r];
+                if (!road.Near(reference, FurnishRange)) continue;
                 Settlement a = SimHost.Sim.State.GetSettlement(road.A), b = SimHost.Sim.State.GetSettlement(road.B);
-                if (a == null || b == null || !road.Near(reference, PaintRange)) continue;
-                bedded.Clear();
+                if (a == null || b == null) continue;
                 for (int i = 0; i < road.Points.Length && budget > 0; i++)
                 {
                     Vector3 p = road.Points[i];
-                    if (Utils.DistanceXZ(reference, p) > PaintRange) continue;
+                    if (Utils.DistanceXZ(reference, p) > FurnishRange) continue;
                     long key = Key(p);
-                    // The objects round the spot too: a player's building there keeps its ground.
                     if (Painted.Contains(key) || !ZoneSystem.instance.IsZoneLoaded(p)) continue;
-                    Painted.Add(key);
-                    if (UnderBuilding(p, 0.5f)) continue;
-                    if (road.Bed == null) road.Bed = Bed(road);
-                    // Inside a settlement the ground is already shaped pad by pad; reshaping it there would tug at the pads.
-                    float ground;
-                    if (OutsideGrounds(p) > 0f && !NearPad(p, 7.5f) && !PlayerBuilt(p, 7f) && ZoneSystem.instance.GetGroundHeight(p, out ground))
+                    // A blocked point is not finished: a building may later be removed. It is looked at again
+                    // now and then, not on every pass (each look is a physics query).
+                    float retry;
+                    if (BlockedUntil.TryGetValue(key, out retry) && Time.time < retry) continue;
+                    if (!BedReady(p, HalfWidth + 1f)) continue;
+                    // Past a building the paint narrows to the room there is, rather than stopping short of it
+                    // and leaving a gap in the road; only where not even a narrow track fits is the point left.
+                    float width = Mathf.Min(HalfWidth, BuildingClearance(p) - 0.3f);
+                    if (width < 1f || PlayerBuilt(p, width + 1f))
                     {
-                        float other;
-                        if (Mathf.Abs(road.Bed[i] - ground) > 0.25f && !(BedCut.TryGetValue(BedKey(p), out other) && Mathf.Abs(other - road.Bed[i]) > 0.3f))
-                        {
-                            // Cut down or built up to the bed, and smoothed round it (also across the border of two
-                            // terrain tiles: the torn edge is mended afterwards, HealSeams). Where two roads run together
-                            // the first one's bed is kept: two beds at different heights would fight into steps.
-                            BedCut[BedKey(p)] = road.Bed[i];
-                            Materializer.QueueGrade(new Vector3(p.x, road.Bed[i], p.z), 2.4f, true);
-                            _graded++;
-                            bedded.Add(i);
-                        }
-                        // Close enough to the bed already: only evened out toward it (below).
-                        else if (!BedCut.TryGetValue(BedKey(p), out other) || Mathf.Abs(other - road.Bed[i]) <= 0.3f) bedded.Add(i);
+                        BlockedUntil[key] = Time.time + 30f;
+                        continue;
                     }
+                    BlockedUntil.Remove(key);
                     // The last stretch into a town is cobbled; the rest is a beaten track.
                     bool cobbled = (a.Tier >= Tier.Town && i * Step < 75f) || (b.Tier >= Tier.Town && (road.Points.Length - 1 - i) * Step < 75f);
-                    Materializer.QueuePaint(p, HalfWidth, cobbled ? 2 : 1);
+                    // The ground under it is laid to the road bed separately, tile by tile (ShapeBeds).
+                    Materializer.QueuePaint(p, width, cobbled ? 2 : 1, key);
+                    Painted.Add(key);
                     _paintedPoints++;
                     budget--;
-                }
-                // After the levelling, in the same line behind it: each levelled disc is flat at its own height, a
-                // step of up to 0.4 m from the next on a slope. Drawn toward the bed a spot every metre (at the
-                // point and halfway to the next), the road runs up and down the bed evenly instead.
-                foreach (int i in bedded)
-                {
-                    for (int half = 0; half < 2; half++)
-                    {
-                        int j = Mathf.Min(i + half, road.Points.Length - 1);
-                        if (half == 1 && j == i) break;
-                        Vector3 spot = Vector3.Lerp(road.Points[i], road.Points[j], 0.5f * half);
-                        Materializer.QueueBlend(new Vector3(spot.x, Mathf.Lerp(road.Bed[i], road.Bed[j], 0.5f * half), spot.z), BlendRadius);
-                        _blended++;
-                    }
                 }
             }
         }
 
-        /// <summary>How far round each spot of a road bed the ground is drawn toward it: the road's width and a little.</summary>
-        private const float BlendRadius = 3.2f;
-        private static int _blended;
+        /// <summary>The paint of a road point was given up (its ground never became ready, or a player built there): painted again on a later pass.</summary>
+        public static void Unpaint(long key)
+        {
+            Painted.Remove(key);
+        }
+
+        /// <summary>How far the point is from the edge of the nearest building of a settlement (negative inside one).</summary>
+        private static float BuildingClearance(Vector3 p)
+        {
+            float best = float.MaxValue;
+            foreach (Settlement s in SimHost.Sim.State.Settlements)
+            {
+                if (s.Destroyed || Utils.DistanceXZ(p, new Vector3(s.Pos.X, 0f, s.Pos.Z)) > 85f) continue;
+                foreach (Building b in s.Buildings)
+                {
+                    if (b.Plot < 0 || b.State == BuildingState.Destroyed) continue;
+                    Vec2 offset;
+                    float yaw;
+                    Defs.PlotTransform(s, b.Plot, out offset, out yaw);
+                    best = Mathf.Min(best, Utils.DistanceXZ(p, new Vector3(s.Pos.X + offset.X, 0f, s.Pos.Z + offset.Z)) - Blueprints.Radius(b.Kind));
+                }
+            }
+            return best;
+        }
+
 
         /// <summary>
         /// Close to the player, where the world's objects exist: trees, bushes, rocks and stumps on
@@ -1114,8 +1227,9 @@ namespace LivingFactions
             for (int r = 0; r < All.Count; r++)
             {
                 Road road = All[r];
+                if (!road.Near(reference, FurnishRange)) continue;
                 Settlement a = SimHost.Sim.State.GetSettlement(road.A), b = SimHost.Sim.State.GetSettlement(road.B);
-                if (a == null || b == null || !road.Near(reference, FurnishRange)) continue;
+                if (a == null || b == null) continue;
                 for (int i = 0; i < road.Points.Length; i++)
                 {
                     Vector3 p = road.Points[i];
@@ -1124,16 +1238,22 @@ namespace LivingFactions
                     float cleared;
                     // Not waiting for the whole area to be instantiated: ZNetScene.IsAreaReady stays false for ever on the
                     // edge of the loaded area, where the trees and rocks of a road are, and nothing there got cleared.
-                    // What stands now is cleared; what comes later is cleared on the next pass (every 45 s).
+                    // The first three quick passes catch growth that arrives just after its tile; later growth is met
+                    // on the regular pass without keeping the early, empty tile marked as done for 45 s.
                     if ((Furnished.TryGetValue(key, out cleared) && Time.time - cleared < 45f) || !ZoneSystem.instance.IsZoneLoaded(p)) continue;
                     // A lamp waits until the ground under it has been cut to the road bed.
                     float ground;
-                    if (budget <= 0 || Materializer.GroundWorkNear(p, 10f) || !ZoneSystem.instance.GetGroundHeight(p, out ground))
+                    if (budget <= 0 || !BedReady(p, 0f) || Materializer.GroundWorkNear(p, 10f) || !ZoneSystem.instance.GetGroundHeight(p, out ground))
                     {
                         pending++;
                         continue;
                     }
-                    Furnished[key] = Time.time;
+                    // Leave a player's base and its planted vegetation alone, and retry if it is removed.
+                    if (PlayerBuilt(p, 7f)) continue;
+                    int passes;
+                    FurnishPasses.TryGetValue(key, out passes);
+                    FurnishPasses[key] = ++passes;
+                    Furnished[key] = Time.time - (passes < 3 ? 44f : 0f);
                     budget--;
                     if (ground < ZoneSystem.c_WaterLevel + 0.3f) continue;
                     p.y = ground;
@@ -1477,11 +1597,24 @@ namespace LivingFactions
             return worst;
         }
 
+        /// <summary>The steepest 10 m of a road's bed between the settlements, where the road keeper lays the ground (not on their grounds).</summary>
+        private static float BedSteepestOutside(Road road)
+        {
+            if (road.Bed == null) road.Bed = Bed(road);
+            float worst = 0f;
+            for (int i = 5; i < road.Points.Length; i++)
+            {
+                if (OutsideGrounds(road.Points[i]) <= 0f || OutsideGrounds(road.Points[i - 5]) <= 0f) continue;
+                worst = Mathf.Max(worst, Mathf.Abs(road.Bed[i] - road.Bed[i - 5]) / (5f * Step));
+            }
+            return worst;
+        }
+
         public static string Describe()
         {
             EnsurePlan();
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine(All.Count + " roads, " + _paintedPoints + " road points painted this session (" + _graded + " cut to the bed, " + _blended + " spots drawn even with it), " + _cleared + " cleared of growth, lamp posts put up " + _lamps
+            sb.AppendLine(All.Count + " roads, " + _paintedPoints + " road points painted this session (" + _bedTiles + " terrain tiles laid to the road beds, " + _bedVertices + " ground points moved), " + _cleared + " cleared of growth, lamp posts put up " + _lamps
                 + " (" + _lampKit + "), out of place taken down " + _lampsSwept + ", trails worn " + TrailKeys.Count);
             foreach (Road road in All)
             {
@@ -1501,7 +1634,8 @@ namespace LivingFactions
                 sb.AppendLine("  " + a.Name + " - " + b.Name + ": " + ((road.Points.Length - 1) * Step).ToString("0", CultureInfo.InvariantCulture) + " m (straight " + Vec2.Distance(a.Pos, b.Pos).ToString("0", CultureInfo.InvariantCulture)
                     + " m), points under water " + wet + ", streets at " + road.BearingA.ToString("0", CultureInfo.InvariantCulture) + " / " + road.BearingB.ToString("0", CultureInfo.InvariantCulture)
                     + " deg, steepest 10 m: land " + (landWorst * 100f).ToString("0", CultureInfo.InvariantCulture) + "% at " + landAt.ToString("0", CultureInfo.InvariantCulture)
-                    + " m, bed " + (bedWorst * 100f).ToString("0", CultureInfo.InvariantCulture) + "% at " + bedAt.ToString("0", CultureInfo.InvariantCulture) + " m");
+                    + " m, bed " + (bedWorst * 100f).ToString("0", CultureInfo.InvariantCulture) + "% at " + bedAt.ToString("0", CultureInfo.InvariantCulture) + " m"
+                    + ", bed outside the grounds " + (BedSteepestOutside(road) * 100f).ToString("0", CultureInfo.InvariantCulture) + "%");
             }
             return sb.ToString().TrimEnd();
         }

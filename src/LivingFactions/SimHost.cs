@@ -414,7 +414,7 @@ namespace LivingFactions
                 return "now day " + Sim.State.Day.ToString("0") + "; kept copies by day: " + string.Join(", ", list.ToArray()) + ". lf rewind <day> takes the factions back to the latest copy not after that day, lf rewind -<days> counts back from today";
             }
             double day;
-            if (!double.TryParse(a[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out day)) return "lf rewind <day>, or lf rewind -<days> to go back that many days";
+            if (!double.TryParse(a[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out day) || double.IsNaN(day) || double.IsInfinity(day)) return "lf rewind <day>, or lf rewind -<days> to go back that many days";
             // "-30": thirty days back from today.
             if (a[1].StartsWith("-")) day += Sim.State.Day;
             string file = null;
@@ -476,16 +476,19 @@ namespace LivingFactions
 
         private static void KeepCopy(string json, double time)
         {
+            string tmp = null;
             try
             {
                 Directory.CreateDirectory(HistoryDir);
                 string file = Path.Combine(HistoryDir, ((long)time).ToString("D12") + ".json.gz");
-                using (FileStream fs = File.Create(file))
+                tmp = file + ".tmp";
+                using (FileStream fs = File.Create(tmp))
                 using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
                 using (StreamWriter writer = new StreamWriter(gz))
                 {
                     writer.Write(json);
                 }
+                PromoteFile(tmp, file, null);
                 string[] all = Directory.GetFiles(HistoryDir, "*.json.gz");
                 Array.Sort(all, StringComparer.Ordinal);
                 for (int i = 0; i < all.Length - SnapshotsKept; i++) File.Delete(all[i]);
@@ -494,6 +497,22 @@ namespace LivingFactions
             {
                 Plugin.Log.LogWarning("Could not keep a copy of the faction state: " + e.Message);
             }
+            finally
+            {
+                if (tmp != null && File.Exists(tmp))
+                {
+                    try { File.Delete(tmp); }
+                    catch (IOException) { }
+                    catch (UnauthorizedAccessException) { }
+                }
+            }
+        }
+
+        // Both paths are in the same directory: replace the old file only after the new one is complete.
+        private static void PromoteFile(string source, string target, string backup)
+        {
+            if (File.Exists(target)) File.Replace(source, target, backup);
+            else File.Move(source, target);
         }
 
         private static int ResolveLanguage()
@@ -517,10 +536,9 @@ namespace LivingFactions
                 string json = JsonConvert.SerializeObject(Sim.State, Formatting.Indented);
                 File.WriteAllText(tmp, json);
                 KeepCopy(json, Sim.State.SavedAtTime);
-                // An unreadable state file must not replace the last good backup.
-                if (_saveFileOk && File.Exists(_savePath)) File.Copy(_savePath, _savePath + ".bak", true);
-                File.Copy(tmp, _savePath, true);
-                File.Delete(tmp);
+                // An unreadable state file must not replace the last good backup. File.Replace promotes
+                // the completed temporary file without truncating the existing save during a failed write.
+                PromoteFile(tmp, _savePath, _saveFileOk ? _savePath + ".bak" : null);
                 _saveFileOk = true;
             }
             catch (Exception e)
